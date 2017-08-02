@@ -8,6 +8,11 @@ public class PlayerController : MonoBehaviour {
 
 	void UpdateFixed()
 	{
+        //
+        // TODO:(pv) Detect double click and switch to/from flight<->point mode.
+        // http://answers.unity3d.com/questions/331545/double-click-mouse-detection-.html
+        //
+
 		float xAxisValue = Input.GetAxis("Horizontal") * Speed;
 		float zAxisValue = Input.GetAxis("Vertical") * Speed;
 		float yValue = 0.0f;
