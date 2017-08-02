@@ -1,6 +1,6 @@
 # Fleet VieweR
 
-View your 3D fleet in Virtual Reality.
+View your fleet in Virtual Reality.
 
 Currently written only in Unity, only Google VR Daydream is supported for now, but other platforms could be supported if there is a high enough demand.
 
