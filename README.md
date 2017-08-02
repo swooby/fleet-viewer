@@ -5,8 +5,7 @@ View your fleet in Virtual Reality.
 Currently written only in Unity, only Google VR Daydream is supported for now, but other platforms could be supported if there is a high enough demand.
 
 The base of this app will be a generic 3D model importer.  
-Star Citizen (SC) will be first-class supported with pre-defined models.  
-Eventually the SC models will be refreshable from the SC website (robertsspaceindustries.com).  
+Star Citizen (SC) will be first-class supported with pre-defined models (eventually network fetched/updated).  
 Other first-class support (Elite Dangerous, EVE Online, No Man's Sky, Space Engineers, Kerbal Space Program, etc) could be added by other Open Source developers.
 
 ## Estimated Milestones
