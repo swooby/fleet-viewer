@@ -24,4 +24,6 @@ Other first-class support (Elite Dangerous, EVE Online, No Man's Sky, Space Engi
   * Use not-currently-existing Star Citizen API to:
     * Report stats/location/contents of ships/vehicles
     * Report UEC
-    
+  * Crazy ideas (mostly just for the fun of it and to push myself even further):
+    * Multiple people avatars to simultaneously browse over the network
+    * Voip group calls and render to texture
