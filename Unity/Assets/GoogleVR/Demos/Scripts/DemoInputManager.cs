@@ -71,8 +71,8 @@ public class DemoInputManager : MonoBehaviour
     public EmulatedPlatformType gvrEmulatedPlatformType = EmulatedPlatformType.Daydream;
     public static string EMULATED_PLATFORM_PROP_NAME = "gvrEmulatedPlatformType";
 #else
-  // Running on an Android device.
-  private GvrSettings.ViewerPlatformType viewerPlatform;
+    // Running on an Android device.
+    private GvrSettings.ViewerPlatformType viewerPlatform;
 #endif  // !RUNNING_ON_ANDROID_DEVICE
 
     void Start()
@@ -83,10 +83,11 @@ public class DemoInputManager : MonoBehaviour
             if (messageCanvas != null)
             {
                 messageText = messageCanvas.transform.Find(MESSAGE_TEXT_NAME).GetComponent<Text>();
+
+                // Message canvas will be enabled later when there's a message to display.
+                messageCanvas.SetActive(false);
             }
         }
-        // Message canvas will be enabled later when there's a message to display.
-        messageCanvas.SetActive(false);
 #if !RUNNING_ON_ANDROID_DEVICE
         if (playerSettingsHasDaydream() || playerSettingsHasCardboard())
         {
@@ -98,26 +99,28 @@ public class DemoInputManager : MonoBehaviour
         }
         isDaydream = (gvrEmulatedPlatformType == EmulatedPlatformType.Daydream);
 #else
-    // Running on an Android device.
-    viewerPlatform = GvrSettings.ViewerPlatform;
-    // First loaded device in Player Settings.
-    string vrDeviceName = UnityEngine.VR.VRSettings.loadedDeviceName;
-    if (vrDeviceName != CARDBOARD_DEVICE_NAME &&
-        vrDeviceName != DAYDREAM_DEVICE_NAME) {
-      Debug.LogErrorFormat("Loaded device was '{0}', must be one of '{1}' or '{2}'",
-            vrDeviceName, DAYDREAM_DEVICE_NAME, CARDBOARD_DEVICE_NAME);
-      return;
-    }
+        // Running on an Android device.
+        viewerPlatform = GvrSettings.ViewerPlatform;
+        // First loaded device in Player Settings.
+        string vrDeviceName = UnityEngine.VR.VRSettings.loadedDeviceName;
+        if (vrDeviceName != CARDBOARD_DEVICE_NAME &&
+            vrDeviceName != DAYDREAM_DEVICE_NAME)
+        {
+            Debug.LogErrorFormat("Loaded device was '{0}', must be one of '{1}' or '{2}'",
+                  vrDeviceName, DAYDREAM_DEVICE_NAME, CARDBOARD_DEVICE_NAME);
+            return;
+        }
 
-    // On a non-Daydream ready phone, fall back to Cardboard if it's present in the list of
-    // enabled VR SDKs.
-    // On a Daydream-ready phone, go into Cardboard mode if it's the currently-paired viewer.
-    if ((!IsDeviceDaydreamReady() && playerSettingsHasCardboard()) ||
-        (IsDeviceDaydreamReady() && playerSettingsHasCardboard() &&
-         GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Cardboard)) {
-      vrDeviceName = CARDBOARD_DEVICE_NAME;
-    }
-    isDaydream = (vrDeviceName == DAYDREAM_DEVICE_NAME);
+        // On a non-Daydream ready phone, fall back to Cardboard if it's present in the list of
+        // enabled VR SDKs.
+        // On a Daydream-ready phone, go into Cardboard mode if it's the currently-paired viewer.
+        if ((!IsDeviceDaydreamReady() && playerSettingsHasCardboard()) ||
+            (IsDeviceDaydreamReady() && playerSettingsHasCardboard() &&
+             GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Cardboard))
+        {
+            vrDeviceName = CARDBOARD_DEVICE_NAME;
+        }
+        isDaydream = (vrDeviceName == DAYDREAM_DEVICE_NAME);
 #endif  // !RUNNING_ON_ANDROID_DEVICE
         SetVRInputMechanism();
     }
@@ -137,14 +140,15 @@ public class DemoInputManager : MonoBehaviour
         isDaydream = (gvrEmulatedPlatformType == EmulatedPlatformType.Daydream);
         SetVRInputMechanism();
 #else
-    // Running on an Android device.
-    // Viewer type switched at runtime.
-    if (!IsDeviceDaydreamReady() || viewerPlatform == GvrSettings.ViewerPlatform) {
-      return;
-    }
-    isDaydream = (GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Daydream);
-    viewerPlatform = GvrSettings.ViewerPlatform;
-    SetVRInputMechanism();
+        // Running on an Android device.
+        // Viewer type switched at runtime.
+        if (!IsDeviceDaydreamReady() || viewerPlatform == GvrSettings.ViewerPlatform)
+        {
+            return;
+        }
+        isDaydream = (GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Daydream);
+        viewerPlatform = GvrSettings.ViewerPlatform;
+        SetVRInputMechanism();
 #endif  // !RUNNING_ON_ANDROID_DEVICE
     }
 
@@ -191,28 +195,35 @@ public class DemoInputManager : MonoBehaviour
 #endif  // !RUNNING_ON_ANDROID_DEVICE
 
 #if RUNNING_ON_ANDROID_DEVICE
-  // Running on an Android device.
-  private static bool IsDeviceDaydreamReady() {
-    // Check API level.
-    using (var version = new AndroidJavaClass(PACKAGE_BUILD_VERSION)) {
-      if (version.GetStatic<int>(FIELD_SDK_INT) < ANDROID_MIN_DAYDREAM_API) {
-        return false;
-      }
+    // Running on an Android device.
+    private static bool IsDeviceDaydreamReady()
+    {
+        // Check API level.
+        using (var version = new AndroidJavaClass(PACKAGE_BUILD_VERSION))
+        {
+            if (version.GetStatic<int>(FIELD_SDK_INT) < ANDROID_MIN_DAYDREAM_API)
+            {
+                return false;
+            }
+        }
+        // API level > 24, check whether the device is Daydream-ready..
+        AndroidJavaObject androidActivity = null;
+        try
+        {
+            androidActivity = GvrActivityHelper.GetActivity();
+        }
+        catch (AndroidJavaException e)
+        {
+            Debug.LogError("Exception while connecting to the Activity: " + e);
+            return false;
+        }
+        AndroidJavaClass daydreamApiClass = new AndroidJavaClass(PACKAGE_DAYDREAM_API_CLASS);
+        if (daydreamApiClass == null || androidActivity == null)
+        {
+            return false;
+        }
+        return daydreamApiClass.CallStatic<bool>(METHOD_IS_DAYDREAM_READY, androidActivity);
     }
-    // API level > 24, check whether the device is Daydream-ready..
-    AndroidJavaObject androidActivity = null;
-    try {
-      androidActivity = GvrActivityHelper.GetActivity();
-    } catch (AndroidJavaException e) {
-      Debug.LogError("Exception while connecting to the Activity: " + e);
-      return false;
-    }
-    AndroidJavaClass daydreamApiClass = new AndroidJavaClass(PACKAGE_DAYDREAM_API_CLASS);
-    if (daydreamApiClass == null || androidActivity == null) {
-      return false;
-    }
-    return daydreamApiClass.CallStatic<bool>(METHOD_IS_DAYDREAM_READY, androidActivity);
-  }
 #endif  // RUNNING_ON_ANDROID_DEVICE
 
     private void UpdateStatusMessage()
