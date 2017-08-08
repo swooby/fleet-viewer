@@ -1062,6 +1062,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 907292808}
+  - component: {fileID: 907292809}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1084,6 +1085,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &907292809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 907292807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bee4d9144bb3b40c08d9a5f11add4419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 5
+  controllerDebugText: {fileID: 1105705565}
 --- !u!1001 &946975180
 Prefab:
   m_ObjectHideFlags: 0
@@ -4980,7 +4994,7 @@ GameObject:
   - component: {fileID: 1105705566}
   - component: {fileID: 1105705565}
   m_Layer: 0
-  m_Name: Text
+  m_Name: ControllerDebugText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5001,8 +5015,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 243, y: -130.50012}
-  m_SizeDelta: {x: 486, y: 261}
+  m_AnchoredPosition: {x: 292.3, y: -130.50012}
+  m_SizeDelta: {x: 387.4, y: 261}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1105705565
 MonoBehaviour:
@@ -5016,7 +5030,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -5030,7 +5044,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 6
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -5346,7 +5360,7 @@ GameObject:
   - component: {fileID: 1507206767}
   - component: {fileID: 1507206766}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: Main Camera Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5420,7 +5434,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 959308592}
-  m_PlaneDistance: 1
+  m_PlaneDistance: 0.1
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -5539,8 +5553,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 243.00002, y: -130.50009}
-  m_SizeDelta: {x: 486, y: 261}
+  m_AnchoredPosition: {x: 292.30002, y: -130.50009}
+  m_SizeDelta: {x: 387.4, y: 261}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1966377664
 MonoBehaviour:
