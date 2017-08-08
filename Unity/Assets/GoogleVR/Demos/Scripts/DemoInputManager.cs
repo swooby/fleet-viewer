@@ -255,12 +255,14 @@ public class DemoInputManager : MonoBehaviour
 
         string vrSdkWarningMessage = isVrSdkListEmpty ? EMPTY_VR_SDK_WARNING_MESSAGE : "";
         string controllerMessage = "";
-        GvrPointerGraphicRaycaster graphicRaycaster =
-          messageCanvas.GetComponent<GvrPointerGraphicRaycaster>();
+        GvrPointerGraphicRaycaster graphicRaycaster = messageCanvas.GetComponent<GvrPointerGraphicRaycaster>();
+
         // This is an example of how to process the controller's state to display a status message.
         switch (GvrControllerInput.State)
         {
             case GvrConnectionState.Connected:
+                controllerMessage = "Connected";
+                messageText.color = Color.white;
                 break;
             case GvrConnectionState.Disconnected:
                 controllerMessage = CONTROLLER_DISCONNECTED_MESSAGE;
@@ -283,14 +285,14 @@ public class DemoInputManager : MonoBehaviour
                 Debug.LogError("Invalid controller state: " + GvrControllerInput.State);
                 break;
         }
-        messageText.text = string.Format("{0}\n{1}", vrSdkWarningMessage, controllerMessage);
-        if (graphicRaycaster != null)
+
+		messageText.text = string.Format("{0}\n{1}", vrSdkWarningMessage, controllerMessage);
+
+		if (graphicRaycaster != null)
         {
-            graphicRaycaster.enabled =
-              !isVrSdkListEmpty || GvrControllerInput.State != GvrConnectionState.Connected;
+            graphicRaycaster.enabled = !isVrSdkListEmpty || true;//GvrControllerInput.State != GvrConnectionState.Connected;
         }
-        messageCanvas.SetActive(isVrSdkListEmpty ||
-                                (GvrControllerInput.State != GvrConnectionState.Connected));
+        messageCanvas.SetActive(isVrSdkListEmpty || true);//(GvrControllerInput.State != GvrConnectionState.Connected));
     }
 
     private void SetVRInputMechanism()
