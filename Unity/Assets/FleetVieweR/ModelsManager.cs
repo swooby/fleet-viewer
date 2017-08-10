@@ -132,7 +132,7 @@ public class ModelsManager : MonoBehaviour
                 {
                     vertices = vertices.ToArray(),
                     triangles = ctmMesh.indices.Clone() as int[],
-                    //normals = normals.ToArray(),
+                    normals = normals.ToArray(),
                     uv = uv.ToArray()
                 };
             }
