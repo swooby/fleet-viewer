@@ -86,74 +86,74 @@ public class ModelsManager : MonoBehaviour
 
         Debug.Log("LoadCTM: BEGIN Converting OpenCTM.Mesh to UnityEngine.Mesh...");
 
-        int vertexCount = ctmMesh.getVertexCount();
-        Debug.LogError("LoadCTM: vertexCount == " + vertexCount);
-        int indexCount = ctmMesh.indices.Length;
-        Debug.LogError("LoadCTM: indexCount == " + indexCount);
+        int verticesLength = ctmMesh.vertices.Length;
+        Debug.LogError("LoadCTM: ctmMesh.vertices.Length == " + verticesLength); // nox: 248145, brunnen: 2439
+        int indicesLength = ctmMesh.indices.Length;
+        Debug.LogError("LoadCTM: ctmMesh.indices.Length == " + indicesLength); // nox: 437886, brunnen: 4329
         bool hasNormals = ctmMesh.hasNormals();
-        Debug.LogError("LoadCTM: hasNormals == " + hasNormals);
-        int normalCount = ctmMesh.normals.Length;
-        Debug.LogError("LoadCTM: normalCount == " + normalCount);
+        Debug.LogError("LoadCTM: hasNormals == " + hasNormals); // nox: False, brunnen: True
+        int normalsLength = hasNormals ? ctmMesh.normals.Length : 0;
+        Debug.LogError("LoadCTM: ctmMesh.normals.Length == " + normalsLength); // nox: 0, brunnen: 2439
 
-        int numMeshes = vertexCount / MAX_FACETS_PER_MESH + 1;
-        Debug.LogError("LoadCTM: numMeshes == " + numMeshes);
-        UnityEngine.Mesh[] unityMeshes = new UnityEngine.Mesh[numMeshes];
-        UnityEngine.Mesh unityMesh;
-
-        for (int i = 0; i < unityMeshes.Length; i++)
+        List<Vector3> vertices = new List<Vector3>();
+        for (int j = 0; j < ctmMesh.getVertexCount(); j++)
         {
-            if (true)
-            {
-                List<Vector3> vertices = new List<Vector3>();
-                for (int j = 0; j < ctmMesh.getVertexCount(); j++)
-                {
-                    vertices.Add(new Vector3(ctmMesh.vertices[(j * 3)],
-                                             ctmMesh.vertices[(j * 3) + 1],
-                                             ctmMesh.vertices[(j * 3) + 2]));
-                }
-
-                List<Vector3> normals = new List<Vector3>();
-                if (hasNormals)
-                {
-                    for (int j = 0; j < ctmMesh.normals.Length / 3; j++)
-                    {
-                        normals.Add(new Vector3(ctmMesh.normals[(j * 3)],
-                                                ctmMesh.normals[(j * 3) + 1],
-                                                ctmMesh.normals[(j * 3) + 2]));
-                    }
-                }
-
-				// TODO:(pv) Texture...
-				List<Vector2> uv = new List<Vector2>();
-
-
-                Debug.Log("LoadCTM: unityMesh = new UnityEngine.Mesh(...)");
-                unityMesh = new UnityEngine.Mesh()
-                {
-                    vertices = vertices.ToArray(),
-                    triangles = ctmMesh.indices.Clone() as int[],
-                    normals = normals.ToArray(),
-                    uv = uv.ToArray()
-                };
-            }
-            else
-            {
-            }
-
-            Debug.Log("LoadCTM: unityMesh.RecalculateBounds()");
-            unityMesh.RecalculateBounds();
-            Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
-            unityMesh.RecalculateNormals();
-
-            Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
-
-            GameObject go = new GameObject();
-            MeshRenderer mr = go.AddComponent<MeshRenderer>();
-            mr.material = new Material(Shader.Find("Diffuse"));
-            MeshFilter mf = go.AddComponent<MeshFilter>();
-            mf.mesh = unityMesh;
-
-            unityMeshes[i] = unityMesh;
+            vertices.Add(new Vector3(ctmMesh.vertices[(j * 3)],
+                                     ctmMesh.vertices[(j * 3) + 1],
+                                     ctmMesh.vertices[(j * 3) + 2]));
         }
+        Debug.LogError("LoadCTM: vertices.Count == " + vertices.Count); // nox: ?, brunnen: ?
+
+        List<Vector3> normals = new List<Vector3>();
+        if (hasNormals)
+        {
+            for (int j = 0; j < ctmMesh.normals.Length / 3; j++)
+            {
+                normals.Add(new Vector3(ctmMesh.normals[(j * 3)],
+                                        ctmMesh.normals[(j * 3) + 1],
+                                        ctmMesh.normals[(j * 3) + 2]));
+            }
+        }
+        Debug.LogError("LoadCTM: normals.Count == " + normals.Count); // nox: ?, brunnen: ?
+
+        int[] triangles = ctmMesh.indices.Clone() as int[];
+        Debug.LogError("LoadCTM: triangles.Length == " + triangles.Length); // nox: ?, brunnen: ?
+
+        // TODO:(pv) Texture...
+        List<Vector2> uv = new List<Vector2>();
+        /*
+        //Debug.LogError("LoadCTM: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
+        if (ctmMesh.texcoordinates.Length > 0)
+        {
+            for (int j = 0; j < ctmMesh.texcoordinates[0].values.Length / 2; j++)
+            {
+                uv.Add(new Vector2(ctmMesh.texcoordinates[0].values[(j * 2)],
+                                   ctmMesh.texcoordinates[0].values[(j * 2) + 1]));
+            }
+        }
+        */
+        Debug.LogError("LoadCTM: uv.Count == " + uv.Count); // nox: ?, brunnen: ?
+
+        Debug.Log("LoadCTM: unityMesh = new UnityEngine.Mesh(...)");
+        UnityEngine.Mesh unityMesh = new UnityEngine.Mesh()
+        {
+            vertices = vertices.ToArray(),
+            triangles = triangles,
+            normals = normals.ToArray(),
+            uv = uv.ToArray()
+        };
+
+        Debug.Log("LoadCTM: unityMesh.RecalculateBounds()");
+        unityMesh.RecalculateBounds();
+        Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
+        unityMesh.RecalculateNormals();
+
+        Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
+
+        GameObject go = new GameObject();
+        MeshRenderer mr = go.AddComponent<MeshRenderer>();
+        mr.material = new Material(Shader.Find("Diffuse"));
+        MeshFilter mf = go.AddComponent<MeshFilter>();
+        mf.mesh = unityMesh;
     }
 }
