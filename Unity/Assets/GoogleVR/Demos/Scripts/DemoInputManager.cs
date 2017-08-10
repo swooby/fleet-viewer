@@ -79,14 +79,20 @@ public class DemoInputManager : MonoBehaviour
     {
         if (messageCanvas == null)
         {
-            messageCanvas = transform.Find(MESSAGE_CANVAS_NAME).gameObject;
-            if (messageCanvas != null)
+            Transform temp = transform.Find(MESSAGE_CANVAS_NAME);
+            if (temp != null)
             {
-                messageText = messageCanvas.transform.Find(MESSAGE_TEXT_NAME).GetComponent<Text>();
+                messageCanvas = temp.gameObject;
 
-                // Message canvas will be enabled later when there's a message to display.
-                messageCanvas.SetActive(false);
-            }
+                temp = messageCanvas.transform.Find(MESSAGE_TEXT_NAME);
+                if (temp != null)
+                {
+                    messageText = temp.GetComponent<Text>();
+                }
+
+				// Message canvas will be enabled later when there's a message to display.
+				messageCanvas.SetActive(false);
+			}
         }
 #if !RUNNING_ON_ANDROID_DEVICE
         if (playerSettingsHasDaydream() || playerSettingsHasCardboard())
