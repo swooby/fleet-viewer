@@ -90,7 +90,10 @@ public class ModelsManager : MonoBehaviour
         Debug.LogError("LoadCTM: vertexCount == " + vertexCount);
         int indexCount = ctmMesh.indices.Length;
         Debug.LogError("LoadCTM: indexCount == " + indexCount);
-		bool hasNormals = ctmMesh.hasNormals();
+        bool hasNormals = ctmMesh.hasNormals();
+        Debug.LogError("LoadCTM: hasNormals == " + hasNormals);
+        int normalCount = ctmMesh.normals.Length;
+        Debug.LogError("LoadCTM: normalCount == " + normalCount);
 
         int numMeshes = vertexCount / MAX_FACETS_PER_MESH + 1;
         Debug.LogError("LoadCTM: numMeshes == " + numMeshes);
@@ -101,46 +104,48 @@ public class ModelsManager : MonoBehaviour
         {
             if (true)
             {
-				List<Vector3> vertices = new List<Vector3>();
-				for (int j = 0; j < ctmMesh.getVertexCount(); j++)
-					vertices.Add(new Vector3(ctmMesh.vertices[(j * 3)],
-											 ctmMesh.vertices[(j * 3) + 1],
-											 ctmMesh.vertices[(j * 3) + 2]));
+                List<Vector3> vertices = new List<Vector3>();
+                for (int j = 0; j < ctmMesh.getVertexCount(); j++)
+                {
+                    vertices.Add(new Vector3(ctmMesh.vertices[(j * 3)],
+                                             ctmMesh.vertices[(j * 3) + 1],
+                                             ctmMesh.vertices[(j * 3) + 2]));
+                }
 
-				// TODO:(pv) Normals..
-                // ctmMesh.hasNormals() ctmMesh.normals
+                List<Vector3> normals = new List<Vector3>();
+                if (hasNormals)
+                {
+                    for (int j = 0; j < ctmMesh.normals.Length / 3; j++)
+                    {
+                        normals.Add(new Vector3(ctmMesh.normals[(j * 3)],
+                                                ctmMesh.normals[(j * 3) + 1],
+                                                ctmMesh.normals[(j * 3) + 2]));
+                    }
+                }
 
-				List<Vector2> uv = new List<Vector2>();
 				// TODO:(pv) Texture...
-				/*
-				//Debug.LogError("LoadCTM: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
-				if (ctmMesh.texcoordinates.Length > 0)
-				{
-					for (int j = 0; j < ctmMesh.texcoordinates[0].values.Length / 2; j++)
-						uv.Add(new Vector2(ctmMesh.texcoordinates[0].values[(j * 2)],
-										   ctmMesh.texcoordinates[0].values[(j * 2) + 1]));
-				}
-				*/
+				List<Vector2> uv = new List<Vector2>();
 
 
-				Debug.Log("LoadCTM: unityMesh = new UnityEngine.Mesh(...)");
-				unityMesh = new UnityEngine.Mesh()
-				{
-					vertices = vertices.ToArray(),
-					triangles = ctmMesh.indices.Clone() as int[],
-					uv = uv.ToArray()
-				};
-			}
+                Debug.Log("LoadCTM: unityMesh = new UnityEngine.Mesh(...)");
+                unityMesh = new UnityEngine.Mesh()
+                {
+                    vertices = vertices.ToArray(),
+                    triangles = ctmMesh.indices.Clone() as int[],
+                    //normals = normals.ToArray(),
+                    uv = uv.ToArray()
+                };
+            }
             else
             {
-			}
+            }
 
-			Debug.Log("LoadCTM: unityMesh.RecalculateBounds()");
-			unityMesh.RecalculateBounds();
-			Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
-			unityMesh.RecalculateNormals();
+            Debug.Log("LoadCTM: unityMesh.RecalculateBounds()");
+            unityMesh.RecalculateBounds();
+            Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
+            unityMesh.RecalculateNormals();
 
-			Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
+            Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
 
             GameObject go = new GameObject();
             MeshRenderer mr = go.AddComponent<MeshRenderer>();
