@@ -69,6 +69,7 @@ public class ModelsManager : MonoBehaviour
 
     //private const int MAX_VERTICES_PER_MESH = 65535;
     private const int MAX_VERTICES_PER_MESH = 65000;
+    private const int MAX_TRIANGLES_PER_MESH = 65000;
     private const int MAX_FACETS_PER_MESH = MAX_VERTICES_PER_MESH / 3;
 
     private void LoadCTM(string path)
@@ -88,30 +89,32 @@ public class ModelsManager : MonoBehaviour
 
         int verticesLength = ctmMesh.vertices.Length;
         Debug.LogError("LoadCTM: ctmMesh.vertices.Length == " + verticesLength); // nox: 248145, brunnen: 2439
+        int numVertices = verticesLength / 3;
+        Debug.LogError("LoadCTM: numVertices == " + numVertices); // nox: ?, brunnen: ?
         int indicesLength = ctmMesh.indices.Length;
         Debug.LogError("LoadCTM: ctmMesh.indices.Length == " + indicesLength); // nox: 437886, brunnen: 4329
-        bool hasNormals = ctmMesh.hasNormals();
+        int numTriangles = indicesLength / 3;
+        Debug.LogError("LoadCTM: numTriangles == " + numTriangles); // nox: ?, brunnen: ?
+        bool hasNormals = ctmMesh.normals != null;
         Debug.LogError("LoadCTM: hasNormals == " + hasNormals); // nox: False, brunnen: True
-        int normalsLength = hasNormals ? ctmMesh.normals.Length : 0;
-        Debug.LogError("LoadCTM: ctmMesh.normals.Length == " + normalsLength); // nox: 0, brunnen: 2439
 
         List<Vector3> vertices = new List<Vector3>();
-        for (int j = 0; j < ctmMesh.getVertexCount(); j++)
+        for (int j = 0; j < verticesLength; j += 3)
         {
-            vertices.Add(new Vector3(ctmMesh.vertices[(j * 3)],
-                                     ctmMesh.vertices[(j * 3) + 1],
-                                     ctmMesh.vertices[(j * 3) + 2]));
+            vertices.Add(new Vector3(ctmMesh.vertices[j],
+                                     ctmMesh.vertices[j + 1],
+                                     ctmMesh.vertices[j + 2]));
         }
         Debug.LogError("LoadCTM: vertices.Count == " + vertices.Count); // nox: ?, brunnen: ?
 
         List<Vector3> normals = new List<Vector3>();
         if (hasNormals)
         {
-            for (int j = 0; j < ctmMesh.normals.Length / 3; j++)
+            for (int j = 0; j < verticesLength; j += 3)
             {
-                normals.Add(new Vector3(ctmMesh.normals[(j * 3)],
-                                        ctmMesh.normals[(j * 3) + 1],
-                                        ctmMesh.normals[(j * 3) + 2]));
+                normals.Add(new Vector3(ctmMesh.normals[j],
+                                        ctmMesh.normals[j + 1],
+                                        ctmMesh.normals[j + 2]));
             }
         }
         Debug.LogError("LoadCTM: normals.Count == " + normals.Count); // nox: ?, brunnen: ?
