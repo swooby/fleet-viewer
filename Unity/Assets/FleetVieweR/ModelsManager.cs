@@ -69,8 +69,16 @@ public class ModelsManager : MonoBehaviour
 
     //private const int MAX_VERTICES_PER_MESH = 65535;
     private const int MAX_VERTICES_PER_MESH = 65000;
-    private const int MAX_TRIANGLES_PER_MESH = 65000;
+    private const int MAX_TRIANGLES_PER_MESH = ((65000 / 3) * 3) / 3; // 64998
     private const int MAX_FACETS_PER_MESH = MAX_VERTICES_PER_MESH / 3;
+
+    class MeshInfo
+    {
+        public List<Vector3> vertices = new List<Vector3>();
+        public List<Vector3> normals = new List<Vector3>();
+        public List<int> triangles = new List<int>();
+        public List<Vector2> uv = new List<Vector2>();
+    }
 
     private void LoadCTM(string path)
     {
@@ -122,11 +130,11 @@ public class ModelsManager : MonoBehaviour
         int[] triangles = ctmMesh.indices.Clone() as int[];
         Debug.LogError("LoadCTM: triangles.Length == " + triangles.Length); // nox: ?, brunnen: ?
 
-        // TODO:(pv) Texture...
         List<Vector2> uv = new List<Vector2>();
         /*
-        //Debug.LogError("LoadCTM: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
-        if (ctmMesh.texcoordinates.Length > 0)
+		// TODO:(pv) Texture...
+		//Debug.LogError("LoadCTM: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
+		if (ctmMesh.texcoordinates.Length > 0)
         {
             for (int j = 0; j < ctmMesh.texcoordinates[0].values.Length / 2; j++)
             {
@@ -151,12 +159,12 @@ public class ModelsManager : MonoBehaviour
         Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
         unityMesh.RecalculateNormals();
 
-        Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
-
         GameObject go = new GameObject();
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
         mr.material = new Material(Shader.Find("Diffuse"));
         MeshFilter mf = go.AddComponent<MeshFilter>();
         mf.mesh = unityMesh;
+
+        Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
     }
 }
