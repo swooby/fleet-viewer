@@ -37,8 +37,32 @@ public class ModelsManager : MonoBehaviour
 
     void Start()
     {
-        // TODO:(pv) Load/restore the previously loaded game system; for now this is hardcoded
-        SystemName = Systems.StarCitizen;
+        if (false)
+        {
+            // TODO:(pv) Load/restore the previously loaded game system; for now this is hardcoded
+            SystemName = Systems.StarCitizen;
+        }
+        else if (false)
+        {
+			string modelFilePath = "Assets/Resources/brunnen.ctm";
+			LoadCTM(modelFilePath);
+		}
+        else if (false)
+        {
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+            /*
+            for (int y = 0; y < 5; y++)
+            {
+                for (int x = 0; x < 5; x++)
+                {
+                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cube.AddComponent<Rigidbody>();
+                    cube.transform.position = new Vector3(x, y, 0);
+                }
+            }
+            */
+        }
     }
 
     private void Configure(string systemName)
@@ -46,7 +70,7 @@ public class ModelsManager : MonoBehaviour
         string configurationFilePath;
         if (!systems.TryGetValue(systemName, out configurationFilePath))
         {
-            Debug.LogError("Failed to load systemName == \"" + systemName + "\"");
+            Debug.LogError("Configure: Failed to load systemName == \"" + systemName + "\"");
             return;
         }
 
@@ -55,18 +79,10 @@ public class ModelsManager : MonoBehaviour
         LoadModelInfos(configurationFilePath);
 
         // TODO:(pv) Load/restore previously loaded models; for now this is hardcoded
-        if (false)
-        {
-            string modelFilePath = "Assets/Resources/brunnen.ctm";
-            LoadCTM(modelFilePath);
-        }
-        else
-        {
-            string modelName = "Nox";
-            //string modelName = "Starfarer";
-            //string modelName = "Idris-P";
-            LoadScalePositionModel(modelName);
-        }
+        string modelName = "Nox";
+        //string modelName = "Starfarer";
+        //string modelName = "Idris-P";
+        LoadScalePositionModel(modelName);
     }
 
     public void LoadModelInfos(string configurationFilePath)
@@ -97,7 +113,7 @@ public class ModelsManager : MonoBehaviour
         List<Dropdown.OptionData> optionDatas = new List<Dropdown.OptionData>();
         foreach (ModelInfo modelInfo in ModelInfos.Values)
         {
-            if (modelInfo == null || modelInfo.HoloviewCtmUrl == null)
+            if (modelInfo == null || modelInfo.ModelPathRemote == null)
             {
                 continue;
             }
@@ -121,43 +137,58 @@ public class ModelsManager : MonoBehaviour
         ModelInfo modelInfo;
         if (!ModelInfos.TryGetValue(modelName, out modelInfo) || modelInfo == null)
         {
-            Debug.LogError("Failed to load modelName == \"" + modelName + "\"");
+            Debug.LogError("LoadScalePositionModel: Failed to load modelName == \"" + modelName + "\"");
             return null;
         }
 
-        string modelFilePath = modelInfo.FleetViewerPath;
-
-        GameObject go = LoadCTM(modelFilePath);
-
-        // TODO:(pv) Scale model relative to length of known 100m starfarer
         float modelLengthMeters = modelInfo.LengthMeters;
-        Debug.LogError("LoadLocalModel: modelLengthMeters == " + modelLengthMeters);
-        CalculateBounds(go);
+        Debug.LogError("LoadScalePositionModel: modelLengthMeters == " + modelLengthMeters);
+        string modelPathLocal = modelInfo.ModelPathLocal;
+        Debug.LogError("LoadScalePositionModel: modelPathLocal == " + modelPathLocal);
+        Vector3 modelRotation = modelInfo.ModelRotation;
+        Debug.LogError("LoadScalePositionModel: modelRotation == " + modelRotation);
+
+        GameObject go = LoadCTM(modelPathLocal);
+
+        Transform goTransform = go.transform;
+
+        Bounds goBounds = CalculateBounds(go);
+        Debug.LogError("LoadScalePositionModel: BEFORE goBounds == " + goBounds);
+        float scale = modelLengthMeters / (goBounds.extents.z * 2);
+        Debug.LogError("LoadScalePositionModel: scale == " + scale);
+        goTransform.localScale = new Vector3(scale, scale, scale);
+        goBounds = CalculateBounds(go);
+        Debug.LogError("LoadScalePositionModel: AFTER goBounds == " + goBounds);
+
+        float goLengthMeters = goBounds.extents.z * 2;
+        Debug.LogError("LoadScalePositionModel: goLengthMeters == " + goLengthMeters);
+
+        goTransform.Rotate(modelRotation);
 
         // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
         return go;
     }
 
-    private void CalculateBounds(GameObject go)
+    private Bounds CalculateBounds(GameObject go)
     {
-        Transform transform = go.transform;
+        Bounds bounds;
 
+        Transform transform = go.transform;
         Quaternion currentRotation = transform.rotation;
         {
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
-            Bounds bounds = new Bounds(transform.position, Vector3.zero);
+            bounds = new Bounds(transform.position, Vector3.zero);
             foreach (Renderer renderer in go.GetComponentsInChildren<Renderer>())
             {
                 bounds.Encapsulate(renderer.bounds);
             }
 
-            Vector3 localCenter = bounds.center - transform.position;
-            bounds.center = localCenter;
-            Debug.Log("The local bounds of model is " + bounds);
         }
         transform.rotation = currentRotation;
+
+        return bounds;
     }
 
     private const int MAX_VERTICES_PER_MESH = 65000;

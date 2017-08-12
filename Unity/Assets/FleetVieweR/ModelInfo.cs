@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class ModelInfo
@@ -11,8 +12,9 @@ public class ModelInfo
     public const string FIELD_BEAM = "Beam";
     public const string FIELD_HEIGHT = "Height";
     public const string FIELD_STORE_URL = "Store URL";
-    public const string FIELD_HOLOVIEW_URL = "Holoview URL";
-    public const string FIELD_FLEETVIEWER_PATH = "FleetVieweR";
+    public const string FIELD_MODEL_PATH_REMOTE = "Model Path Remote";
+    public const string FIELD_MODEL_PATH_LOCAL = "Model Path Local";
+    public const string FIELD_MODEL_ROTATION = "Model Rotation";
 
     public string Name { get; private set; }
     public DateTime LastChecked { get; private set; }
@@ -20,8 +22,9 @@ public class ModelInfo
     public float BeamMeters { get; private set; }
     public float HeightMeters { get; private set; }
     public Uri StoreUrl { get; private set; }
-    public Uri HoloviewCtmUrl { get; private set; }
-    public string FleetViewerPath { get; private set; }
+    public Uri ModelPathRemote { get; private set; }
+    public string ModelPathLocal { get; private set; }
+    public Vector3 ModelRotation { get; private set; }
 
     public ModelInfo(Dictionary<string, string> dictionary)
     {
@@ -74,14 +77,37 @@ public class ModelInfo
 
         try
         {
-            HoloviewCtmUrl = new Uri(dictionary[FIELD_HOLOVIEW_URL]);
+            ModelPathRemote = new Uri(dictionary[FIELD_MODEL_PATH_REMOTE]);
         }
         catch (FormatException)
         {
-            HoloviewCtmUrl = null;
+            ModelPathRemote = null;
         }
 
-        FleetViewerPath = dictionary[FIELD_FLEETVIEWER_PATH];
+        ModelPathLocal = dictionary[FIELD_MODEL_PATH_LOCAL];
+
+        String modelRotation;
+        dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
+        ModelRotation = StringToVector3(modelRotation);
+    }
+
+    private Vector3 StringToVector3(String value)
+    {
+        Vector3 result = Vector3.zero;
+
+        if (value != null)
+        {
+            Match match = Regex.Match(value, @"(?<X>-?\d?.?\d?),(?<Y>-?\d?.?\d?),(?<Z>-?\d?.?\d?)");
+            if (match.Success)
+            {
+				float x = float.Parse(match.Groups["X"].Value);
+				float y = float.Parse(match.Groups["Y"].Value);
+				float z = float.Parse(match.Groups["Z"].Value);
+                result = new Vector3(x, y, z);
+            }
+        }
+
+        return result;
     }
 
     /*
