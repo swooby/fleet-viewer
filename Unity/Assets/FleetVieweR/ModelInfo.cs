@@ -12,6 +12,7 @@ public class ModelInfo
     public const string FIELD_HEIGHT = "Height";
     public const string FIELD_STORE_URL = "Store URL";
     public const string FIELD_HOLOVIEW_URL = "Holoview URL";
+    public const string FIELD_FLEETVIEWER_PATH = "FleetVieweR";
 
     public string Name { get; private set; }
     public DateTime LastChecked { get; private set; }
@@ -20,10 +21,12 @@ public class ModelInfo
     public float HeightMeters { get; private set; }
     public Uri StoreUrl { get; private set; }
     public Uri HoloviewCtmUrl { get; private set; }
+    public string FleetViewerPath { get; private set; }
 
     public ModelInfo(Dictionary<string, string> dictionary)
     {
         Name = dictionary[FIELD_NAME];
+
         try
         {
             LastChecked = DateTime.Parse(dictionary[FIELD_LAST_CHECKED]);
@@ -32,6 +35,7 @@ public class ModelInfo
         {
             LastChecked = DateTime.MinValue;
         }
+
         try
         {
             LengthMeters = float.Parse(dictionary[FIELD_LENGTH]);
@@ -40,6 +44,7 @@ public class ModelInfo
         {
             LengthMeters = float.NaN;
         }
+
         try
         {
             BeamMeters = float.Parse(dictionary[FIELD_BEAM]);
@@ -48,6 +53,7 @@ public class ModelInfo
         {
             BeamMeters = float.NaN;
         }
+
         try
         {
             HeightMeters = float.Parse(dictionary[FIELD_HEIGHT]);
@@ -56,6 +62,7 @@ public class ModelInfo
         {
             HeightMeters = float.NaN;
         }
+
         try
         {
             StoreUrl = new Uri(dictionary[FIELD_STORE_URL]);
@@ -64,6 +71,7 @@ public class ModelInfo
         {
             StoreUrl = null;
         }
+
         try
         {
             HoloviewCtmUrl = new Uri(dictionary[FIELD_HOLOVIEW_URL]);
@@ -72,6 +80,8 @@ public class ModelInfo
         {
             HoloviewCtmUrl = null;
         }
+
+        FleetViewerPath = dictionary[FIELD_FLEETVIEWER_PATH];
     }
 
     /*

@@ -36,6 +36,10 @@ public class PlayerController : MonoBehaviour
         // http://answers.unity3d.com/questions/331545/double-click-mouse-detection-.html
         //
 
+        // TODO:(pv) Shift down doubles [or more] speed
+        // TODO:(pv) Momentum
+        // TODO:(pv) Roll (yaw and pitch are controlled by mouse input or VR headset)
+
         float deltaTime = Time.fixedDeltaTime;
 
         GvrConnectionState connectionState = GvrControllerInput.State;

@@ -8,18 +8,78 @@ using OpenCTM;
 
 public class ModelsManager : MonoBehaviour
 {
-    void Start()
+    class Systems
     {
-        LoadModelInfos("Star Citizen/Star Citizen Ships 3D Models - Data");
-        //LoadCTM("brunnen");
-        //LoadCTM("Star Citizen/Nox/Xian_nox2");
-        //LoadCTM("Star Citizen/Idris/Idris");
+        public const string StarCitizen = "StarCitizen";
     }
 
-    public SortedDictionary<String, ModelInfo> ModelInfos { get; private set; }
-
-    public void LoadModelInfos(string path)
+    // TODO:(pv) Load this from a[nother] configuration file...
+    Dictionary<string, string> systems = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
+        { Systems.StarCitizen, "Assets/FleetVieweR/Star Citizen Ships 3D Models - Data.csv" },
+    };
+
+    private string systemName;
+
+    public string SystemName
+    {
+        get
+        {
+            return systemName;
+        }
+        set
+        {
+            Configure(value);
+        }
+    }
+
+    public SortedDictionary<string, ModelInfo> ModelInfos { get; private set; }
+
+    void Start()
+    {
+        // TODO:(pv) Load/restore the previously loaded game system; for now this is hardcoded
+        SystemName = Systems.StarCitizen;
+    }
+
+    private void Configure(string systemName)
+    {
+        string configurationFilePath;
+        if (!systems.TryGetValue(systemName, out configurationFilePath))
+        {
+            Debug.LogError("Failed to load systemName == \"" + systemName + "\"");
+            return;
+        }
+
+        this.systemName = systemName;
+
+        LoadModelInfos(configurationFilePath);
+
+        // TODO:(pv) Load/restore previously loaded models; for now this is hardcoded
+        if (false)
+        {
+            string modelFilePath = "Assets/Resources/brunnen.ctm";
+            LoadCTM(modelFilePath);
+        }
+        else
+        {
+			string modelName = "Nox";
+			//string modelName = "Starfarer";
+			//string modelName = "Idris-P";
+			LoadLocalModel(modelName);
+        }
+    }
+
+    public void LoadModelInfos(string configurationFilePath)
+    {
+        ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
+        CSVReader.Read<ModelInfo>(configurationFilePath, dictionary =>
+        {
+            ModelInfo modelInfo = new ModelInfo(dictionary);
+            ModelInfos[modelInfo.Name] = modelInfo;
+            return null;
+        });
+        Debug.Log("LoadModelInfos: ModelInfos.Count == " + ModelInfos.Count);
+
         GameObject modelInfosDropdown = GameObject.Find("/Player/Main Camera/Overlay Canvas/ModelInfosDropdown");
         if (modelInfosDropdown == null)
         {
@@ -33,18 +93,6 @@ public class ModelsManager : MonoBehaviour
             Debug.LogWarning("LoadModelInfos: dropdown == null; ignoring");
             return;
         }
-
-        ModelInfos = new SortedDictionary<string, ModelInfo>();
-        dropdown.ClearOptions();
-
-        CSVReader.Read<ModelInfo>(path, dictionary =>
-        {
-            ModelInfo modelInfo = new ModelInfo(dictionary);
-            ModelInfos[modelInfo.Name] = modelInfo;
-            return null;
-        });
-
-        Debug.Log("LoadModelInfos: ModelInfos.Count == " + ModelInfos.Count);
 
         List<Dropdown.OptionData> optionDatas = new List<Dropdown.OptionData>();
         foreach (ModelInfo modelInfo in ModelInfos.Values)
@@ -61,16 +109,36 @@ public class ModelsManager : MonoBehaviour
             optionDatas.Add(optionData);
         }
 
+        dropdown.ClearOptions();
         dropdown.AddOptions(optionDatas);
         dropdown.value = 0;
 
         Debug.Log("LoadModelInfos: dropdown.options.Count == " + dropdown.options.Count);
     }
 
+    private UnityEngine.Mesh[] LoadLocalModel(string modelName)
+    {
+        ModelInfo modelInfo;
+        if (!ModelInfos.TryGetValue(modelName, out modelInfo) || modelInfo == null)
+        {
+            Debug.LogError("Failed to load modelName == \"" + modelName + "\"");
+            return null;
+        }
+
+        string modelFilePath = ModelInfos[modelName].FleetViewerPath;
+
+        UnityEngine.Mesh[] unityMeshes = LoadCTM(modelFilePath);
+
+        // TODO:(pv) Scale model relative to length of 100m starfarer
+        // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
+
+        return unityMeshes;
+    }
+
     //private const int MAX_VERTICES_PER_MESH = 65535;
     private const int MAX_VERTICES_PER_MESH = 65000;
-    private const int MAX_TRIANGLES_PER_MESH = ((65000 / 3) * 3) / 3; // 64998
-    private const int MAX_FACETS_PER_MESH = MAX_VERTICES_PER_MESH / 3;
+    private const int MAX_TRIANGLES_PER_MESH = 65000;
+    private const int TRIANGLES_PER_MESH = MAX_TRIANGLES_PER_MESH - MAX_TRIANGLES_PER_MESH % 3; // 64998
 
     class MeshInfo
     {
@@ -80,11 +148,14 @@ public class ModelsManager : MonoBehaviour
         public List<Vector2> uv = new List<Vector2>();
     }
 
-    private void LoadCTM(string path)
+    // TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
+    private UnityEngine.Mesh[] LoadCTM(string path)
     {
         Debug.Log("LoadCTM(\"" + path + "\")");
 
-        FileStream file = new FileStream("Assets/Resources/" + path + ".ctm", FileMode.Open);
+        UnityEngine.Mesh[] unityMeshes = null;
+
+        FileStream file = new FileStream(path, FileMode.Open);
 
         //Debug.Log("LoadCTM: new CtmFileReader(file)");
         CtmFileReader reader = new CtmFileReader(file);
@@ -166,6 +237,9 @@ public class ModelsManager : MonoBehaviour
             mr.material = new Material(Shader.Find("Diffuse"));
             MeshFilter mf = go.AddComponent<MeshFilter>();
             mf.mesh = unityMesh;
+
+            unityMeshes = new UnityEngine.Mesh[1];
+            unityMeshes[1] = unityMesh;
         }
         else if (true)
         {
@@ -205,7 +279,7 @@ public class ModelsManager : MonoBehaviour
             */
             Debug.LogError("LoadCTM: uv.Count == " + uv.Count); // nox: ?, brunnen: ?
 
-            int meshCount = numTriangles / MAX_TRIANGLES_PER_MESH + 1;
+            int meshCount = numTriangles / TRIANGLES_PER_MESH + 1;
             MeshInfo[] meshInfos = new MeshInfo[meshCount];
 
             //
@@ -223,7 +297,7 @@ public class ModelsManager : MonoBehaviour
             {
                 //Debug.LogError("LoadCTM: triangleIndex == " + triangleIndex);
 
-                meshIndex = triangleIndex / MAX_TRIANGLES_PER_MESH;
+                meshIndex = triangleIndex / TRIANGLES_PER_MESH;
                 //Debug.LogError("LoadCTM: meshIndex == " + meshIndex);
 
                 meshInfo = meshInfos[meshIndex];
@@ -295,7 +369,7 @@ public class ModelsManager : MonoBehaviour
             }
 
             Debug.Log("LoadCTM: Creating Unity Mesh(es)");
-            UnityEngine.Mesh[] unityMeshes = new UnityEngine.Mesh[meshCount];
+            unityMeshes = new UnityEngine.Mesh[meshCount];
             UnityEngine.Mesh unityMesh;
             for (meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
@@ -332,5 +406,7 @@ public class ModelsManager : MonoBehaviour
         }
 
         Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
+
+        return unityMeshes;
     }
 }
