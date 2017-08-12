@@ -47,7 +47,7 @@ public class ModelsManager : MonoBehaviour
             string modelFilePath = "Assets/Resources/brunnen.ctm";
             LoadCTM(modelFilePath);
         }
-        else
+        else if (false)
         {
             if (false)
             {
@@ -67,50 +67,58 @@ public class ModelsManager : MonoBehaviour
             }
             else
             {
+                GameObject root = new GameObject();
+
                 int unit = 5;
 
-                Vector3[] vertices = new Vector3[4];
-                vertices[0] = new Vector3(0, 0, unit);
-                vertices[1] = new Vector3(unit, 0, unit);
-                vertices[2] = new Vector3(0, unit, unit);
-                vertices[3] = new Vector3(unit, unit, unit);
-
-                int[] triangles = new int[6];
-                triangles[0] = 0;
-                triangles[1] = 2;
-                triangles[2] = 1;
-                triangles[3] = 2;
-                triangles[4] = 3;
-                triangles[5] = 1;
-
-                Vector3[] normals = new Vector3[4];
-                normals[0] = -Vector3.forward;
-                normals[1] = -Vector3.forward;
-                normals[2] = -Vector3.forward;
-                normals[3] = -Vector3.forward;
-
-                Vector2[] uv = new Vector2[4];
-                uv[0] = new Vector2(0, 0);
-                uv[1] = new Vector2(1, 0);
-                uv[2] = new Vector2(0, 1);
-                uv[3] = new Vector2(1, 1);
-
-                UnityEngine.Mesh mesh = new UnityEngine.Mesh()
+                for (int i = 0; i < 5; i++)
                 {
-                    vertices = vertices,
-                    triangles = triangles,
-                    normals = normals,
-                    uv = uv,
-                };
+                    MeshInfo meshInfo1 = new MeshInfo();
+                    meshInfo1.vertices.Add(new Vector3(0, 0, unit * (i + 1)));
+                    meshInfo1.vertices.Add(new Vector3(unit, 0, unit * (i + 1)));
+                    meshInfo1.vertices.Add(new Vector3(0, unit, unit * (i + 1)));
+                    meshInfo1.vertices.Add(new Vector3(unit, unit, unit * (i + 1)));
 
-                mesh.RecalculateBounds();
-                mesh.RecalculateNormals();
+                    meshInfo1.triangles.Add(0);
+                    meshInfo1.triangles.Add(2);
+                    meshInfo1.triangles.Add(1);
+                    meshInfo1.triangles.Add(2);
+                    meshInfo1.triangles.Add(3);
+                    meshInfo1.triangles.Add(1);
 
-                GameObject go = new GameObject();
-                MeshRenderer mr = go.AddComponent<MeshRenderer>();
-                mr.material = new Material(Shader.Find("Diffuse"));
-                MeshFilter mf = go.AddComponent<MeshFilter>();
-                mf.mesh = mesh;
+                    /*
+                    meshInfo1.normals.Add(-Vector3.forward);
+                    meshInfo1.normals.Add(-Vector3.forward);
+                    meshInfo1.normals.Add(-Vector3.forward);
+                    meshInfo1.normals.Add(-Vector3.forward);
+                    */
+
+                    /*
+                    meshInfo1.uv.Add(new Vector2(0, 0));
+                    meshInfo1.uv.Add(new Vector2(1, 0));
+                    meshInfo1.uv.Add(new Vector2(0, 1));
+                    meshInfo1.uv.Add(new Vector2(1, 1));
+                    */
+
+                    UnityEngine.Mesh mesh = new UnityEngine.Mesh()
+                    {
+                        vertices = meshInfo1.vertices.ToArray(),
+                        triangles = meshInfo1.triangles.ToArray(),
+                        normals = meshInfo1.normals.ToArray(),
+                        uv = meshInfo1.uv.ToArray(),
+                    };
+
+                    mesh.RecalculateBounds();
+                    mesh.RecalculateNormals();
+
+                    GameObject child = new GameObject();
+                    MeshRenderer mr = child.AddComponent<MeshRenderer>();
+                    mr.material = new Material(Shader.Find("Diffuse"));
+                    MeshFilter mf = child.AddComponent<MeshFilter>();
+                    mf.mesh = mesh;
+
+                    child.transform.SetParent(root.transform);
+                }
             }
         }
     }
@@ -275,7 +283,7 @@ public class ModelsManager : MonoBehaviour
         int verticesLength = ctmMesh.vertices.Length;
         //Debug.LogError("LoadCTM: ctmMesh.vertices.Length == " + verticesLength); // nox: 248145, brunnen: 2439
         int numVertices = verticesLength / 3;
-        Debug.LogError("LoadCTM: numVertices == " + numVertices); // nox: ?, brunnen: ?
+        //Debug.LogError("LoadCTM: numVertices == " + numVertices); // nox: ?, brunnen: ?
         List<Vector3> vertices = new List<Vector3>();
         for (int j = 0; j < verticesLength; j += 3)
         {
@@ -283,10 +291,10 @@ public class ModelsManager : MonoBehaviour
                                      ctmMesh.vertices[j + 1],
                                      ctmMesh.vertices[j + 2]));
         }
-        Debug.LogError("LoadCTM: vertices.Count == " + vertices.Count); // nox: ?, brunnen: ?
+        //Debug.LogError("LoadCTM: vertices.Count == " + vertices.Count); // nox: ?, brunnen: ?
 
         bool hasNormals = ctmMesh.normals != null;
-        Debug.LogError("LoadCTM: hasNormals == " + hasNormals); // nox: False, brunnen: True
+        //Debug.LogError("LoadCTM: hasNormals == " + hasNormals); // nox: False, brunnen: True
         List<Vector3> normals = new List<Vector3>();
         if (hasNormals)
         {
@@ -297,7 +305,7 @@ public class ModelsManager : MonoBehaviour
                                         ctmMesh.normals[j + 2]));
             }
         }
-        Debug.LogError("LoadCTM: normals.Count == " + normals.Count); // nox: ?, brunnen: ?
+        //Debug.LogError("LoadCTM: normals.Count == " + normals.Count); // nox: ?, brunnen: ?
 
         int indicesLength = ctmMesh.indices.Length;
         //Debug.LogError("LoadCTM: ctmMesh.indices.Length == " + indicesLength); // nox: 437886, brunnen: 4329
@@ -358,7 +366,7 @@ public class ModelsManager : MonoBehaviour
 				}
 			}
             */
-            Debug.LogError("LoadCTM: uv.Count == " + uv.Count); // nox: ?, brunnen: ?
+            //Debug.LogError("LoadCTM: uv.Count == " + uv.Count); // nox: ?, brunnen: ?
 
             int meshCount = numTriangles / MAX_TRIANGLES_PER_MESH + 1;
             Debug.LogError("LoadCTM: meshCount == " + meshCount);
@@ -484,8 +492,12 @@ public class ModelsManager : MonoBehaviour
                 mf.mesh = unityMesh;
 
                 child.transform.SetParent(root.transform);
+
+                Debug.LogError("LoadCTM: child.activeSelf == " + child.activeSelf);
             }
         }
+
+        Debug.LogError("LoadCTM: root.activeSelf == " + root.activeSelf);
 
         Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
 
