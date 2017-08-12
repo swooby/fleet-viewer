@@ -62,10 +62,9 @@ public class ModelsManager : MonoBehaviour
         }
         else
         {
-			string modelName = "Nox";
-			//string modelName = "Starfarer";
-			//string modelName = "Idris-P";
-			LoadLocalModel(modelName);
+            string modelName = "Nox";
+            //string modelName = "Starfarer";
+            //string modelName = "Idris-P";
             LoadScalePositionModel(modelName);
         }
     }
@@ -133,10 +132,32 @@ public class ModelsManager : MonoBehaviour
         // TODO:(pv) Scale model relative to length of known 100m starfarer
         float modelLengthMeters = modelInfo.LengthMeters;
         Debug.LogError("LoadLocalModel: modelLengthMeters == " + modelLengthMeters);
+        CalculateBounds(go);
 
         // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
         return go;
+    }
+
+    private void CalculateBounds(GameObject go)
+    {
+        Transform transform = go.transform;
+
+        Quaternion currentRotation = transform.rotation;
+        {
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+            Bounds bounds = new Bounds(transform.position, Vector3.zero);
+            foreach (Renderer renderer in go.GetComponentsInChildren<Renderer>())
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+
+            Vector3 localCenter = bounds.center - transform.position;
+            bounds.center = localCenter;
+            Debug.Log("The local bounds of model is " + bounds);
+        }
+        transform.rotation = currentRotation;
     }
 
     private const int MAX_VERTICES_PER_MESH = 65000;
@@ -150,8 +171,8 @@ public class ModelsManager : MonoBehaviour
         public List<Vector2> uv = new List<Vector2>();
     }
 
-	// TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
-	//  https://www.google.com/search?q=unity+async+load
+    // TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
+    //  https://www.google.com/search?q=unity+async+load
     private GameObject LoadCTM(string path)
     {
         Debug.Log("LoadCTM(\"" + path + "\")");
