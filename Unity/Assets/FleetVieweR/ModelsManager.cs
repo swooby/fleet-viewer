@@ -66,6 +66,7 @@ public class ModelsManager : MonoBehaviour
 			//string modelName = "Starfarer";
 			//string modelName = "Idris-P";
 			LoadLocalModel(modelName);
+            LoadScalePositionModel(modelName);
         }
     }
 
@@ -116,7 +117,7 @@ public class ModelsManager : MonoBehaviour
         Debug.Log("LoadModelInfos: dropdown.options.Count == " + dropdown.options.Count);
     }
 
-    private UnityEngine.Mesh[] LoadLocalModel(string modelName)
+    private UnityEngine.Mesh[] LoadScalePositionModel(string modelName)
     {
         ModelInfo modelInfo;
         if (!ModelInfos.TryGetValue(modelName, out modelInfo) || modelInfo == null)
@@ -125,20 +126,20 @@ public class ModelsManager : MonoBehaviour
             return null;
         }
 
-        string modelFilePath = ModelInfos[modelName].FleetViewerPath;
+        string modelFilePath = modelInfo.FleetViewerPath;
 
         UnityEngine.Mesh[] unityMeshes = LoadCTM(modelFilePath);
 
-        // TODO:(pv) Scale model relative to length of 100m starfarer
+        // TODO:(pv) Scale model relative to length of known 100m starfarer
+        float modelLengthMeters = modelInfo.LengthMeters;
+        Debug.LogError("LoadLocalModel: modelLengthMeters == " + modelLengthMeters);
         // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
         return unityMeshes;
     }
 
-    //private const int MAX_VERTICES_PER_MESH = 65535;
     private const int MAX_VERTICES_PER_MESH = 65000;
-    private const int MAX_TRIANGLES_PER_MESH = 65000;
-    private const int TRIANGLES_PER_MESH = MAX_TRIANGLES_PER_MESH - MAX_TRIANGLES_PER_MESH % 3; // 64998
+    private const int MAX_TRIANGLES_PER_MESH = ((65000 / 3) * 3) / 3; // 64998
 
     class MeshInfo
     {
@@ -148,10 +149,12 @@ public class ModelsManager : MonoBehaviour
         public List<Vector2> uv = new List<Vector2>();
     }
 
-    // TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
-    private UnityEngine.Mesh[] LoadCTM(string path)
+	// TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
+	//  https://www.google.com/search?q=unity+async+load
+	private UnityEngine.Mesh[] LoadCTM(string path)
     {
         Debug.Log("LoadCTM(\"" + path + "\")");
+        Debug.Log("LoadCTM: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
 
         UnityEngine.Mesh[] unityMeshes = null;
 
@@ -167,39 +170,39 @@ public class ModelsManager : MonoBehaviour
         Debug.Log("LoadCTM: BEGIN Converting OpenCTM.Mesh to UnityEngine.Mesh...");
 
         int verticesLength = ctmMesh.vertices.Length;
-        Debug.LogError("LoadCTM: ctmMesh.vertices.Length == " + verticesLength); // nox: 248145, brunnen: 2439
+        //Debug.LogError("LoadCTM: ctmMesh.vertices.Length == " + verticesLength); // nox: 248145, brunnen: 2439
         int numVertices = verticesLength / 3;
         Debug.LogError("LoadCTM: numVertices == " + numVertices); // nox: ?, brunnen: ?
-        int indicesLength = ctmMesh.indices.Length;
-        Debug.LogError("LoadCTM: ctmMesh.indices.Length == " + indicesLength); // nox: 437886, brunnen: 4329
-        int numTriangles = indicesLength / 3;
-        Debug.LogError("LoadCTM: numTriangles == " + numTriangles); // nox: ?, brunnen: ?
+        List<Vector3> vertices = new List<Vector3>();
+        for (int j = 0; j < verticesLength; j += 3)
+        {
+            vertices.Add(new Vector3(ctmMesh.vertices[j],
+                                     ctmMesh.vertices[j + 1],
+                                     ctmMesh.vertices[j + 2]));
+        }
+        Debug.LogError("LoadCTM: vertices.Count == " + vertices.Count); // nox: ?, brunnen: ?
+
         bool hasNormals = ctmMesh.normals != null;
         Debug.LogError("LoadCTM: hasNormals == " + hasNormals); // nox: False, brunnen: True
+        List<Vector3> normals = new List<Vector3>();
+        if (hasNormals)
+        {
+            for (int j = 0; j < verticesLength; j += 3)
+            {
+                normals.Add(new Vector3(ctmMesh.normals[j],
+                                        ctmMesh.normals[j + 1],
+                                        ctmMesh.normals[j + 2]));
+            }
+        }
+        Debug.LogError("LoadCTM: normals.Count == " + normals.Count); // nox: ?, brunnen: ?
+
+        int indicesLength = ctmMesh.indices.Length;
+        //Debug.LogError("LoadCTM: ctmMesh.indices.Length == " + indicesLength); // nox: 437886, brunnen: 4329
+        int numTriangles = indicesLength / 3;
+        Debug.LogError("LoadCTM: numTriangles == " + numTriangles); // nox: ?, brunnen: ?
 
         if (false)
         {
-            List<Vector3> vertices = new List<Vector3>();
-            for (int j = 0; j < verticesLength; j += 3)
-            {
-                vertices.Add(new Vector3(ctmMesh.vertices[j],
-                                         ctmMesh.vertices[j + 1],
-                                         ctmMesh.vertices[j + 2]));
-            }
-            Debug.LogError("LoadCTM: vertices.Count == " + vertices.Count); // nox: ?, brunnen: ?
-
-            List<Vector3> normals = new List<Vector3>();
-            if (hasNormals)
-            {
-                for (int j = 0; j < verticesLength; j += 3)
-                {
-                    normals.Add(new Vector3(ctmMesh.normals[j],
-                                            ctmMesh.normals[j + 1],
-                                            ctmMesh.normals[j + 2]));
-                }
-            }
-            Debug.LogError("LoadCTM: normals.Count == " + normals.Count); // nox: ?, brunnen: ?
-
             int[] triangles = ctmMesh.indices.Clone() as int[];
             Debug.LogError("LoadCTM: triangles.Length == " + triangles.Length); // nox: ?, brunnen: ?
 
@@ -243,27 +246,6 @@ public class ModelsManager : MonoBehaviour
         }
         else if (true)
         {
-            List<Vector3> vertices = new List<Vector3>();
-            for (int j = 0; j < verticesLength; j += 3)
-            {
-                vertices.Add(new Vector3(ctmMesh.vertices[j],
-                                         ctmMesh.vertices[j + 1],
-                                         ctmMesh.vertices[j + 2]));
-            }
-            Debug.LogError("LoadCTM: vertices.Count == " + vertices.Count); // nox: ?, brunnen: ?
-
-            List<Vector3> normals = new List<Vector3>();
-            if (hasNormals)
-            {
-                for (int j = 0; j < verticesLength; j += 3)
-                {
-                    normals.Add(new Vector3(ctmMesh.normals[j],
-                                            ctmMesh.normals[j + 1],
-                                            ctmMesh.normals[j + 2]));
-                }
-            }
-            Debug.LogError("LoadCTM: normals.Count == " + normals.Count); // nox: ?, brunnen: ?
-
             List<Vector2> uv = new List<Vector2>();
             /*
 			// TODO:(pv) Texture...
@@ -279,7 +261,8 @@ public class ModelsManager : MonoBehaviour
             */
             Debug.LogError("LoadCTM: uv.Count == " + uv.Count); // nox: ?, brunnen: ?
 
-            int meshCount = numTriangles / TRIANGLES_PER_MESH + 1;
+            int meshCount = numTriangles / MAX_TRIANGLES_PER_MESH + 1;
+            Debug.LogError("LoadCTM: meshCount == " + meshCount);
             MeshInfo[] meshInfos = new MeshInfo[meshCount];
 
             //
@@ -297,7 +280,7 @@ public class ModelsManager : MonoBehaviour
             {
                 //Debug.LogError("LoadCTM: triangleIndex == " + triangleIndex);
 
-                meshIndex = triangleIndex / TRIANGLES_PER_MESH;
+                meshIndex = triangleIndex / MAX_TRIANGLES_PER_MESH;
                 //Debug.LogError("LoadCTM: meshIndex == " + meshIndex);
 
                 meshInfo = meshInfos[meshIndex];
