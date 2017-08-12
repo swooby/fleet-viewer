@@ -44,24 +44,74 @@ public class ModelsManager : MonoBehaviour
         }
         else if (false)
         {
-			string modelFilePath = "Assets/Resources/brunnen.ctm";
-			LoadCTM(modelFilePath);
-		}
-        else if (false)
+            string modelFilePath = "Assets/Resources/brunnen.ctm";
+            LoadCTM(modelFilePath);
+        }
+        else
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-            /*
-            for (int y = 0; y < 5; y++)
+            if (false)
             {
-                for (int x = 0; x < 5; x++)
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                /*
+                for (int y = 0; y < 5; y++)
                 {
-                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    cube.AddComponent<Rigidbody>();
-                    cube.transform.position = new Vector3(x, y, 0);
+                    for (int x = 0; x < 5; x++)
+                    {
+                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        cube.AddComponent<Rigidbody>();
+                        cube.transform.position = new Vector3(x, y, 0);
+                    }
                 }
+                */
             }
-            */
+            else
+            {
+                int unit = 5;
+
+                Vector3[] vertices = new Vector3[4];
+                vertices[0] = new Vector3(0, 0, unit);
+                vertices[1] = new Vector3(unit, 0, unit);
+                vertices[2] = new Vector3(0, unit, unit);
+                vertices[3] = new Vector3(unit, unit, unit);
+
+                int[] triangles = new int[6];
+                triangles[0] = 0;
+                triangles[1] = 2;
+                triangles[2] = 1;
+                triangles[3] = 2;
+                triangles[4] = 3;
+                triangles[5] = 1;
+
+                Vector3[] normals = new Vector3[4];
+                normals[0] = -Vector3.forward;
+                normals[1] = -Vector3.forward;
+                normals[2] = -Vector3.forward;
+                normals[3] = -Vector3.forward;
+
+                Vector2[] uv = new Vector2[4];
+                uv[0] = new Vector2(0, 0);
+                uv[1] = new Vector2(1, 0);
+                uv[2] = new Vector2(0, 1);
+                uv[3] = new Vector2(1, 1);
+
+                UnityEngine.Mesh mesh = new UnityEngine.Mesh()
+                {
+                    vertices = vertices,
+                    triangles = triangles,
+                    normals = normals,
+                    uv = uv,
+                };
+
+                mesh.RecalculateBounds();
+                mesh.RecalculateNormals();
+
+                GameObject go = new GameObject();
+                MeshRenderer mr = go.AddComponent<MeshRenderer>();
+                mr.material = new Material(Shader.Find("Diffuse"));
+                MeshFilter mf = go.AddComponent<MeshFilter>();
+                mf.mesh = mesh;
+            }
         }
     }
 

@@ -17,7 +17,6 @@ public class CSVReader
     public delegate T OnKeyValue<T>(Dictionary<string, string> dictionary);
 
     private static readonly string SPLIT_RE = @",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))";
-    private static readonly string LINE_SPLIT_RE = @"\r\n|\n\r|\n|\r";
     private static readonly char[] TRIM_CHARS = { '\"' };
 
     public static List<T> Read<T>(string filepath, OnKeyValue<T> callback) where T : class
