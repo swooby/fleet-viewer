@@ -16,7 +16,7 @@ public class ModelsManager : MonoBehaviour
     // TODO:(pv) Load this from a[nother] configuration file...
     Dictionary<string, string> systems = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        { Systems.StarCitizen, "Assets/FleetVieweR/Star Citizen Ships 3D Models - Data.csv" },
+        { Systems.StarCitizen, "Star Citizen Ships 3D Models - Data" },
     };
 
     private string systemName;
@@ -37,17 +37,17 @@ public class ModelsManager : MonoBehaviour
 
     void Start()
     {
-        if (false)
+        if (true)
         {
             // TODO:(pv) Load/restore the previously loaded game system; for now this is hardcoded
             SystemName = Systems.StarCitizen;
         }
-        else if (false)
+        else if (true)
         {
-            string modelFilePath = "Assets/Resources/brunnen.ctm";
+            string modelFilePath = "brunnen.ctm";
             LoadCTM(modelFilePath);
         }
-        else if (false)
+        else if (true)
         {
             if (false)
             {
@@ -113,7 +113,8 @@ public class ModelsManager : MonoBehaviour
 
                     GameObject child = new GameObject();
                     MeshRenderer mr = child.AddComponent<MeshRenderer>();
-                    mr.material = new Material(Shader.Find("Diffuse"));
+                    Material material = new Material(Shader.Find("Standard"));
+                    mr.material = material;
                     MeshFilter mf = child.AddComponent<MeshFilter>();
                     mf.mesh = mesh;
 
@@ -269,10 +270,11 @@ public class ModelsManager : MonoBehaviour
 
         GameObject root = new GameObject();
 
-        FileStream file = new FileStream(path, FileMode.Open);
+        TextAsset asset = Resources.Load(path) as TextAsset;
+        Stream stream = new MemoryStream(asset.bytes);
 
         //Debug.Log("LoadCTM: new CtmFileReader(file)");
-        CtmFileReader reader = new CtmFileReader(file);
+        CtmFileReader reader = new CtmFileReader(stream);
         //Debug.Log("LoadCTM: reader.decode()");
         OpenCTM.Mesh ctmMesh = reader.decode();
         //Debug.Log("LoadCTM: ctmMesh.checkIntegrity()");
@@ -347,7 +349,8 @@ public class ModelsManager : MonoBehaviour
             unityMesh.RecalculateNormals();
 
             MeshRenderer mr = root.AddComponent<MeshRenderer>();
-            mr.material = new Material(Shader.Find("Diffuse"));
+            Material material = new Material(Shader.Find("Standard"));
+            mr.material = material;
             MeshFilter mf = root.AddComponent<MeshFilter>();
             mf.mesh = unityMesh;
         }
@@ -487,7 +490,9 @@ public class ModelsManager : MonoBehaviour
 
                 child = new GameObject();
                 MeshRenderer mr = child.AddComponent<MeshRenderer>();
-                mr.material = new Material(Shader.Find("Diffuse"));
+                Shader shader = Shader.Find("Standard");
+                Material material = new Material(shader);
+                mr.material = material;
                 MeshFilter mf = child.AddComponent<MeshFilter>();
                 mf.mesh = unityMesh;
 
