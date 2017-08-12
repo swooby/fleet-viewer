@@ -117,7 +117,7 @@ public class ModelsManager : MonoBehaviour
         Debug.Log("LoadModelInfos: dropdown.options.Count == " + dropdown.options.Count);
     }
 
-    private UnityEngine.Mesh[] LoadScalePositionModel(string modelName)
+    private GameObject LoadScalePositionModel(string modelName)
     {
         ModelInfo modelInfo;
         if (!ModelInfos.TryGetValue(modelName, out modelInfo) || modelInfo == null)
@@ -128,14 +128,15 @@ public class ModelsManager : MonoBehaviour
 
         string modelFilePath = modelInfo.FleetViewerPath;
 
-        UnityEngine.Mesh[] unityMeshes = LoadCTM(modelFilePath);
+        GameObject go = LoadCTM(modelFilePath);
 
         // TODO:(pv) Scale model relative to length of known 100m starfarer
         float modelLengthMeters = modelInfo.LengthMeters;
         Debug.LogError("LoadLocalModel: modelLengthMeters == " + modelLengthMeters);
+
         // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
-        return unityMeshes;
+        return go;
     }
 
     private const int MAX_VERTICES_PER_MESH = 65000;
@@ -151,12 +152,12 @@ public class ModelsManager : MonoBehaviour
 
 	// TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
 	//  https://www.google.com/search?q=unity+async+load
-	private UnityEngine.Mesh[] LoadCTM(string path)
+    private GameObject LoadCTM(string path)
     {
         Debug.Log("LoadCTM(\"" + path + "\")");
         Debug.Log("LoadCTM: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
 
-        UnityEngine.Mesh[] unityMeshes = null;
+        GameObject root = new GameObject();
 
         FileStream file = new FileStream(path, FileMode.Open);
 
@@ -235,14 +236,10 @@ public class ModelsManager : MonoBehaviour
             Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
             unityMesh.RecalculateNormals();
 
-            GameObject go = new GameObject();
-            MeshRenderer mr = go.AddComponent<MeshRenderer>();
+            MeshRenderer mr = root.AddComponent<MeshRenderer>();
             mr.material = new Material(Shader.Find("Diffuse"));
-            MeshFilter mf = go.AddComponent<MeshFilter>();
+            MeshFilter mf = root.AddComponent<MeshFilter>();
             mf.mesh = unityMesh;
-
-            unityMeshes = new UnityEngine.Mesh[1];
-            unityMeshes[1] = unityMesh;
         }
         else if (true)
         {
@@ -352,7 +349,7 @@ public class ModelsManager : MonoBehaviour
             }
 
             Debug.Log("LoadCTM: Creating Unity Mesh(es)");
-            unityMeshes = new UnityEngine.Mesh[meshCount];
+            GameObject child;
             UnityEngine.Mesh unityMesh;
             for (meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
@@ -378,18 +375,18 @@ public class ModelsManager : MonoBehaviour
                 Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
                 unityMesh.RecalculateNormals();
 
-                GameObject go = new GameObject();
-                MeshRenderer mr = go.AddComponent<MeshRenderer>();
+                child = new GameObject();
+                MeshRenderer mr = child.AddComponent<MeshRenderer>();
                 mr.material = new Material(Shader.Find("Diffuse"));
-                MeshFilter mf = go.AddComponent<MeshFilter>();
+                MeshFilter mf = child.AddComponent<MeshFilter>();
                 mf.mesh = unityMesh;
 
-                unityMeshes[meshIndex] = unityMesh;
+                child.transform.SetParent(root.transform);
             }
         }
 
         Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
 
-        return unityMeshes;
+        return root;
     }
 }
