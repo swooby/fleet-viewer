@@ -44,8 +44,8 @@ public class ModelsManager : MonoBehaviour
         }
         else if (true)
         {
-            string modelFilePath = "brunnen.ctm";
-            LoadCTM(modelFilePath);
+            string resourcePath = "brunnen.ctm";
+            LoadCTM(resourcePath);
         }
         else if (true)
         {
@@ -201,26 +201,26 @@ public class ModelsManager : MonoBehaviour
         }
 
         float modelLengthMeters = modelInfo.LengthMeters;
-        Debug.LogError("LoadScalePositionModel: modelLengthMeters == " + modelLengthMeters);
+        Debug.Log("LoadScalePositionModel: modelLengthMeters == " + modelLengthMeters);
         string modelPathLocal = modelInfo.ModelPathLocal;
-        Debug.LogError("LoadScalePositionModel: modelPathLocal == " + modelPathLocal);
+        Debug.Log("LoadScalePositionModel: modelPathLocal == " + modelPathLocal);
         Vector3 modelRotation = modelInfo.ModelRotation;
-        Debug.LogError("LoadScalePositionModel: modelRotation == " + modelRotation);
+        Debug.Log("LoadScalePositionModel: modelRotation == " + modelRotation);
 
         GameObject go = LoadCTM(modelPathLocal);
 
         Transform goTransform = go.transform;
 
         Bounds goBounds = CalculateBounds(go);
-        Debug.LogError("LoadScalePositionModel: BEFORE goBounds == " + goBounds);
+        //Debug.LogError("LoadScalePositionModel: BEFORE goBounds == " + goBounds);
         float scale = modelLengthMeters / (goBounds.extents.z * 2);
-        Debug.LogError("LoadScalePositionModel: scale == " + scale);
+        //Debug.LogError("LoadScalePositionModel: scale == " + scale);
         goTransform.localScale = new Vector3(scale, scale, scale);
         goBounds = CalculateBounds(go);
-        Debug.LogError("LoadScalePositionModel: AFTER goBounds == " + goBounds);
+        //Debug.LogError("LoadScalePositionModel: AFTER goBounds == " + goBounds);
 
         float goLengthMeters = goBounds.extents.z * 2;
-        Debug.LogError("LoadScalePositionModel: goLengthMeters == " + goLengthMeters);
+        //Debug.LogError("LoadScalePositionModel: goLengthMeters == " + goLengthMeters);
 
         goTransform.Rotate(modelRotation);
 
@@ -251,7 +251,7 @@ public class ModelsManager : MonoBehaviour
     }
 
     private const int MAX_VERTICES_PER_MESH = 65000;
-    private const int MAX_TRIANGLES_PER_MESH = ((65000 / 3) * 3) / 3; // 64998
+    private const int MAX_TRIANGLES_PER_MESH = ((65000 / 3) * 3) / 3; // 64998 / 3 == 21666
 
     class MeshInfo
     {
@@ -263,18 +263,18 @@ public class ModelsManager : MonoBehaviour
 
     // TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
     //  https://www.google.com/search?q=unity+async+load
-    private GameObject LoadCTM(string path)
+    private GameObject LoadCTM(string resourcePath)
     {
-        Debug.Log("LoadCTM(\"" + path + "\")");
-        Debug.Log("LoadCTM: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
+        Debug.Log("LoadCTM(resourcePath:" + Utils.Quote(resourcePath) + ")");
+        Debug.LogWarning("LoadCTM: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
 
         GameObject root = new GameObject();
 
-        TextAsset asset = Resources.Load(path) as TextAsset;
-        Stream stream = new MemoryStream(asset.bytes);
+        TextAsset textAsset = Resources.Load(resourcePath) as TextAsset;
+        Stream memoryStream = new MemoryStream(textAsset.bytes);
 
-        //Debug.Log("LoadCTM: new CtmFileReader(file)");
-        CtmFileReader reader = new CtmFileReader(stream);
+        //Debug.Log("LoadCTM: new CtmFileReader(memoryStream)");
+        CtmFileReader reader = new CtmFileReader(memoryStream);
         //Debug.Log("LoadCTM: reader.decode()");
         OpenCTM.Mesh ctmMesh = reader.decode();
         //Debug.Log("LoadCTM: ctmMesh.checkIntegrity()");
@@ -312,7 +312,7 @@ public class ModelsManager : MonoBehaviour
         int indicesLength = ctmMesh.indices.Length;
         //Debug.LogError("LoadCTM: ctmMesh.indices.Length == " + indicesLength); // nox: 437886, brunnen: 4329
         int numTriangles = indicesLength / 3;
-        Debug.LogError("LoadCTM: numTriangles == " + numTriangles); // nox: ?, brunnen: ?
+        Debug.LogWarning("LoadCTM: numTriangles == " + numTriangles); // nox: ?, brunnen: ?
 
         if (false)
         {
@@ -372,7 +372,7 @@ public class ModelsManager : MonoBehaviour
             //Debug.LogError("LoadCTM: uv.Count == " + uv.Count); // nox: ?, brunnen: ?
 
             int meshCount = numTriangles / MAX_TRIANGLES_PER_MESH + 1;
-            Debug.LogError("LoadCTM: meshCount == " + meshCount);
+            Debug.Log("LoadCTM: meshCount == " + meshCount);
             MeshInfo[] meshInfos = new MeshInfo[meshCount];
 
             //
@@ -466,15 +466,15 @@ public class ModelsManager : MonoBehaviour
             UnityEngine.Mesh unityMesh;
             for (meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
-                Debug.LogError("LoadCTM: meshIndex == " + meshIndex);
+                //Debug.LogError("LoadCTM: meshIndex == " + meshIndex);
 
                 meshInfo = meshInfos[meshIndex];
-                Debug.LogError("LoadCTM: meshInfo.vertices.Count == " + meshInfo.vertices.Count);
-                Debug.LogError("LoadCTM: meshInfo.normals.Count == " + meshInfo.normals.Count);
-                Debug.LogError("LoadCTM: meshInfo.triangles.Count == " + meshInfo.triangles.Count);
-                Debug.LogError("LoadCTM: meshInfo.uv.Count == " + meshInfo.uv.Count);
+                //Debug.LogError("LoadCTM: meshInfo.vertices.Count == " + meshInfo.vertices.Count);
+                //Debug.LogError("LoadCTM: meshInfo.normals.Count == " + meshInfo.normals.Count);
+                //Debug.LogError("LoadCTM: meshInfo.triangles.Count == " + meshInfo.triangles.Count);
+                //Debug.LogError("LoadCTM: meshInfo.uv.Count == " + meshInfo.uv.Count);
 
-                Debug.Log("LoadCTM: unityMesh = new UnityEngine.Mesh(...)");
+                //Debug.Log("LoadCTM: unityMesh = new UnityEngine.Mesh(...)");
                 unityMesh = new UnityEngine.Mesh()
                 {
                     vertices = meshInfo.vertices.ToArray(),
@@ -483,9 +483,9 @@ public class ModelsManager : MonoBehaviour
                     uv = meshInfo.uv.ToArray()
                 };
 
-                Debug.Log("LoadCTM: unityMesh.RecalculateBounds()");
+                //Debug.Log("LoadCTM: unityMesh.RecalculateBounds()");
                 unityMesh.RecalculateBounds();
-                Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
+                //Debug.Log("LoadCTM: unityMesh.RecalculateNormals()");
                 unityMesh.RecalculateNormals();
 
                 child = new GameObject();
@@ -497,12 +497,8 @@ public class ModelsManager : MonoBehaviour
                 mf.mesh = unityMesh;
 
                 child.transform.SetParent(root.transform);
-
-                Debug.LogError("LoadCTM: child.activeSelf == " + child.activeSelf);
             }
         }
-
-        Debug.LogError("LoadCTM: root.activeSelf == " + root.activeSelf);
 
         Debug.Log("LoadCTM: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
 

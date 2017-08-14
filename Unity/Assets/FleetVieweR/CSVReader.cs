@@ -20,13 +20,13 @@ public class CSVReader
     private static readonly string SPLIT_RE = @",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))";
     private static readonly char[] TRIM_CHARS = { '\"' };
 
-    public static List<T> Read<T>(string filepath, OnKeyValue<T> callback) where T : class
+    public static List<T> Read<T>(string resourcePath, OnKeyValue<T> callback) where T : class
     {
-        Debug.Log("CSVReader.Read(\"" + filepath + "\", ...");
+        Debug.Log("CSVReader.Read(resourcePath:" + Utils.Quote(resourcePath) + ", ...");
 
         List<T> list = new List<T>();
 
-        TextAsset data = Resources.Load(filepath) as TextAsset;
+        TextAsset data = Resources.Load(resourcePath) as TextAsset;
 
         if (data == null) return list;
 
