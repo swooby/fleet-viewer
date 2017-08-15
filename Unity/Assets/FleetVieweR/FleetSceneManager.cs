@@ -9,6 +9,10 @@ using OpenCTM;
 
 public class FleetSceneManager : MonoBehaviour
 {
+    public const bool RESET_SETTINGS = false;
+    // TODO:(pv) Define this per game system?
+    public const string DEFAULT_MODEL_KEY = "Nox";
+
     #region DATA
 
     [Serializable]
@@ -59,7 +63,7 @@ public class FleetSceneManager : MonoBehaviour
 		AppSettingsPath = Application.persistentDataPath + "/settings.fvr";
         Debug.Log("Start: AppSettingsPath == " + Utils.Quote(AppSettingsPath));
 
-        if (false)
+        if (RESET_SETTINGS)
         {
             File.Delete(AppSettingsPath);
         }
@@ -104,7 +108,7 @@ public class FleetSceneManager : MonoBehaviour
                 Settings.SystemName = "Star Citizen";
 
                 ModelSettings modelSettings = new ModelSettings();
-                modelSettings.Key = "nox";
+                modelSettings.Key = DEFAULT_MODEL_KEY;
                 Settings.ModelSettings.Add(modelSettings);
 
                 try
