@@ -35,7 +35,7 @@ public class CSVReader
         if (lines.Length <= 1) return list;
 
         var header = Regex.Split(lines[0], SPLIT_RE);
-        Debug.Log("CSVReader.Read: header == " + header);
+        //Debug.Log("CSVReader.Read: header == " + header);
 
         for (var i = 1; i < lines.Length; i++)
         {

@@ -147,7 +147,7 @@ public class ModelsManager : MonoBehaviour
     public void LoadModelInfos(string configurationFilePath)
     {
         ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
-        CSVReader.Read<ModelInfo>(configurationFilePath, dictionary =>
+        CSVReader.Read<ModelInfo>(configurationFilePath, (dictionary) =>
         {
             ModelInfo modelInfo = new ModelInfo(dictionary);
             ModelInfos[modelInfo.Name] = modelInfo;
@@ -219,7 +219,7 @@ public class ModelsManager : MonoBehaviour
         goBounds = CalculateBounds(go);
         //Debug.LogError("LoadScalePositionModel: AFTER goBounds == " + goBounds);
 
-        float goLengthMeters = goBounds.extents.z * 2;
+        //float goLengthMeters = goBounds.extents.z * 2;
         //Debug.LogError("LoadScalePositionModel: goLengthMeters == " + goLengthMeters);
 
         goTransform.Rotate(modelRotation);
@@ -266,6 +266,9 @@ public class ModelsManager : MonoBehaviour
     private GameObject LoadCTM(string resourcePath)
     {
         Debug.Log("LoadCTM(resourcePath:" + Utils.Quote(resourcePath) + ")");
+
+        return CTMReader.Read(resourcePath);
+
         Debug.LogWarning("LoadCTM: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
 
         GameObject root = new GameObject();
@@ -284,7 +287,7 @@ public class ModelsManager : MonoBehaviour
 
         int verticesLength = ctmMesh.vertices.Length;
         //Debug.LogError("LoadCTM: ctmMesh.vertices.Length == " + verticesLength); // nox: 248145, brunnen: 2439
-        int numVertices = verticesLength / 3;
+        //int numVertices = verticesLength / 3;
         //Debug.LogError("LoadCTM: numVertices == " + numVertices); // nox: ?, brunnen: ?
         List<Vector3> vertices = new List<Vector3>();
         for (int j = 0; j < verticesLength; j += 3)

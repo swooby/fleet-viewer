@@ -6,114 +6,121 @@ using UnityEngine;
 
 public class ModelInfo
 {
-    public const string FIELD_NAME = "Name";
-    public const string FIELD_LAST_CHECKED = "Last Checked";
-    public const string FIELD_LENGTH = "Length";
-    public const string FIELD_BEAM = "Beam";
-    public const string FIELD_HEIGHT = "Height";
-    public const string FIELD_STORE_URL = "Store URL";
-    public const string FIELD_MODEL_PATH_REMOTE = "Model Path Remote";
-    public const string FIELD_MODEL_PATH_LOCAL = "Model Path Local";
-    public const string FIELD_MODEL_ROTATION = "Model Rotation";
+	public const string FIELD_NAME = "Name";
+	public const string FIELD_LAST_CHECKED = "Last Checked";
+	public const string FIELD_LENGTH = "Length";
+	public const string FIELD_BEAM = "Beam";
+	public const string FIELD_HEIGHT = "Height";
+	public const string FIELD_STORE_URL = "Store URL";
+	public const string FIELD_MODEL_PATH_REMOTE = "Model Path Remote";
+	public const string FIELD_MODEL_PATH_LOCAL = "Model Path Local";
+	public const string FIELD_MODEL_ROTATION = "Model Rotation";
 
-    public string Name { get; private set; }
-    public DateTime LastChecked { get; private set; }
-    public float LengthMeters { get; private set; }
-    public float BeamMeters { get; private set; }
-    public float HeightMeters { get; private set; }
-    public Uri StoreUrl { get; private set; }
-    public Uri ModelPathRemote { get; private set; }
-    public string ModelPathLocal { get; private set; }
-    public Vector3 ModelRotation { get; private set; }
+	public string Name { get; private set; }
+	public DateTime LastChecked { get; private set; }
+	public float LengthMeters { get; private set; }
+	public float BeamMeters { get; private set; }
+	public float HeightMeters { get; private set; }
+	public Uri StoreUrl { get; private set; }
+	public Uri ModelPathRemote { get; private set; }
+	public string ModelPathLocal { get; private set; }
+	public Vector3 ModelRotation { get; private set; }
 
-    public ModelInfo(Dictionary<string, string> dictionary)
-    {
-        Name = dictionary[FIELD_NAME];
+	private GameObject gameObject;
 
-        try
-        {
-            LastChecked = DateTime.Parse(dictionary[FIELD_LAST_CHECKED]);
-        }
-        catch (FormatException)
-        {
-            LastChecked = DateTime.MinValue;
-        }
+	public GameObject GameObject
+	{
+		get
+		{
+			if (gameObject == null)
+			{
+				gameObject = CTMReader.Read(ModelPathLocal);
+			}
+			return gameObject;
+		}
+	}
 
-        try
-        {
-            LengthMeters = float.Parse(dictionary[FIELD_LENGTH]);
-        }
-        catch (FormatException)
-        {
-            LengthMeters = float.NaN;
-        }
+	public ModelInfo(Dictionary<string, string> dictionary)
+	{
+		Name = dictionary[FIELD_NAME];
 
-        try
-        {
-            BeamMeters = float.Parse(dictionary[FIELD_BEAM]);
-        }
-        catch (FormatException)
-        {
-            BeamMeters = float.NaN;
-        }
+		try
+		{
+			LastChecked = DateTime.Parse(dictionary[FIELD_LAST_CHECKED]);
+		}
+		catch (FormatException)
+		{
+			LastChecked = DateTime.MinValue;
+		}
 
-        try
-        {
-            HeightMeters = float.Parse(dictionary[FIELD_HEIGHT]);
-        }
-        catch (FormatException)
-        {
-            HeightMeters = float.NaN;
-        }
+		try
+		{
+			LengthMeters = float.Parse(dictionary[FIELD_LENGTH]);
+		}
+		catch (FormatException)
+		{
+			LengthMeters = float.NaN;
+		}
 
-        try
-        {
-            StoreUrl = new Uri(dictionary[FIELD_STORE_URL]);
-        }
-        catch (FormatException)
-        {
-            StoreUrl = null;
-        }
+		try
+		{
+			BeamMeters = float.Parse(dictionary[FIELD_BEAM]);
+		}
+		catch (FormatException)
+		{
+			BeamMeters = float.NaN;
+		}
 
-        try
-        {
-            ModelPathRemote = new Uri(dictionary[FIELD_MODEL_PATH_REMOTE]);
-        }
-        catch (FormatException)
-        {
-            ModelPathRemote = null;
-        }
+		try
+		{
+			HeightMeters = float.Parse(dictionary[FIELD_HEIGHT]);
+		}
+		catch (FormatException)
+		{
+			HeightMeters = float.NaN;
+		}
 
-        ModelPathLocal = dictionary[FIELD_MODEL_PATH_LOCAL];
+		try
+		{
+			StoreUrl = new Uri(dictionary[FIELD_STORE_URL]);
+		}
+		catch (FormatException)
+		{
+			StoreUrl = null;
+		}
 
-        String modelRotation;
-        dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
-        ModelRotation = StringToVector3(modelRotation);
-    }
+		try
+		{
+			ModelPathRemote = new Uri(dictionary[FIELD_MODEL_PATH_REMOTE]);
+		}
+		catch (FormatException)
+		{
+			ModelPathRemote = null;
+		}
 
-    private Vector3 StringToVector3(String value)
-    {
-        Vector3 result = Vector3.zero;
+		ModelPathLocal = dictionary[FIELD_MODEL_PATH_LOCAL];
 
-        if (value != null)
-        {
-            Match match = Regex.Match(value, @"(?<X>-?\d?.?\d?),(?<Y>-?\d?.?\d?),(?<Z>-?\d?.?\d?)");
-            if (match.Success)
-            {
+		String modelRotation;
+		dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
+		ModelRotation = StringToVector3(modelRotation);
+	}
+
+	private Vector3 StringToVector3(String value)
+	{
+		Vector3 result = Vector3.zero;
+
+		if (value != null)
+		{
+			Match match = Regex.Match(value, @"(?<X>-?\d?.?\d?),(?<Y>-?\d?.?\d?),(?<Z>-?\d?.?\d?)");
+			if (match.Success)
+			{
 				float x = float.Parse(match.Groups["X"].Value);
 				float y = float.Parse(match.Groups["Y"].Value);
 				float z = float.Parse(match.Groups["Z"].Value);
-                result = new Vector3(x, y, z);
-            }
-        }
+				result = new Vector3(x, y, z);
+			}
+		}
 
-        return result;
-    }
-
-    /*
-    public override string ToString()
-    {
-        return Name;
-    }
-    */
+		return result;
+	}
 }
