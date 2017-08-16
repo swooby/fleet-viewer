@@ -236,7 +236,7 @@ public class ModelsManager : MonoBehaviour
         Transform transform = go.transform;
         Quaternion currentRotation = transform.rotation;
         {
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            transform.rotation = Quaternion.identity;
 
             bounds = new Bounds(transform.position, Vector3.zero);
             foreach (Renderer renderer in go.GetComponentsInChildren<Renderer>())

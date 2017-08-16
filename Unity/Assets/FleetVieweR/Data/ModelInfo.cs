@@ -34,7 +34,30 @@ public class ModelInfo
 		{
 			if (gameObject == null)
 			{
-				gameObject = CTMReader.Read(ModelPathLocal);
+				string modelPathLocal = ModelPathLocal;
+				Debug.Log("ModelInfo.GameObject: modelPathLocal == " + modelPathLocal);
+				float modelLengthMeters = LengthMeters;
+				Debug.Log("ModelInfo.GameObject: modelLengthMeters == " + modelLengthMeters);
+				Vector3 modelRotation = ModelRotation;
+				Debug.Log("ModelInfo.GameObject: modelRotation == " + modelRotation);
+
+                gameObject = CTMReader.Read(ModelPathLocal);
+
+				Transform transform = gameObject.transform;
+
+				Bounds bounds = Utils.CalculateBounds(gameObject);
+				//Debug.LogError("ModelInfo.GameObject: BEFORE goBounds == " + goBounds);
+				float scale = LengthMeters / (bounds.extents.z * 2);
+				//Debug.LogError("ModelInfo.GameObject: scale == " + scale);
+				transform.localScale = new Vector3(scale, scale, scale);// * 1000;
+				//goBounds = CalculateBounds(go);
+				//Debug.LogError("ModelInfo.GameObject: AFTER goBounds == " + goBounds);
+
+				//float goLengthMeters = goBounds.extents.z * 2;
+				//Debug.LogError("ModelInfo.GameObject: goLengthMeters == " + goLengthMeters);
+
+                transform.Rotate(ModelRotation);
+
 			}
 			return gameObject;
 		}
