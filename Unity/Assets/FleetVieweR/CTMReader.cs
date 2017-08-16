@@ -274,13 +274,15 @@ public class CTMReader
                 MeshRenderer mr = child.AddComponent<MeshRenderer>();
 #if RUNNING_ON_ANDROID_DEVICE
                 //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights)");
-                Shader shader = Shader.Find("Mobile/VertexLit");
+                //Shader shader = Shader.Find("Mobile/VertexLit");
                 //Shader shader = Shader.Find("Standard");
+                Shader shader = Shader.Find("Standard (Two Sided)");
                 //Shader shader = Shader.Find("Diffuse");
 #else
+                Shader shader = Shader.Find("Standard (Two Sided)");
                 //Shader shader = Shader.Find("Standard");
                 //Shader shader = Shader.Find("Diffuse");
-                Shader shader = Shader.Find("Projector/Light");
+                //Shader shader = Shader.Find("Projector/Light");
 #endif
                 mr.material = new Material(shader);
 
