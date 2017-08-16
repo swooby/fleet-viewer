@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-	public float Speed = 0.1f;
+	public float Speed = 5.0f;
 
 	public Text controllerDebugText;
 
