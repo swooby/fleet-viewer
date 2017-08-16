@@ -35,7 +35,15 @@ public class FleetSceneManager : MonoBehaviour
             GameObject go = AddModel(modelSettings);
 
             bounds = Utils.CalculateBounds(go, bounds);
+            //Debug.LogError("Start: bounds == " + bounds);
         }
+        //Debug.LogError("Start: bounds == " + bounds);
+        //Debug.LogError("Start: bounds.max == " + bounds.max);
+        //Debug.LogError("Start: bounds.min == " + bounds.min);
+        //Debug.LogError("Start: bounds.size == " + bounds.size);
+        //Debug.LogError("Start: bounds.extents == " + bounds.extents);
+
+        // TODO:(pv) Zoom to fit all loaded models...
         GameObject player = GameObject.Find("/Player");
         player.transform.position = new Vector3(0,
                                                 -(float)(bounds.extents.y * 0.2),

@@ -251,6 +251,9 @@ public class CTMReader
                 }
             }
 
+            // TODO:(pv) Set root [and children?] to be Occlusion Culling
+            //  https://docs.unity3d.com/Manual/OcclusionCulling.html
+
             Debug.Log("CTMReader.Read: Creating Unity Mesh(es)");
             GameObject child;
             UnityEngine.Mesh unityMesh;
