@@ -17,6 +17,33 @@ public class CTMReader
 		public List<Vector3> normals = new List<Vector3>();
 		public List<int> triangles = new List<int>();
 		public List<Vector2> uv = new List<Vector2>();
+
+        private UnityEngine.Mesh mesh;
+
+        public UnityEngine.Mesh Mesh
+        {
+            get
+            {
+                if (mesh == null)
+                {
+					//Debug.Log("MeshInfo: mesh = new UnityEngine.Mesh(...)");
+					mesh = new UnityEngine.Mesh()
+					{
+						vertices = vertices.ToArray(),
+						triangles = triangles.ToArray(),
+						normals = normals.ToArray(),
+						uv = uv.ToArray()
+					};
+					//Debug.Log("MeshInfo: mesh.RecalculateBounds()");
+					mesh.RecalculateBounds();
+					//Debug.Log("MeshInfo: mesh.RecalculateNormals()");
+					mesh.RecalculateNormals();
+					//Debug.Log("MeshInfo: mesh.RecalculateTangents()");
+					mesh.RecalculateTangents();
+				}
+                return mesh;
+            }
+        }
 	}
 
 	private CTMReader()
@@ -236,24 +263,14 @@ public class CTMReader
 				//Debug.LogError("CTMReader.Read: meshInfo.triangles.Count == " + meshInfo.triangles.Count);
 				//Debug.LogError("CTMReader.Read: meshInfo.uv.Count == " + meshInfo.uv.Count);
 
-				//Debug.Log("CTMReader.Read: unityMesh = new UnityEngine.Mesh(...)");
-				unityMesh = new UnityEngine.Mesh()
-				{
-					vertices = meshInfo.vertices.ToArray(),
-					triangles = meshInfo.triangles.ToArray(),
-					normals = meshInfo.normals.ToArray(),
-					uv = meshInfo.uv.ToArray()
-				};
-
-				//Debug.Log("CTMReader.Read: unityMesh.RecalculateBounds()");
-				unityMesh.RecalculateBounds();
-				//Debug.Log("CTMReader.Read: unityMesh.RecalculateNormals()");
-				unityMesh.RecalculateNormals();
+                unityMesh = meshInfo.Mesh;
 
 				child = new GameObject();
 				MeshRenderer mr = child.AddComponent<MeshRenderer>();
-				Shader shader = Shader.Find("Standard");
-                //Shader shader = Shader.Find("Projector/Light");
+				Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights)");
+				//Shader shader = Shader.Find("Standard");
+				//Shader shader = Shader.Find("Projector/Light");
+				//Shader shader = Shader.Find("Diffuse");
 				Material material = new Material(shader);
 				mr.material = material;
 				MeshFilter mf = child.AddComponent<MeshFilter>();
