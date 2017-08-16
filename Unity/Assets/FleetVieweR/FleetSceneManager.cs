@@ -28,10 +28,18 @@ public class FleetSceneManager : MonoBehaviour
 
         SystemName = AppSettings.SystemName;
 
+        Bounds bounds = new Bounds(transform.position, Vector3.zero);
+
         foreach (ModelSettings modelSettings in AppSettings.ModelSettings)
         {
-            AddModel(modelSettings);
+            GameObject go = AddModel(modelSettings);
+
+            bounds = Utils.CalculateBounds(go, bounds);
         }
+        GameObject player = GameObject.Find("/Player");
+        player.transform.position = new Vector3(0,
+                                                -(float)(bounds.extents.y * 0.2),
+                                                -(float)(bounds.extents.z * 1.2));
     }
 
     void Update()

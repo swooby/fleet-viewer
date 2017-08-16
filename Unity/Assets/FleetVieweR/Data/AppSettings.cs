@@ -39,7 +39,7 @@ public class AppSettings
             appSettings = JsonUtility.FromJson<AppSettings>(jsonData);
         }
 
-        Debug.LogError("appSettings == " + appSettings);
+        //Debug.LogError("appSettings == " + appSettings);
 
         return appSettings;
 	}
