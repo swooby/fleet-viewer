@@ -149,8 +149,8 @@ public class FleetSceneManager : MonoBehaviour
 
         GameObject go = LoadModel(modelKey);
 
-        go.transform.position = modelSettings.Position;
-        go.transform.rotation = modelSettings.Rotation;
+        //go.transform.position = modelSettings.Position;
+        //go.transform.rotation = modelSettings.Rotation;
 
         return go;
     }

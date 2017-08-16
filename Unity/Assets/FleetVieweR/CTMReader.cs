@@ -40,7 +40,7 @@ public class CTMReader
                     //Debug.Log("MeshInfo: mesh.RecalculateNormals()");
                     mesh.RecalculateNormals();
                     //Debug.Log("MeshInfo: mesh.RecalculateTangents()");
-                    mesh.RecalculateTangents();
+                    //mesh.RecalculateTangents();
                 }
                 return mesh;
             }
@@ -279,8 +279,8 @@ public class CTMReader
                 Shader shader = Shader.Find("Standard (Two Sided)");
                 //Shader shader = Shader.Find("Diffuse");
 #else
-                Shader shader = Shader.Find("Standard (Two Sided)");
                 //Shader shader = Shader.Find("Standard");
+                Shader shader = Shader.Find("Standard (Two Sided)");
                 //Shader shader = Shader.Find("Diffuse");
                 //Shader shader = Shader.Find("Projector/Light");
 #endif
