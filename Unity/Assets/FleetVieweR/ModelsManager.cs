@@ -45,7 +45,7 @@ public class ModelsManager : MonoBehaviour
         else if (true)
         {
             string resourcePath = "brunnen.ctm";
-            LoadCTM(resourcePath);
+            LoadCTM("brunnen", resourcePath);
         }
         else if (true)
         {
@@ -207,7 +207,7 @@ public class ModelsManager : MonoBehaviour
         Vector3 modelRotation = modelInfo.ModelRotation;
         Debug.Log("LoadScalePositionModel: modelRotation == " + modelRotation);
 
-        GameObject go = LoadCTM(modelPathLocal);
+        GameObject go = LoadCTM(modelName, modelPathLocal);
 
         Transform goTransform = go.transform;
 
@@ -263,11 +263,11 @@ public class ModelsManager : MonoBehaviour
 
     // TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
     //  https://www.google.com/search?q=unity+async+load
-    private GameObject LoadCTM(string resourcePath)
+    private GameObject LoadCTM(string name, string resourcePath)
     {
-        Debug.Log("LoadCTM(resourcePath:" + Utils.Quote(resourcePath) + ")");
+        Debug.Log("LoadCTM(name:" + Utils.Quote(name) + ", resourcePath:" + Utils.Quote(resourcePath) + ")");
 
-        return CTMReader.Read(resourcePath);
+        return CTMReader.Read(name, resourcePath);
 
         Debug.LogWarning("LoadCTM: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
 

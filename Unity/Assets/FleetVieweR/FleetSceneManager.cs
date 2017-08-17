@@ -9,15 +9,31 @@ using OpenCTM;
 
 public class FleetSceneManager : MonoBehaviour
 {
+    public const bool GL_WIREFRAME = false;
+
     public const bool RESET_SETTINGS = false;
 
     private AppSettings AppSettings;
 
     private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
 
+
+    private GameObject FleetRoot;
+    private GameObject FleetPlanes;
+    private GameObject FleetModels;
+    private GameObject Player;
+    private GameObject Respawn;
+
+
     void Start()
     {
         Input.backButtonLeavesApp = true;
+
+        FleetRoot = GameObject.FindGameObjectWithTag("FleetModels");
+        FleetPlanes = GameObject.FindGameObjectWithTag("FleetPlanes");
+        FleetModels = GameObject.FindGameObjectWithTag("FleetModels");
+        Player = GameObject.FindGameObjectWithTag("Player");
+        Respawn = GameObject.FindGameObjectWithTag("Respawn");
 
         if (RESET_SETTINGS)
         {
@@ -28,26 +44,34 @@ public class FleetSceneManager : MonoBehaviour
 
         SystemName = AppSettings.SystemName;
 
-        Bounds bounds = new Bounds(transform.position, Vector3.zero);
-
-        foreach (ModelSettings modelSettings in AppSettings.ModelSettings)
+        if (true)
         {
-            GameObject go = AddModel(modelSettings);
+            //
+            // The simplest way to load; usually intended for testing purposes only...
+            //
 
-            bounds = Utils.CalculateBounds(go, bounds);
-            //Debug.LogError("Start: bounds == " + bounds);
+            for (int i = 0; i < 2; i++)
+            {
+                AddNewModel("Nox");
+            }
         }
-        //Debug.LogError("Start: bounds == " + bounds);
-        //Debug.LogError("Start: bounds.max == " + bounds.max);
-        //Debug.LogError("Start: bounds.min == " + bounds.min);
-        //Debug.LogError("Start: bounds.size == " + bounds.size);
-        //Debug.LogError("Start: bounds.extents == " + bounds.extents);
+        else
+        {
+            foreach (ModelSettings modelSettings in AppSettings.ModelSettings)
+            {
+                GameObject go = AddSavedModel(modelSettings);
+            }
+        }
 
-        // TODO:(pv) Zoom to fit all loaded models...
-        GameObject player = GameObject.Find("/Player");
-        player.transform.position = new Vector3(0,
-                                                -(float)(bounds.extents.y * 0.2),
-                                                -(float)(bounds.extents.z * 1.2));
+        RepositionPlayerToViewFleet();
+    }
+
+    void OnPreRender()
+    {
+        if (GL_WIREFRAME)
+        {
+            GL.wireframe = true;
+        }
     }
 
     void Update()
@@ -56,6 +80,19 @@ public class FleetSceneManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        DebugBoxFleetModels();
+    }
+
+    void OnPostRender()
+    {
+        if (GL_WIREFRAME)
+        {
+            GL.wireframe = false;
         }
     }
 
@@ -81,7 +118,7 @@ public class FleetSceneManager : MonoBehaviour
             systems.TryGetValue(value, out system);
             if (system == null)
             {
-                Debug.LogError("LoadSystem: Failed to load systemName == " + Utils.Quote(value));
+                Debug.LogError("SystemName: Failed to load systemName == " + Utils.Quote(value));
             }
 
             systemName = value;
@@ -103,7 +140,7 @@ public class FleetSceneManager : MonoBehaviour
             ModelInfos[modelInfo.Name] = modelInfo;
             return null;
         });
-        Debug.Log("LoadModelInfos: ModelInfos.Count == " + ModelInfos.Count);
+        //Debug.Log("LoadModelInfos: ModelInfos.Count == " + ModelInfos.Count);
 
         /*
         GameObject modelInfosDropdown = GameObject.Find("/Player/Main Camera/Overlay Canvas/ModelInfosDropdown");
@@ -123,7 +160,7 @@ public class FleetSceneManager : MonoBehaviour
         List<Dropdown.OptionData> optionDatas = new List<Dropdown.OptionData>();
         foreach (ModelInfo modelInfo in ModelInfos.Values)
         {
-            if (modelInfo == null || modelInfo.ModelPathRemote == null)
+            if (modelInfo == null || modelInfo.ModelPathLocal == null)
             {
                 continue;
             }
@@ -143,7 +180,19 @@ public class FleetSceneManager : MonoBehaviour
         */
     }
 
-    private GameObject AddModel(ModelSettings modelSettings)
+    private GameObject LoadModel(string modelKey)
+    {
+        ModelInfo modelInfo;
+        if (!ModelInfos.TryGetValue(modelKey, out modelInfo) || modelInfo == null)
+        {
+            Debug.LogError("LoadModel: Failed to load modelKey == " + Utils.Quote(modelKey));
+            return null;
+        }
+
+        return modelInfo.Model;
+    }
+
+    private GameObject AddSavedModel(ModelSettings modelSettings, bool repositionPlayerToViewFleet = false)
     {
         string modelKey = modelSettings.Key;
 
@@ -155,31 +204,115 @@ public class FleetSceneManager : MonoBehaviour
         return go;
     }
 
-    private GameObject AddModel(string modelKey)
+    private GameObject AddNewModel(string modelKey, bool repositionPlayerToViewFleet = false)
     {
-        GameObject go = LoadModel(modelKey);
+        Debug.Log("AddNewModel(modelKey:" + Utils.Quote(modelKey) +
+                  ", repositionPlayerToViewFleet:" + repositionPlayerToViewFleet + ")");
+
+        GameObject model = LoadModel(modelKey);
+
+        Transform modelTransform = model.transform;
+        Bounds modelBounds = Utils.CalculateBounds(modelTransform, new Bounds());
+        Debug.LogError("AddNewModel: BEFORE modelBounds == " + modelBounds + ", Size: " + modelBounds.size);
+
+        GameObject fleetPlanes = FleetPlanes;
+        Transform fleetPlanesTransform = fleetPlanes.transform;
+        Bounds fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform, new Bounds());
+        Debug.LogError("AddNewModel: BEFORE fleetPlanesBounds == " + fleetPlanesBounds + ", Size: " + fleetPlanesBounds.size);
+
+        GameObject fleetModels = FleetModels;
+        Transform fleetModelsTransform = fleetModels.transform;
+        Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform, new Bounds());
+        Debug.LogError("AddNewModel: BEFORE fleetModelsBounds == " + fleetModelsBounds + ", Size: " + fleetModelsBounds.size);
+
+        modelTransform.SetParent(fleetModelsTransform);
+
+        modelBounds = Utils.CalculateBounds(modelTransform, new Bounds());
+        Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + modelBounds + ", Size: " + modelBounds.size);
+
+        fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform, new Bounds());
+        Debug.LogError("AddNewModel: AFTER SetParent fleetModelsBounds == " + fleetModelsBounds + ", Size: " + fleetModelsBounds.size);
+
+        float scaleX = fleetModelsBounds.size.x / fleetPlanesBounds.size.x;
+        float scaleY = fleetModelsBounds.size.y / fleetPlanesBounds.size.y;
+        float scaleZ = fleetModelsBounds.size.z / fleetPlanesBounds.size.z;
+        Vector3 fleetPlanesScale = new Vector3(scaleX, scaleY, scaleZ);
+        fleetPlanesTransform.localScale = fleetPlanesScale;
+
+        if (repositionPlayerToViewFleet)
+        {
+            RepositionPlayerToViewFleet();
+        }
 
         // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
         // Calculate width of all loaded non-positioned models
         // Evenly reposition all loaded models
 
+        // TODO:(pv) Save modelSettings...
         //modelSettings.Position = modelPosition;
-
         //modelSettings.Rotation = modelRotation;
 
-        return go;
+        return model;
     }
 
-    private GameObject LoadModel(string modelKey)
-    {
-        ModelInfo modelInfo;
-        if (!ModelInfos.TryGetValue(modelKey, out modelInfo) || modelInfo == null)
-        {
-            Debug.LogError("LoadScalePositionModel: Failed to load modelKey == " + Utils.Quote(modelKey));
-            return null;
-        }
+    private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
 
-        return modelInfo.GameObject;
+    private void DebugBoxFleetModels()
+    {
+        if (FleetModels != null)
+        {
+            Transform fleetModelsTransform = FleetModels.transform;
+            foreach (Transform fleetModelTransform in fleetModelsTransform)
+            {
+                DebugBox(fleetModelTransform);
+            }
+            DebugBox(fleetModelsTransform);
+        }
+    }
+
+    private void DebugBox(Transform transform)
+    {
+        Color savedColor = Gizmos.color;
+
+        int instanceId = transform.GetInstanceID();
+
+        Color color;
+        if (!debugColors.TryGetValue(instanceId, out color))
+        {
+            color = UnityEngine.Random.ColorHSV();
+
+            debugColors[instanceId] = color;
+        }
+        Gizmos.color = color;
+
+        Bounds bounds = Utils.CalculateBounds(transform, new Bounds());
+
+        Gizmos.DrawWireCube(bounds.center, bounds.size);
+
+        Gizmos.color = savedColor;
+    }
+
+    private void RepositionPlayerToViewFleet()
+    {
+        GameObject fleetRoot = FleetRoot;
+        Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot, new Bounds());
+        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + fleetRootBounds);
+        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.max == " + fleetRootBounds.max);
+        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.min == " + fleetRootBounds.min);
+        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.size == " + fleetRootBounds.size);
+
+        Vector3 position = new Vector3(fleetRootBounds.center.x,
+                                       -(float)(fleetRootBounds.extents.y * 0.4),
+                                       -(float)(fleetRootBounds.extents.z * 1.5));
+
+        // TODO:(pv) Improve this zoom in/out...
+        Debug.LogError("RepositionPlayerToViewFleet: BEFORE Player.transform.position == " + Player.transform.position);
+        Player.transform.position = position;
+        Debug.LogError("RepositionPlayerToViewFleet: AFTER Player.transform.position == " + Player.transform.position);
+
+        position.y -= 1;
+
+        Respawn.transform.position = position;
     }
 }

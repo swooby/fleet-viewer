@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class ModelInfo
 {
+    public const bool VERBOSE_LOG = false;
+
     public const string FIELD_NAME = "Name";
     public const string FIELD_LAST_CHECKED = "Last Checked";
     public const string FIELD_LENGTH = "Length";
@@ -26,39 +26,68 @@ public class ModelInfo
     public string ModelPathLocal { get; private set; }
     public Vector3 ModelRotation { get; private set; }
 
-    private GameObject gameObject;
-
-    public GameObject GameObject
+    private GameObject cachedModel;
+    public GameObject Model
     {
         get
         {
-            if (gameObject == null)
+            GameObject model;
+
+            if (cachedModel == null)
             {
                 Debug.Log("ModelInfo.GameObject: ModelPathLocal == " + ModelPathLocal);
-                gameObject = CTMReader.Read(ModelPathLocal);
+                model = ModelFactory.Get(Name, ModelPathLocal);
 
-                Transform transform = gameObject.transform;
+                Transform transform = model.transform;
 
                 Debug.Log("ModelInfo.GameObject: LengthMeters == " + LengthMeters);
-                Bounds bounds = new Bounds(transform.position, Vector3.zero);
-                bounds = Utils.CalculateBounds(gameObject, bounds);
-                //Debug.LogError("ModelInfo.GameObject: BEFORE bounds == " + bounds);
-                float scale = LengthMeters / (bounds.extents.z * 2);
-                //Debug.LogError("ModelInfo.GameObject: scale == " + scale);
+                Bounds bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("ModelInfo.GameObject: BEFORE SCALE bounds == " + bounds + ", Size: " + bounds.size);
+                }
+                float scale = LengthMeters / bounds.size.z;
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("ModelInfo.GameObject: scale == " + scale);
+                }
                 transform.localScale = new Vector3(scale, scale, scale);// * 1000;
+                if (VERBOSE_LOG)
+                {
+                    bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
+                    Debug.LogError("ModelInfo.GameObject: AFTER SCALE bounds == " + bounds + ", Size: " + bounds.size);
 
-                bounds = new Bounds(transform.position, Vector3.zero);
-                bounds = Utils.CalculateBounds(gameObject, bounds);
-                //Debug.LogError("ModelInfo.GameObject: AFTER bounds == " + bounds);
+                    float finalLengthMeters = bounds.size.z;
+                    Debug.LogError("ModelInfo.GameObject: finalLengthMeters == " + finalLengthMeters);
+                }
 
-                //float finalLengthMeters = bounds.extents.z * 2;
-                //Debug.LogError("ModelInfo.GameObject: finalLengthMeters == " + finalLengthMeters);
+                bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("ModelInfo.GameObject: BEFORE TRANSLATE bounds == " + bounds + ", Size: " + bounds.size);
+                }
+				Vector3 translate = new Vector3(bounds.extents.x,
+												 bounds.extents.y,
+												-bounds.extents.z);
+                translate -= bounds.center;
+                transform.Translate(translate);
+                bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("ModelInfo.GameObject: AFTER TRANSLATE bounds == " + bounds + ", Size: " + bounds.size);
+                }
 
                 Debug.Log("ModelInfo.GameObject: ModelRotation == " + ModelRotation);
                 transform.Rotate(ModelRotation);
 
+                cachedModel = model;
             }
-            return gameObject;
+            else
+            {
+                model = UnityEngine.Object.Instantiate(cachedModel);
+            }
+
+            return model;
         }
     }
 
@@ -124,25 +153,6 @@ public class ModelInfo
 
         String modelRotation;
         dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
-        ModelRotation = StringToVector3(modelRotation);
-    }
-
-    private Vector3 StringToVector3(String value)
-    {
-        Vector3 result = Vector3.zero;
-
-        if (value != null)
-        {
-            Match match = Regex.Match(value, @"(?<X>-?\d?.?\d?),(?<Y>-?\d?.?\d?),(?<Z>-?\d?.?\d?)");
-            if (match.Success)
-            {
-                float x = float.Parse(match.Groups["X"].Value);
-                float y = float.Parse(match.Groups["Y"].Value);
-                float z = float.Parse(match.Groups["Z"].Value);
-                result = new Vector3(x, y, z);
-            }
-        }
-
-        return result;
+        ModelRotation = Utils.StringToVector3(modelRotation);
     }
 }
