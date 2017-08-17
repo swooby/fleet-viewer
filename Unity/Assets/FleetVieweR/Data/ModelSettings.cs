@@ -64,7 +64,7 @@ public class ModelSettings
         }
     }
 
-	public QuaternionSerializable rotation;
+	private QuaternionSerializable rotation;
 	public Quaternion Rotation
     {
         get

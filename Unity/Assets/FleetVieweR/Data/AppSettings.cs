@@ -2,21 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO:(pv) Save this as JSON string to PlayerPrefs
-//  https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
-//  https://stackoverflow.com/questions/40078490/saving-loading-data-in-unity/40097623
-//  https://stackoverflow.com/questions/40965645/what-is-the-best-way-to-save-game-state
-//  https://www.youtube.com/watch?v=LBs6qOgCDOY
-//  https://www.youtube.com/watch?v=kQ5vh4JJFQI (Not Android specific)
-//  https://creative.pluralsight.com/tutorial/608-Unity-Mobile-Game-Development-Saving-Data-and-Highscores
-
+/// <summary>
+/// Don't use BinaryFormatter:
+///     https://stackoverflow.com/a/40966346/252308
+/// PlayerPrefs is sufficient for our purposes.
+/// 
+/// References:
+///     https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
+///     https://stackoverflow.com/questions/40078490/saving-loading-data-in-unity/40097623
+///     https://stackoverflow.com/questions/40965645/what-is-the-best-way-to-save-game-state
+///     https://www.youtube.com/watch?v=LBs6qOgCDOY
+///     https://www.youtube.com/watch?v=kQ5vh4JJFQI Not Android specific; horribly inefficient save to multiple files
+///     https://creative.pluralsight.com/tutorial/608-Unity-Mobile-Game-Development-Saving-Data-and-Highscores
+///     
+/// </summary>
 [Serializable]
 public class AppSettings
 {
     public const string DEFAULT_SYSTEM_NAME = "Star Citizen";
     public const string DEFAULT_MODEL_KEY = "Nox";
 
-    private const string PREF_KEY = "AppSettings";
+	private const string PREF_KEY = "AppSettings";
 
     public static void Reset()
     {
