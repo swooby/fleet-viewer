@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class Utils
@@ -8,12 +7,17 @@ public class Utils
     {
     }
 
-    public static String Quote(String value)
+    public static string Quote(string value)
     {
         return value == null ? "null" : "\"" + value + "\"";
     }
 
-    public static Vector3 StringToVector3(String value)
+    public static string ToString(Bounds bounds)
+    {
+        return bounds + ", Size: " + bounds.size;
+    }
+
+    public static Vector3 StringToVector3(string value)
     {
         Vector3 result = Vector3.zero;
 
@@ -32,23 +36,31 @@ public class Utils
         return result;
     }
 
-    public static Bounds CalculateBounds(GameObject go, Bounds bounds)
+    public static Bounds CalculateBounds(GameObject go, bool unrotate = false)
     {
-        return CalculateBounds(go.transform, bounds);
+        return CalculateBounds(go.transform, unrotate);
     }
 
-    public static Bounds CalculateBounds(Transform transform, Bounds bounds)
+    public static Bounds CalculateBounds(Transform transform, bool unrotate = false)
     {
-        Quaternion savedRotation = transform.rotation;
+		Quaternion savedRotation = transform.rotation;
 
-        transform.rotation = Quaternion.identity;
+        if (unrotate)
+        {
+            transform.rotation = Quaternion.identity;
+        }
+
+		Bounds bounds = new Bounds(transform.position, Vector3.zero);
 
         foreach (Renderer renderer in transform.GetComponentsInChildren<Renderer>())
         {
             bounds.Encapsulate(renderer.bounds);
         }
 
-        transform.rotation = savedRotation;
+        if (unrotate)
+        {
+            transform.rotation = savedRotation;
+        }
 
         return bounds;
     }

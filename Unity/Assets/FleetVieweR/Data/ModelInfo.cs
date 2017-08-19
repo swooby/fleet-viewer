@@ -35,50 +35,14 @@ public class ModelInfo
 
             if (cachedModel == null)
             {
-                Debug.Log("ModelInfo.GameObject: ModelPathLocal == " + ModelPathLocal);
-                model = ModelFactory.Get(Name, ModelPathLocal);
+                model = ModelLoad(Name, ModelPathLocal);
 
-                Transform transform = model.transform;
+                // We must rotate first to ensure Z starts off as length
+				ModelCorrectRotation(model, ModelRotation);
 
-                Debug.Log("ModelInfo.GameObject: LengthMeters == " + LengthMeters);
-                Bounds bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
-                if (VERBOSE_LOG)
-                {
-                    Debug.LogError("ModelInfo.GameObject: BEFORE SCALE bounds == " + bounds + ", Size: " + bounds.size);
-                }
-                float scale = LengthMeters / bounds.size.z;
-                if (VERBOSE_LOG)
-                {
-                    Debug.LogError("ModelInfo.GameObject: scale == " + scale);
-                }
-                transform.localScale = new Vector3(scale, scale, scale);// * 1000;
-                if (VERBOSE_LOG)
-                {
-                    bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
-                    Debug.LogError("ModelInfo.GameObject: AFTER SCALE bounds == " + bounds + ", Size: " + bounds.size);
+				ModelSetLengthMeters(model, LengthMeters);
 
-                    float finalLengthMeters = bounds.size.z;
-                    Debug.LogError("ModelInfo.GameObject: finalLengthMeters == " + finalLengthMeters);
-                }
-
-                bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
-                if (VERBOSE_LOG)
-                {
-                    Debug.LogError("ModelInfo.GameObject: BEFORE TRANSLATE bounds == " + bounds + ", Size: " + bounds.size);
-                }
-				Vector3 translate = new Vector3(bounds.extents.x,
-												 bounds.extents.y,
-												-bounds.extents.z);
-                translate -= bounds.center;
-                transform.Translate(translate);
-                bounds = Utils.CalculateBounds(model, new Bounds(transform.position, Vector3.zero));
-                if (VERBOSE_LOG)
-                {
-                    Debug.LogError("ModelInfo.GameObject: AFTER TRANSLATE bounds == " + bounds + ", Size: " + bounds.size);
-                }
-
-                Debug.Log("ModelInfo.GameObject: ModelRotation == " + ModelRotation);
-                transform.Rotate(ModelRotation);
+				ModelCorrectPosition(model);
 
                 cachedModel = model;
             }
@@ -86,6 +50,9 @@ public class ModelInfo
             {
                 model = UnityEngine.Object.Instantiate(cachedModel);
             }
+
+            Debug.LogError("ModelInfo.GameObject: gameObject.transform.position == " + model.transform.position);
+            Debug.LogError("ModelInfo.GameObject: gameObject.transform.rotation == " + model.transform.rotation);
 
             return model;
         }
@@ -155,4 +122,94 @@ public class ModelInfo
         dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
         ModelRotation = Utils.StringToVector3(modelRotation);
     }
+
+    private static GameObject ModelLoad(string modelName, string modelPath)
+    {
+        Debug.Log("ModelInfo.ModelLoad(modelName:" + Utils.Quote(modelName) +
+                  ", modelPath:" + Utils.Quote(modelPath) + ")");
+
+        GameObject model = ModelFactory.Get(modelName, modelPath);
+
+        if (VERBOSE_LOG)
+        {
+            Transform transform = model.transform;
+            Bounds bounds = Utils.CalculateBounds(transform);
+            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD bounds == " + Utils.ToString(bounds));
+        }
+
+        return model;
+    }
+
+	private static void ModelSetLengthMeters(GameObject model, float lengthMeters)
+	{
+		Debug.Log("ModelInfo.ModelSetLength(model, lengthMeters:" + lengthMeters + ")");
+
+		Transform transform = model.transform;
+
+		Bounds bounds = Utils.CalculateBounds(transform);
+
+		float scale = lengthMeters / bounds.size.z;
+		if (VERBOSE_LOG)
+		{
+			Debug.LogError("ModelInfo.ModelSetLengthMeters: scale == " + scale);
+		}
+
+		transform.localScale = new Vector3(scale, scale, scale);// * 1000;
+
+		if (VERBOSE_LOG)
+		{
+			bounds = Utils.CalculateBounds(transform);
+			Debug.LogError("ModelInfo.ModelSetLengthMeters: AFTER SCALE bounds == " + bounds + ", Size: " + bounds.size);
+
+			float finalLengthMeters = bounds.size.z;
+			Debug.LogError("ModelInfo.ModelSetLengthMeters: finalLengthMeters == " + finalLengthMeters);
+		}
+	}
+
+    private static void ModelCorrectPosition(GameObject model)
+    {
+		Debug.Log("ModelInfo.ModelCorrectPosition(model)");
+
+		Transform transform = model.transform;
+
+		Bounds bounds = Utils.CalculateBounds(transform);
+
+        if (VERBOSE_LOG)
+        {
+            Debug.LogError("ModelInfo.ModelCorrectPosition: BEFORE TRANSLATE bounds == " + bounds + ", Size: " + bounds.size);
+        }
+
+        Vector3 translate = new Vector3(bounds.extents.x,
+                                         bounds.extents.y,
+                                        -bounds.extents.z);
+        
+        translate -= bounds.center;
+
+        transform.Translate(translate);
+
+        if (VERBOSE_LOG)
+        {
+			bounds = Utils.CalculateBounds(transform);
+			Debug.LogError("ModelInfo.ModelCorrectPosition: AFTER TRANSLATE bounds == " + bounds + ", Size: " + bounds.size);
+        }
+    }
+
+	private static void ModelCorrectRotation(GameObject model, Vector3 rotation)
+	{
+		Debug.Log("ModelInfo.ModelCorrectRotation(model, rotation:" + rotation + ")");
+
+		Transform transform = model.transform;
+
+		transform.Rotate(rotation);
+
+		if (VERBOSE_LOG)
+		{
+			Bounds bounds = Utils.CalculateBounds(transform);
+			Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER ROTATE transform.position == " + transform.position);
+			Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER ROTATE transform.rotation == " + transform.rotation);
+			Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER ROTATE bounds == " + Utils.ToString(bounds));
+		}
+	}
 }

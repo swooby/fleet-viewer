@@ -85,7 +85,7 @@ public class FleetSceneManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        DebugBoxFleetModels();
+        DebugDecorate();
     }
 
     void OnPostRender()
@@ -212,32 +212,37 @@ public class FleetSceneManager : MonoBehaviour
         GameObject model = LoadModel(modelKey);
 
         Transform modelTransform = model.transform;
-        Bounds modelBounds = Utils.CalculateBounds(modelTransform, new Bounds());
-        Debug.LogError("AddNewModel: BEFORE modelBounds == " + modelBounds + ", Size: " + modelBounds.size);
+        Bounds modelBounds = Utils.CalculateBounds(modelTransform);
+        Debug.LogError("AddNewModel: BEFORE modelBounds == " + Utils.ToString(modelBounds));
 
         GameObject fleetPlanes = FleetPlanes;
         Transform fleetPlanesTransform = fleetPlanes.transform;
-        Bounds fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform, new Bounds());
-        Debug.LogError("AddNewModel: BEFORE fleetPlanesBounds == " + fleetPlanesBounds + ", Size: " + fleetPlanesBounds.size);
+        Bounds fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
+        Debug.LogError("AddNewModel: BEFORE fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
 
         GameObject fleetModels = FleetModels;
         Transform fleetModelsTransform = fleetModels.transform;
-        Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform, new Bounds());
-        Debug.LogError("AddNewModel: BEFORE fleetModelsBounds == " + fleetModelsBounds + ", Size: " + fleetModelsBounds.size);
+        Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
+        Debug.LogError("AddNewModel: BEFORE fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
 
         modelTransform.SetParent(fleetModelsTransform);
 
-        modelBounds = Utils.CalculateBounds(modelTransform, new Bounds());
-        Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + modelBounds + ", Size: " + modelBounds.size);
+        modelBounds = Utils.CalculateBounds(modelTransform);
+        Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
 
-        fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform, new Bounds());
-        Debug.LogError("AddNewModel: AFTER SetParent fleetModelsBounds == " + fleetModelsBounds + ", Size: " + fleetModelsBounds.size);
+        fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
+        Debug.LogError("AddNewModel: AFTER SetParent fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
 
         float scaleX = fleetModelsBounds.size.x / fleetPlanesBounds.size.x;
         float scaleY = fleetModelsBounds.size.y / fleetPlanesBounds.size.y;
         float scaleZ = fleetModelsBounds.size.z / fleetPlanesBounds.size.z;
         Vector3 fleetPlanesScale = new Vector3(scaleX, scaleY, scaleZ);
+        Debug.LogError("AddNewModel: fleetPlanesScale == " + fleetPlanesScale);
+        fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
+        Debug.LogError("AddNewModel: BEFORE localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
         fleetPlanesTransform.localScale = fleetPlanesScale;
+        fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
+        Debug.LogError("AddNewModel: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
 
         if (repositionPlayerToViewFleet)
         {
@@ -258,20 +263,20 @@ public class FleetSceneManager : MonoBehaviour
 
     private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
 
-    private void DebugBoxFleetModels()
+    private void DebugDecorate()
     {
         if (FleetModels != null)
         {
             Transform fleetModelsTransform = FleetModels.transform;
             foreach (Transform fleetModelTransform in fleetModelsTransform)
             {
-                DebugBox(fleetModelTransform);
+                DebugDecorate(fleetModelTransform);
             }
-            DebugBox(fleetModelsTransform);
+            DebugDecorate(fleetModelsTransform);
         }
     }
 
-    private void DebugBox(Transform transform)
+    private void DebugDecorate(Transform transform)
     {
         Color savedColor = Gizmos.color;
 
@@ -286,25 +291,28 @@ public class FleetSceneManager : MonoBehaviour
         }
         Gizmos.color = color;
 
-        Bounds bounds = Utils.CalculateBounds(transform, new Bounds());
+        Bounds bounds = Utils.CalculateBounds(transform);
 
         Gizmos.DrawWireCube(bounds.center, bounds.size);
+		Gizmos.DrawWireSphere(bounds.center, 0.5f);
+		Gizmos.DrawWireSphere(bounds.max, 0.5f);
+		Gizmos.DrawWireSphere(bounds.min, 0.5f);
 
-        Gizmos.color = savedColor;
+		Gizmos.color = savedColor;
     }
 
     private void RepositionPlayerToViewFleet()
     {
+        Debug.Log("RepositionPlayerToViewFleet()");
+
         GameObject fleetRoot = FleetRoot;
-        Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot, new Bounds());
-        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + fleetRootBounds);
-        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.max == " + fleetRootBounds.max);
-        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.min == " + fleetRootBounds.min);
-        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.size == " + fleetRootBounds.size);
+        Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot);
+        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
+        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.min == " + fleetRootBounds.min + ", fleetRootBounds.max == " + fleetRootBounds.max);
 
         Vector3 position = new Vector3(fleetRootBounds.center.x,
-                                       -(float)(fleetRootBounds.extents.y * 0.4),
-                                       -(float)(fleetRootBounds.extents.z * 1.5));
+                                       fleetRootBounds.size.y * 0.4f,
+                                       fleetRootBounds.size.z * -1.5f);
 
         // TODO:(pv) Improve this zoom in/out...
         Debug.LogError("RepositionPlayerToViewFleet: BEFORE Player.transform.position == " + Player.transform.position);
