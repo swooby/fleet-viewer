@@ -50,7 +50,19 @@ public class FleetSceneManager : MonoBehaviour
             // The simplest way to load; usually intended for testing purposes only...
             //
 
+            //AddNewModel("Idris-P");
+            AddNewModel("Reclaimer");
+            AddNewModel("Genesis");
+            AddNewModel("Prospector");
+            AddNewModel("Terrapin");
+            AddNewModel("M50");
+            AddNewModel("MPUV Cargo");
             for (int i = 0; i < 2; i++)
+            {
+                AddNewModel("MPUV Personnel");
+            }
+            AddNewModel("Dragonfly");
+            for (int i = 0; i < 3; i++)
             {
                 AddNewModel("Nox");
             }
@@ -215,11 +227,6 @@ public class FleetSceneManager : MonoBehaviour
         Bounds modelBounds = Utils.CalculateBounds(modelTransform);
         Debug.LogError("AddNewModel: BEFORE modelBounds == " + Utils.ToString(modelBounds));
 
-        GameObject fleetPlanes = FleetPlanes;
-        Transform fleetPlanesTransform = fleetPlanes.transform;
-        Bounds fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
-        Debug.LogError("AddNewModel: BEFORE fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
-
         GameObject fleetModels = FleetModels;
         Transform fleetModelsTransform = fleetModels.transform;
         Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
@@ -227,22 +234,21 @@ public class FleetSceneManager : MonoBehaviour
 
         modelTransform.SetParent(fleetModelsTransform);
 
+        Vector3 modelTranslate = new Vector3(fleetModelsBounds.size.x + modelBounds.extents.x,
+                                             0,
+                                             0);
+        if (fleetModelsBounds.size.x > 0)
+        {
+            modelTranslate.x += 2;
+        }
+        Debug.LogError("AddNewModel: modelTranslate == " + modelTranslate);
+
+        modelTransform.Translate(modelTranslate);
+
         modelBounds = Utils.CalculateBounds(modelTransform);
         Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
 
-        fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
-        Debug.LogError("AddNewModel: AFTER SetParent fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
-
-        float scaleX = fleetModelsBounds.size.x / fleetPlanesBounds.size.x;
-        float scaleY = fleetModelsBounds.size.y / fleetPlanesBounds.size.y;
-        float scaleZ = fleetModelsBounds.size.z / fleetPlanesBounds.size.z;
-        Vector3 fleetPlanesScale = new Vector3(scaleX, scaleY, scaleZ);
-        Debug.LogError("AddNewModel: fleetPlanesScale == " + fleetPlanesScale);
-        fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
-        Debug.LogError("AddNewModel: BEFORE localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
-        fleetPlanesTransform.localScale = fleetPlanesScale;
-        fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
-        Debug.LogError("AddNewModel: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
+        FleetPlanesScale();
 
         if (repositionPlayerToViewFleet)
         {
@@ -259,6 +265,24 @@ public class FleetSceneManager : MonoBehaviour
         //modelSettings.Rotation = modelRotation;
 
         return model;
+    }
+
+    private void FleetPlanesScale()
+    {
+        Debug.LogWarning("FleetPlanesScale()");
+
+        GameObject fleetPlanes = FleetPlanes;
+        Transform fleetPlanesTransform = fleetPlanes.transform;
+
+        GameObject fleetModels = FleetModels;
+        Transform fleetModelsTransform = fleetModels.transform;
+        Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
+        Debug.LogError("FleetPlanesScale: fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
+
+        fleetPlanesTransform.localScale = fleetModelsBounds.size;
+
+        Bounds fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
+        Debug.LogError("FleetPlanesScale: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
     }
 
     private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
@@ -294,11 +318,11 @@ public class FleetSceneManager : MonoBehaviour
         Bounds bounds = Utils.CalculateBounds(transform);
 
         Gizmos.DrawWireCube(bounds.center, bounds.size);
-		Gizmos.DrawWireSphere(bounds.center, 0.5f);
-		Gizmos.DrawWireSphere(bounds.max, 0.5f);
-		Gizmos.DrawWireSphere(bounds.min, 0.5f);
+        Gizmos.DrawWireSphere(bounds.center, 0.5f);
+        Gizmos.DrawWireSphere(bounds.max, 0.5f);
+        Gizmos.DrawWireSphere(bounds.min, 0.5f);
 
-		Gizmos.color = savedColor;
+        Gizmos.color = savedColor;
     }
 
     private void RepositionPlayerToViewFleet()
