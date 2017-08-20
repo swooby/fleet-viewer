@@ -50,7 +50,7 @@ public class FleetSceneManager : MonoBehaviour
             // The simplest way to load; usually intended for testing purposes only...
             //
 
-            //AddNewModel("Idris-P");
+            AddNewModel("Idris-P");
             AddNewModel("Reclaimer");
             AddNewModel("Genesis");
             AddNewModel("Prospector");
@@ -243,7 +243,7 @@ public class FleetSceneManager : MonoBehaviour
         }
         Debug.LogError("AddNewModel: modelTranslate == " + modelTranslate);
 
-        modelTransform.Translate(modelTranslate);
+        modelTransform.Translate(modelTranslate, Space.Self);
 
         modelBounds = Utils.CalculateBounds(modelTransform);
         Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
@@ -342,9 +342,11 @@ public class FleetSceneManager : MonoBehaviour
         Debug.LogError("RepositionPlayerToViewFleet: BEFORE Player.transform.position == " + Player.transform.position);
         Player.transform.position = position;
         Debug.LogError("RepositionPlayerToViewFleet: AFTER Player.transform.position == " + Player.transform.position);
+        Player.transform.rotation = Quaternion.identity;
 
         position.y -= 1;
 
         Respawn.transform.position = position;
+        Respawn.transform.rotation = Quaternion.identity;
     }
 }

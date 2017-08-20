@@ -14,7 +14,7 @@ public class Utils
 
     public static string ToString(Bounds bounds)
     {
-        return bounds + ", Size: " + bounds.size;
+        return bounds + ", Size: " + bounds.size + ", Min: " + bounds.min + ", Max: " + bounds.max;
     }
 
     public static Vector3 StringToVector3(string value)
