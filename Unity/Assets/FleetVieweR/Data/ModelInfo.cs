@@ -47,14 +47,14 @@ public class ModelInfo
                 model.transform.localScale = Vector3.one;
             }
 
-            // First rotate so that length is the Z axis
-            ModelCorrectRotation(model, ModelRotation);
+			// 1) Rotate so the length is along Z and bow faces -Z
+			ModelNormalizeRotation(model, ModelRotation);
 
-            // Next set length so that we can reposition
-            ModelSetLengthMeters(model, LengthMeters);
+            // 2) Uniformly scale X/Y/Z so that bounds.size.z is the expected length
+            ModelNormalizeScale(model, Vector3.forward, LengthMeters);
 
-            // Reposition now that we have set length on Z axis
-            ModelCorrectPosition(model);
+			// 3) Use the scaled length to position the stern at Z == 0
+			ModelNormalizePosition(model);
 
             ModelDecorate(model);
 
@@ -152,9 +152,9 @@ public class ModelInfo
         return model;
     }
 
-    private static void ModelCorrectRotation(GameObject model, Vector3 rotation)
+    private static void ModelNormalizeRotation(GameObject model, Vector3 rotation)
     {
-        Debug.Log("ModelInfo.ModelCorrectRotation(model, rotation:" + rotation + ")");
+        Debug.Log("ModelInfo.ModelNormalizeRotation(model, rotation:" + rotation + ")");
 
         Transform transform = model.transform;
 
@@ -163,79 +163,74 @@ public class ModelInfo
         if (VERBOSE_LOG)
         {
             Bounds bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER ROTATE transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER ROTATE transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER ROTATE bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.ModelNormalizeRotation: AFTER ROTATE transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.ModelNormalizeRotation: AFTER ROTATE transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.ModelNormalizeRotation: AFTER ROTATE bounds == " + Utils.ToString(bounds));
         }
     }
 
-    private static void ModelSetLengthMeters(GameObject model, float lengthMeters)
+    private static void ModelNormalizeScale(GameObject model, Vector3 axis, float lengthMeters)
     {
-        ModelSetLengthMeters(model, lengthMeters, Vector3.forward);
-    }
-
-    private static void ModelSetLengthMeters(GameObject model, float lengthMeters, Vector3 axis)
-    {
-        Debug.Log("ModelInfo.ModelSetLength(model, lengthMeters:" + lengthMeters + ")");
+        Debug.Log("ModelInfo.ModelNormalizeScale(model, axis:" + axis + ", lengthMeters:" + lengthMeters + ")");
 
         Transform transform = model.transform;
 
         Bounds bounds = Utils.CalculateBounds(transform);
 
         float boundsLength;
-        if (axis == Vector3.forward)
+        if (axis == Vector3.forward || axis == Vector3.back)
         {
             boundsLength = bounds.size.z;
         }
-        else if (axis == Vector3.right)
+        else if (axis == Vector3.right || axis == Vector3.left)
         {
             boundsLength = bounds.size.x;
         }
-        else if (axis == Vector3.up)
+        else if (axis == Vector3.up || axis == Vector3.down)
         {
             boundsLength = bounds.size.y;
         }
         else
         {
-            throw new ArgumentException("axis must be Vector3.forward, Vector3.right, or Vector3.up");
+            throw new ArgumentException("axis must be Vector3.forward, Vector3.back, Vector3.right, Vector3.left, Vector3.up, or Vector3.down");
         }
 
         float scale = lengthMeters / boundsLength;
         if (VERBOSE_LOG)
         {
-            Debug.LogError("ModelInfo.ModelSetLengthMeters: scale == " + scale);
+            Debug.LogError("ModelInfo.ModelNormalizeScale: scale == " + scale);
         }
 
         transform.localScale = new Vector3(scale, scale, scale);// * 1000;
         if (VERBOSE_LOG)
         {
             bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.ModelSetLengthMeters: AFTER SCALE bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.ModelNormalizeScale: AFTER SCALE bounds == " + Utils.ToString(bounds));
 
             float finalLengthMeters;
-            if (axis == Vector3.forward)
-            {
+			if (axis == Vector3.forward || axis == Vector3.back)
+			{
                 finalLengthMeters = bounds.size.z;
             }
-            else if (axis == Vector3.right)
-            {
+			else if (axis == Vector3.right || axis == Vector3.left)
+			{
                 finalLengthMeters = bounds.size.x;
             }
-            else if (axis == Vector3.up)
-            {
+			else if (axis == Vector3.up || axis == Vector3.down)
+			{
                 finalLengthMeters = bounds.size.y;
             }
             else
             {
-                throw new ArgumentException("axis must be Vector3.forward, Vector3.right, or Vector3.up");
-            }
-            Debug.LogError("ModelInfo.ModelSetLengthMeters: finalLengthMeters == " + finalLengthMeters);
+				throw new ArgumentException("axis must be Vector3.forward, Vector3.back, Vector3.right, Vector3.left, Vector3.up, or Vector3.down");
+			}
+            Debug.LogError("ModelInfo.ModelNormalizeScale: finalLengthMeters == " + finalLengthMeters);
         }
     }
 
-    private static void ModelCorrectPosition(GameObject model)
+    private static void ModelNormalizePosition(GameObject model)
     {
-        Debug.Log("ModelInfo.ModelCorrectPosition(model)");
+        Debug.Log("ModelInfo.ModelNormalizePosition(model)");
 
         Transform transform = model.transform;
 
@@ -243,9 +238,9 @@ public class ModelInfo
 
         if (VERBOSE_LOG)
         {
-            Debug.LogError("ModelInfo.ModelCorrectRotation: BEFORE POSITION transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.ModelCorrectRotation: BEFORE POSITION transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.ModelCorrectPosition: BEFORE POSITION bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.ModelNormalizePosition: BEFORE POSITION transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.ModelNormalizePosition: BEFORE POSITION transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.ModelNormalizePosition: BEFORE POSITION bounds == " + Utils.ToString(bounds));
         }
 
         if (bounds.center == Vector3.zero)
@@ -262,9 +257,9 @@ public class ModelInfo
         if (VERBOSE_LOG)
         {
             bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER POSITION transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER POSITION transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.ModelCorrectRotation: AFTER POSITION bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.ModelNormalizePosition: AFTER POSITION transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.ModelNormalizePosition: AFTER POSITION transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.ModelNormalizePosition: AFTER POSITION bounds == " + Utils.ToString(bounds));
         }
     }
 

@@ -25,7 +25,10 @@ public class ModelFactory
         {
             //Debug.LogError("ModelFactory.Get: Cached Load: Object.Instantiate(model)");
 			model = Object.Instantiate(model);
-        }
+
+			model.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+			model.transform.localScale = Vector3.one;
+		}
 
         return model;
     }
