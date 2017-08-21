@@ -50,19 +50,43 @@ public class FleetSceneManager : MonoBehaviour
             // The simplest way to load; usually intended for testing purposes only...
             //
 
-            AddNewModel("Idris-P");
-            AddNewModel("Reclaimer");
-            AddNewModel("Genesis");
-            AddNewModel("Prospector");
-            AddNewModel("Terrapin");
-            AddNewModel("M50");
-            AddNewModel("MPUV Cargo");
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Idris-P");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Reclaimer");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Genesis");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Prospector");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Terrapin");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("M50");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("MPUV Cargo");
+            }
+            for (int i = 0; i < 1; i++)
             {
                 AddNewModel("MPUV Personnel");
             }
-            AddNewModel("Dragonfly");
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Dragonfly");
+            }
+            for (int i = 0; i < 1; i++)
             {
                 AddNewModel("Nox");
             }
@@ -225,30 +249,30 @@ public class FleetSceneManager : MonoBehaviour
 
         Transform modelTransform = model.transform;
         Bounds modelBounds = Utils.CalculateBounds(modelTransform);
-        Debug.LogError("AddNewModel: BEFORE modelBounds == " + Utils.ToString(modelBounds));
+        //Debug.LogError("AddNewModel: BEFORE modelBounds == " + Utils.ToString(modelBounds));
+        Vector3 modelLocalPosition = modelTransform.localPosition;
+		//Debug.LogError("AddNewModel: BEFORE modelLocalPosition == " + modelLocalPosition);
 
-        GameObject fleetModels = FleetModels;
+		GameObject fleetModels = FleetModels;
         Transform fleetModelsTransform = fleetModels.transform;
         Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
-        Debug.LogError("AddNewModel: BEFORE fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
+        //Debug.LogError("AddNewModel: BEFORE fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
 
         modelTransform.SetParent(fleetModelsTransform);
 
-        Vector3 modelTranslate = new Vector3(fleetModelsBounds.size.x + modelBounds.extents.x,
-                                             0,
-                                             0);
+        modelLocalPosition.x = fleetModelsBounds.size.x + modelBounds.extents.x;
         if (fleetModelsBounds.size.x > 0)
         {
-            modelTranslate.x += 2;
+            modelLocalPosition.x += 2;
         }
-        Debug.LogError("AddNewModel: modelTranslate == " + modelTranslate);
+        //Debug.LogError("AddNewModel: AFTER modelLocalPosition == " + modelLocalPosition);
 
-        modelTransform.Translate(modelTranslate, Space.Self);
+        modelTransform.localPosition = modelLocalPosition;
 
         modelBounds = Utils.CalculateBounds(modelTransform);
-        Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
+        //Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
 
-        FleetPlanesScale();
+		FleetPlanesScale();
 
         if (repositionPlayerToViewFleet)
         {
@@ -269,7 +293,7 @@ public class FleetSceneManager : MonoBehaviour
 
     private void FleetPlanesScale()
     {
-        Debug.LogWarning("FleetPlanesScale()");
+        Debug.Log("FleetPlanesScale()");
 
         GameObject fleetPlanes = FleetPlanes;
         Transform fleetPlanesTransform = fleetPlanes.transform;
@@ -277,12 +301,12 @@ public class FleetSceneManager : MonoBehaviour
         GameObject fleetModels = FleetModels;
         Transform fleetModelsTransform = fleetModels.transform;
         Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
-        Debug.LogError("FleetPlanesScale: fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
+        //Debug.LogError("FleetPlanesScale: fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
 
         fleetPlanesTransform.localScale = fleetModelsBounds.size;
 
         Bounds fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
-        Debug.LogError("FleetPlanesScale: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
+        //Debug.LogError("FleetPlanesScale: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
     }
 
     private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
@@ -331,17 +355,17 @@ public class FleetSceneManager : MonoBehaviour
 
         GameObject fleetRoot = FleetRoot;
         Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot);
-        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
-        Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.min == " + fleetRootBounds.min + ", fleetRootBounds.max == " + fleetRootBounds.max);
+        //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
+        //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.min == " + fleetRootBounds.min + ", fleetRootBounds.max == " + fleetRootBounds.max);
 
         Vector3 position = new Vector3(fleetRootBounds.center.x,
                                        fleetRootBounds.size.y * 0.4f,
                                        fleetRootBounds.size.z * -1.5f);
 
         // TODO:(pv) Improve this zoom in/out...
-        Debug.LogError("RepositionPlayerToViewFleet: BEFORE Player.transform.position == " + Player.transform.position);
+        //Debug.LogError("RepositionPlayerToViewFleet: BEFORE Player.transform.position == " + Player.transform.position);
         Player.transform.position = position;
-        Debug.LogError("RepositionPlayerToViewFleet: AFTER Player.transform.position == " + Player.transform.position);
+        //Debug.LogError("RepositionPlayerToViewFleet: AFTER Player.transform.position == " + Player.transform.position);
         Player.transform.rotation = Quaternion.identity;
 
         position.y -= 1;

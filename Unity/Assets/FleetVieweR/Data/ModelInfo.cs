@@ -58,8 +58,11 @@ public class ModelInfo
 
             ModelDecorate(model);
 
-            Debug.LogError("ModelInfo.Model: gameObject.transform.position == " + model.transform.position);
-            Debug.LogError("ModelInfo.Model: gameObject.transform.rotation == " + model.transform.rotation);
+            if (VERBOSE_LOG)
+            {
+                Debug.LogError("ModelInfo.Model: gameObject.transform.position == " + model.transform.position);
+                Debug.LogError("ModelInfo.Model: gameObject.transform.rotation == " + model.transform.rotation);
+            }
 
             return model;
         }
@@ -267,7 +270,7 @@ public class ModelInfo
 
     private static void ModelDecorate(GameObject model)
     {
-        Debug.Log("ModelInfo.ModelDecorate(model)");
+        //Debug.Log("ModelInfo.ModelDecorate(model)");
 
         Transform transform = model.transform;
 
