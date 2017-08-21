@@ -50,291 +50,291 @@ public class FleetSceneManager : MonoBehaviour
             // The simplest way to load; usually intended for testing purposes only...
             //
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Hull E");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Idris-P");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Hull D");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Endeavor");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Orion");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Reclaimer");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Polaris");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Carrack");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("890 Jump");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Hull C");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Starfarer");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Genesis");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Crucible");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Retaliator Base");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Caterpillar");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Constellation Phoenix");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Constellation Andromeda");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Constellation Aquila");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Constellation Taurus");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Hull B");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Redeemer");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Vanguard Harbinger");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Vanguard Sentinel");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Esperia Prowler");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Freelancer");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Esperia Glaive");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Vanduul Scythe");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Cutlass Blue");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Cutlass Red");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Cutlass Black");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Defender");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Sabre");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("F7C-M Super Hornet");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Prospector");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("300i");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("315p");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("325a");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Herald");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("F7C Hornet");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("F7C-R Hornet Tracker");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("F7C-S Hornet Ghost");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Hurricane");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Gladiator");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Hull A");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Eclipse");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Gladius");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Buccaneer");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Terrapin");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Avenger Stalker");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Aurora ES");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Aurora LX");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Aurora MR");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Aurora CL");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Aurora LN");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Mustang Alpha");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Mustang Beta");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Mustang Delta");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Mustang Gamma");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Mustang Omega");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Reliant Mako");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Reliant Sen");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Reliant Tana");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Reliant Kore");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("P-72 Archimedes");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("P-52 Merlin");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Razor");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("M50");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Khartu-Al");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("MPUV Cargo");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("MPUV Personnel");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Dragonfly");
             }
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 0; i++)
             {
                 AddNewModel("Nox");
             }
