@@ -611,9 +611,15 @@ public class FleetSceneManager : MonoBehaviour
         //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
         //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.min == " + fleetRootBounds.min + ", fleetRootBounds.max == " + fleetRootBounds.max);
 
-        Vector3 position = new Vector3(fleetRootBounds.center.x,
-                                       fleetRootBounds.size.y * 0.4f,
-                                       fleetRootBounds.size.z * -1.5f);
+		float fieldOfView = Camera.main.fieldOfView;
+
+		float opposite = fleetRootBounds.extents.x;
+
+		float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView / 2.0f));
+
+		Vector3 position = new Vector3(fleetRootBounds.center.x,
+                                       fleetRootBounds.size.y * 0.5f,
+                                       -adjacent);
 
         // TODO:(pv) Improve this zoom in/out...
         //Debug.LogError("RepositionPlayerToViewFleet: BEFORE Player.transform.position == " + Player.transform.position);
