@@ -609,22 +609,21 @@ public class FleetSceneManager : MonoBehaviour
         GameObject fleetRoot = FleetRoot;
         Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot);
         //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
-        //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds.min == " + fleetRootBounds.min + ", fleetRootBounds.max == " + fleetRootBounds.max);
 
-		float fieldOfView = Camera.main.fieldOfView;
+        float fieldOfView = Camera.main.fieldOfView;
+        //Debug.LogError("RepositionPlayerToViewFleet: fieldOfView == " + fieldOfView);
 
-		float opposite = fleetRootBounds.extents.x;
+        float opposite = fleetRootBounds.extents.x;
+        //Debug.LogError("RepositionPlayerToViewFleet: opposite == " + opposite);
 
-		float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView / 2.0f));
+        float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView / 2.0f));
+        //Debug.LogError("RepositionPlayerToViewFleet: adjacent == " + adjacent);
 
-		Vector3 position = new Vector3(fleetRootBounds.center.x,
+        Vector3 position = new Vector3(fleetRootBounds.center.x,
                                        fleetRootBounds.size.y * 0.5f,
-                                       -adjacent);
+                                       -fleetRootBounds.size.z - adjacent);
 
-        // TODO:(pv) Improve this zoom in/out...
-        //Debug.LogError("RepositionPlayerToViewFleet: BEFORE Player.transform.position == " + Player.transform.position);
         Player.transform.position = position;
-        //Debug.LogError("RepositionPlayerToViewFleet: AFTER Player.transform.position == " + Player.transform.position);
         Player.transform.rotation = Quaternion.identity;
 
         position.y -= 1;
