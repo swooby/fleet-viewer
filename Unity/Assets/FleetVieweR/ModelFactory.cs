@@ -10,7 +10,7 @@ public class ModelFactory
 
     private static Dictionary<string, GameObject> models = new Dictionary<string, GameObject>();
 
-    public static GameObject Get(string modelPath)
+    public static GameObject Load(string modelPath)
     {
         GameObject model;
 
@@ -24,11 +24,11 @@ public class ModelFactory
         else
         {
             //Debug.LogError("ModelFactory.Get: Cached Load: Object.Instantiate(model)");
-			model = Object.Instantiate(model);
+            model = Object.Instantiate(model);
 
-			model.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-			model.transform.localScale = Vector3.one;
-		}
+            model.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            model.transform.localScale = Vector3.one;
+        }
 
         return model;
     }
