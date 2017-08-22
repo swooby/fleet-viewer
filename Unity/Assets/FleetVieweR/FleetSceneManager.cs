@@ -356,14 +356,6 @@ public class FleetSceneManager : MonoBehaviour
         RepositionPlayerToViewFleet();
     }
 
-    void OnPreRender()
-    {
-        if (GL_WIREFRAME)
-        {
-            GL.wireframe = true;
-        }
-    }
-
     void Update()
     {
         // Exit when (X) is tapped.
@@ -373,10 +365,13 @@ public class FleetSceneManager : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        DebugDecorate();
-    }
+	void OnPreRender()
+	{
+		if (GL_WIREFRAME)
+		{
+			GL.wireframe = true;
+		}
+	}
 
     void OnPostRender()
     {
@@ -386,7 +381,12 @@ public class FleetSceneManager : MonoBehaviour
         }
     }
 
-    private string systemName;
+	private void OnDrawGizmos()
+	{
+		DebugDecorate();
+	}
+
+	private string systemName;
 
     private string SystemName
     {

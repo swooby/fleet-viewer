@@ -10,14 +10,14 @@ public class ModelFactory
 
     private static Dictionary<string, GameObject> models = new Dictionary<string, GameObject>();
 
-    public static GameObject Get(string name, string modelPath)
+    public static GameObject Get(string modelPath)
     {
         GameObject model;
 
         if (!models.TryGetValue(modelPath, out model))
         {
             //Debug.LogError("ModelFactory.Get: Non-Cached Load: CTMReader.Read(...)");
-            model = CTMReader.Read(name, modelPath);
+            model = CTMReader.Read(modelPath);
 
             models[modelPath] = model;
         }

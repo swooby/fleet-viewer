@@ -63,7 +63,7 @@ public class CTMReader
 
     // TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
     //  https://www.google.com/search?q=unity+async+load
-    public static GameObject Read(string name, string resourcePath)
+    public static GameObject Read(string resourcePath)
     {
         Debug.Log("CTMReader.Read(resourcePath:" + Utils.Quote(resourcePath) + ")");
         if (VERBOSE_LOG)
@@ -71,28 +71,42 @@ public class CTMReader
             Debug.LogWarning("CTMReader.Read: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
         }
 
-        GameObject root = new GameObject();
-        root.name = name;
+        MeshInfo[] meshInfos = GetMeshInfos(resourcePath);
+        if (meshInfos == null)
+        {
+            return null;
+        }
 
+        GameObject gameObject = GetGameObject(meshInfos);
+        if (gameObject == null)
+        {
+            return null;
+        }
+
+        return gameObject;
+    }
+
+    private static MeshInfo[] GetMeshInfos(string resourcePath)
+    {
         TextAsset textAsset = Resources.Load(resourcePath) as TextAsset;
         Stream memoryStream = new MemoryStream(textAsset.bytes);
 
-        //Debug.Log("CTMReader.Read: new CtmFileReader(memoryStream)");
+        //Debug.Log("CTMReader.GetMeshInfos: new CtmFileReader(memoryStream)");
         CtmFileReader reader = new CtmFileReader(memoryStream);
-        //Debug.Log("CTMReader.Read: reader.decode()");
+        //Debug.Log("CTMReader.GetMeshInfos: reader.decode()");
         OpenCTM.Mesh ctmMesh = reader.decode();
-        //Debug.Log("CTMReader.Read: ctmMesh.checkIntegrity()");
+        //Debug.Log("CTMReader.GetMeshInfos: ctmMesh.checkIntegrity()");
         ctmMesh.checkIntegrity();
 
         if (VERBOSE_LOG)
         {
-            Debug.LogWarning("CTMReader.Read: BEGIN Converting OpenCTM.Mesh to UnityEngine.Mesh...");
+            Debug.LogWarning("CTMReader.GetMeshInfos: BEGIN Converting OpenCTM.Mesh to UnityEngine.Mesh...");
         }
 
         int verticesLength = ctmMesh.vertices.Length;
-        //Debug.LogError("CTMReader.Read: ctmMesh.vertices.Length == " + verticesLength);
+        //Debug.LogError("CTMReader.GetMeshInfos: ctmMesh.vertices.Length == " + verticesLength);
         //int numVectors = verticesLength / 3;
-        //Debug.LogError("CTMReader.Read: numVectors == " + numVectors);
+        //Debug.LogError("CTMReader.GetMeshInfos: numVectors == " + numVectors);
         List<Vector3> vertices = new List<Vector3>();
         for (int j = 0; j < verticesLength; j += 3)
         {
@@ -100,10 +114,10 @@ public class CTMReader
                                      ctmMesh.vertices[j + 1],
                                      ctmMesh.vertices[j + 2]));
         }
-        //Debug.LogError("CTMReader.Read: vertices.Count == " + vertices.Count);
+        //Debug.LogError("CTMReader.GetMeshInfos: vertices.Count == " + vertices.Count);
 
         bool hasNormals = ctmMesh.normals != null;
-        //Debug.LogError("CTMReader.Read: hasNormals == " + hasNormals);
+        //Debug.LogError("CTMReader.GetMeshInfos: hasNormals == " + hasNormals);
         List<Vector3> normals = new List<Vector3>();
         if (hasNormals)
         {
@@ -114,20 +128,20 @@ public class CTMReader
                                         ctmMesh.normals[j + 2]));
             }
         }
-        //Debug.LogError("CTMReader.Read: normals.Count == " + normals.Count);
+        //Debug.LogError("CTMReader.GetMeshInfos: normals.Count == " + normals.Count);
 
         int indicesLength = ctmMesh.indices.Length;
-        //Debug.LogError("CTMReader.Read: ctmMesh.indices.Length == " + indicesLength);
+        //Debug.LogError("CTMReader.GetMeshInfos: ctmMesh.indices.Length == " + indicesLength);
         int numTriangles = indicesLength / 3;
         if (VERBOSE_LOG)
         {
-            Debug.LogWarning("CTMReader.Read: numTriangles == " + numTriangles);
+            Debug.LogWarning("CTMReader.GetMeshInfos: numTriangles == " + numTriangles);
         }
 
         //List<Vector2> uv = new List<Vector2>();
         /*
         // TODO:(pv) Texture...
-        //Debug.LogError("CTMReader.Read: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
+        //Debug.LogError("CTMReader.GetMeshInfos: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
         if (ctmMesh.texcoordinates.Length > 0)
         {
             for (int j = 0; j < ctmMesh.texcoordinates[0].values.Length / 2; j++)
@@ -137,12 +151,12 @@ public class CTMReader
             }
         }
         */
-        //Debug.LogError("CTMReader.Read: uv.Count == " + uv.Count);
+        //Debug.LogError("CTMReader.GetMeshInfos: uv.Count == " + uv.Count);
 
         int meshCount = (int)Math.Ceiling((double)(numTriangles / (double)MAX_TRIANGLES_PER_MESH));
         if (VERBOSE_LOG)
         {
-            Debug.LogWarning("CTMReader.Read: meshCount == " + meshCount);
+            Debug.LogWarning("CTMReader.GetMeshInfos: meshCount == " + meshCount);
         }
         MeshInfo[] meshInfos = new MeshInfo[meshCount];
 
@@ -164,13 +178,13 @@ public class CTMReader
         {
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: triangleIndex == " + triangleIndex);
+                Debug.LogError("CTMReader.GetMeshInfos: triangleIndex == " + triangleIndex);
             }
 
             meshIndex = triangleIndex / MAX_TRIANGLES_PER_MESH;
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: meshIndex == " + meshIndex);
+                Debug.LogError("CTMReader.GetMeshInfos: meshIndex == " + meshIndex);
             }
 
             meshInfo = meshInfos[meshIndex];
@@ -178,7 +192,7 @@ public class CTMReader
             {
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError("CTMReader.Read: meshInfos[" + meshIndex + "] = new MeshInfo();");
+                    Debug.LogError("CTMReader.GetMeshInfos: meshInfos[" + meshIndex + "] = new MeshInfo();");
                 }
                 meshInfo = new MeshInfo();
                 meshInfos[meshIndex] = meshInfo;
@@ -186,25 +200,25 @@ public class CTMReader
 
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: meshInfo == " + meshInfo);
+                Debug.LogError("CTMReader.GetMeshInfos: meshInfo == " + meshInfo);
             }
 
             indicesIndex = triangleIndex * 3;
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: indicesIndex == " + indicesIndex);
+                Debug.LogError("CTMReader.GetMeshInfos: indicesIndex == " + indicesIndex);
             }
 
             triangleVertex1 = ctmMesh.indices[indicesIndex];
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: triangleVertex1 == " + triangleVertex1);
+                Debug.LogError("CTMReader.GetMeshInfos: triangleVertex1 == " + triangleVertex1);
             }
             meshInfo.triangles.Add(meshInfo.vertices.Count);
             vertex1 = vertices[triangleVertex1];
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: vertex1 == " + vertex1);
+                Debug.LogError("CTMReader.GetMeshInfos: vertex1 == " + vertex1);
             }
             meshInfo.vertices.Add(vertex1);
             if (hasNormals)
@@ -212,7 +226,7 @@ public class CTMReader
                 normal1 = normals[triangleVertex1];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError("CTMReader.Read: normal1 == " + normal1);
+                    Debug.LogError("CTMReader.GetMeshInfos: normal1 == " + normal1);
                 }
                 meshInfo.normals.Add(normal1);
             }
@@ -220,13 +234,13 @@ public class CTMReader
             triangleVertex2 = ctmMesh.indices[indicesIndex + 1];
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: triangleVertex2 == " + triangleVertex2);
+                Debug.LogError("CTMReader.GetMeshInfos: triangleVertex2 == " + triangleVertex2);
             }
             meshInfo.triangles.Add(meshInfo.vertices.Count);
             vertex2 = vertices[triangleVertex2];
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: vertex2 == " + vertex2);
+                Debug.LogError("CTMReader.GetMeshInfos: vertex2 == " + vertex2);
             }
             meshInfo.vertices.Add(vertex2);
             if (hasNormals)
@@ -234,7 +248,7 @@ public class CTMReader
                 normal2 = normals[triangleVertex2];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError("CTMReader.Read: normal2 == " + normal2);
+                    Debug.LogError("CTMReader.GetMeshInfos: normal2 == " + normal2);
                 }
                 meshInfo.normals.Add(normal2);
             }
@@ -242,13 +256,13 @@ public class CTMReader
             triangleVertex3 = ctmMesh.indices[indicesIndex + 2];
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: triangleVertex3 == " + triangleVertex3);
+                Debug.LogError("CTMReader.GetMeshInfos: triangleVertex3 == " + triangleVertex3);
             }
             meshInfo.triangles.Add(meshInfo.vertices.Count);
             vertex3 = vertices[triangleVertex3];
             if (triangleIndex >= debugTriangleIndex)
             {
-                Debug.LogError("CTMReader.Read: vertex3 == " + vertex3);
+                Debug.LogError("CTMReader.GetMeshInfos: vertex3 == " + vertex3);
             }
             meshInfo.vertices.Add(vertex3);
             if (hasNormals)
@@ -256,7 +270,7 @@ public class CTMReader
                 normal3 = normals[triangleVertex3];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError("CTMReader.Read: normal3 == " + normal3);
+                    Debug.LogError("CTMReader.GetMeshInfos: normal3 == " + normal3);
                 }
                 meshInfo.normals.Add(normal3);
             }
@@ -278,38 +292,50 @@ public class CTMReader
                 triangleVertexMax = triangleVertexNew;
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError("CTMReader.Read: triangleVertexMax == " + triangleVertexMax);
+                    Debug.LogError("CTMReader.GetMeshInfos: triangleVertexMax == " + triangleVertexMax);
                 }
             }
         }
 
-            // TODO:(pv) Set root [and children?] to be Occlusion Culling
-            //  https://docs.unity3d.com/Manual/OcclusionCulling.html
+        return meshInfos;
+    }
+
+    private static GameObject GetGameObject(MeshInfo[] meshInfos)
+    {
+        if (meshInfos == null)
+        {
+            return null;
+        }
+
+        GameObject root = new GameObject();
 
         if (VERBOSE_LOG)
         {
-            Debug.LogWarning("CTMReader.Read: Creating Unity Mesh(es)");
+            Debug.LogWarning("CTMReader.GetGameObject: Creating Unity Mesh(es)");
         }
-        GameObject child;
+
+        int meshCount = meshInfos.Length;
+        MeshInfo meshInfo;
         UnityEngine.Mesh unityMesh;
+        GameObject child;
 
         int debugMeshIndex = int.MaxValue;
 
-        for (meshIndex = 0; meshIndex < meshCount; meshIndex++)
+        for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
         {
             if (meshIndex >= debugMeshIndex)
             {
-                Debug.LogError("CTMReader.Read: meshIndex == " + meshIndex);
+                Debug.LogError("CTMReader.GetGameObject: meshIndex == " + meshIndex);
             }
 
             meshInfo = meshInfos[meshIndex];
             if (meshIndex >= debugMeshIndex)
             {
-                Debug.LogError("CTMReader.Read: meshInfo == " + meshInfo);
-                Debug.LogError("CTMReader.Read: meshInfo.vertices.Count == " + meshInfo.vertices.Count);
-                Debug.LogError("CTMReader.Read: meshInfo.normals.Count == " + meshInfo.normals.Count);
-                Debug.LogError("CTMReader.Read: meshInfo.triangles.Count == " + meshInfo.triangles.Count);
-                Debug.LogError("CTMReader.Read: meshInfo.uv.Count == " + meshInfo.uv.Count);
+                Debug.LogError("CTMReader.GetGameObject: meshInfo == " + meshInfo);
+                Debug.LogError("CTMReader.GetGameObject: meshInfo.vertices.Count == " + meshInfo.vertices.Count);
+                Debug.LogError("CTMReader.GetGameObject: meshInfo.normals.Count == " + meshInfo.normals.Count);
+                Debug.LogError("CTMReader.GetGameObject: meshInfo.triangles.Count == " + meshInfo.triangles.Count);
+                Debug.LogError("CTMReader.GetGameObject: meshInfo.uv.Count == " + meshInfo.uv.Count);
             }
 
             unityMesh = meshInfo.Mesh;
@@ -342,7 +368,7 @@ public class CTMReader
 
         if (VERBOSE_LOG)
         {
-            Debug.LogWarning("CTMReader.Read: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
+            Debug.LogWarning("CTMReader.GetGameObject: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
         }
 
         return root;
