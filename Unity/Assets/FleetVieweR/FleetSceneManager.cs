@@ -50,245 +50,53 @@ public class FleetSceneManager : MonoBehaviour
             // The simplest way to load; usually intended for testing purposes only...
             //
 
-            for (int i = 0; i < 0; i++)
+            // Order shortest to longest...
+            // ...to give the appearance of loading fast right from the start...
+            // ...as opposed to slowing down when loading the smaller ships.
+
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Hull E");
+                AddNewModel("Nox");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Idris-P");
+                AddNewModel("Dragonfly");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Hull D");
+                AddNewModel("MPUV Personnel");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Endeavor");
+                AddNewModel("MPUV Cargo");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Orion");
+                AddNewModel("Khartu-Al");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Reclaimer");
+                AddNewModel("M50");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Polaris");
+                AddNewModel("Razor");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Carrack");
+                AddNewModel("P-52 Merlin");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("890 Jump");
+                AddNewModel("P-72 Archimedes");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Hull C");
+                AddNewModel("Reliant Kore");
             }
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 1; i++)
             {
-                AddNewModel("Starfarer");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Genesis");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Crucible");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Retaliator Base");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Caterpillar");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Constellation Phoenix");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Constellation Andromeda");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Constellation Aquila");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Constellation Taurus");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Hull B");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Redeemer");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Vanguard Harbinger");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Vanguard Sentinel");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Esperia Prowler");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Freelancer");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Esperia Glaive");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Vanduul Scythe");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Cutlass Blue");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Cutlass Red");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Cutlass Black");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Defender");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Sabre");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("F7C-M Super Hornet");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Prospector");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("300i");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("315p");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("325a");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Herald");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("F7C Hornet");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("F7C-R Hornet Tracker");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("F7C-S Hornet Ghost");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Hurricane");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Gladiator");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Hull A");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Eclipse");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Gladius");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Buccaneer");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Terrapin");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Avenger Stalker");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Aurora ES");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Aurora LX");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Aurora MR");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Aurora CL");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Aurora LN");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Mustang Alpha");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Mustang Beta");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Mustang Delta");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Mustang Gamma");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Mustang Omega");
-            }
-            for (int i = 0; i < 0; i++)
-            {
-                AddNewModel("Reliant Mako");
+                AddNewModel("Reliant Tana");
             }
             for (int i = 0; i < 0; i++)
             {
@@ -296,48 +104,246 @@ public class FleetSceneManager : MonoBehaviour
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("Reliant Tana");
+                AddNewModel("Reliant Mako");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Mustang Omega");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("Reliant Kore");
+                AddNewModel("Mustang Gamma");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("P-72 Archimedes");
+                AddNewModel("Mustang Delta");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("P-52 Merlin");
+                AddNewModel("Mustang Beta");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("Razor");
+                AddNewModel("Mustang Alpha");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Aurora LN");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("M50");
+                AddNewModel("Aurora CL");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("Khartu-Al");
+                AddNewModel("Aurora MR");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("MPUV Cargo");
+                AddNewModel("Aurora LX");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("MPUV Personnel");
+                AddNewModel("Aurora ES");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Avenger Stalker");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Terrapin");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Buccaneer");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Gladius");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Eclipse");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Hull A");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Gladiator");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Hurricane");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("Dragonfly");
+                AddNewModel("F7C-S Hornet Ghost");
             }
             for (int i = 0; i < 0; i++)
             {
-                AddNewModel("Nox");
+                AddNewModel("F7C-R Hornet Tracker");
             }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("F7C Hornet");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Herald");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("325a");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("315p");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("300i");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Prospector");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("F7C-M Super Hornet");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Sabre");
+            }
+            for (int i = 0; i < 1; i++) // Pixel takes 2m:10s to load to here
+            {
+                AddNewModel("Defender");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Cutlass Black");
+            }
+            for (int i = 0; i < 0; i++)
+            {
+                AddNewModel("Cutlass Red");
+            }
+            for (int i = 0; i < 0; i++)
+            {
+                AddNewModel("Cutlass Blue");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Vanduul Scythe");
+            }
+            /*
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Esperia Glaive");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Freelancer");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Esperia Prowler");
+            }
+            for (int i = 0; i < 0; i++)
+            {
+                AddNewModel("Vanguard Sentinel");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Vanguard Harbinger");
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                AddNewModel("Redeemer");
+            }
+            for (int i = 0; i < 1; i++) // Pixel takes m:s to load to here
+            {
+                AddNewModel("Hull B");
+            }
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Constellation Taurus");
+			}
+			for (int i = 0; i < 1; i++)
+			{
+				AddNewModel("Constellation Aquila");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Constellation Andromeda");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Constellation Phoenix");
+			}
+			for (int i = 0; i < 1; i++)
+			{
+				AddNewModel("Caterpillar");
+			}
+			for (int i = 0; i < 1; i++)
+			{
+				AddNewModel("Retaliator Base");
+			}
+			for (int i = 0; i < 1; i++) // Pixel takes m:s to load to here
+			{
+				AddNewModel("Crucible");
+			}
+			for (int i = 0; i < 1; i++)
+			{
+				AddNewModel("Genesis");
+			}
+			for (int i = 0; i < 1; i++)
+			{
+				AddNewModel("Starfarer");
+			}
+			for (int i = 0; i < 1; i++)
+			{
+				AddNewModel("Hull C");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("890 Jump");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Carrack");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Polaris");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Reclaimer");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Orion");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Endeavor");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Hull D");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Idris-P");
+			}
+			for (int i = 0; i < 0; i++)
+			{
+				AddNewModel("Hull E");
+			}
+			*/
         }
         else
         {
@@ -513,10 +519,10 @@ public class FleetSceneManager : MonoBehaviour
 
         modelTransform.SetParent(fleetModelsTransform);
 
-        modelLocalPosition.x = fleetModelsBounds.size.x + modelBounds.extents.x;
+        modelLocalPosition.x = -(fleetModelsBounds.size.x + modelBounds.extents.x);
         if (fleetModelsBounds.size.x > 0)
         {
-            modelLocalPosition.x += 2;
+            modelLocalPosition.x -= 2;
         }
         //Debug.LogError("AddNewModel: AFTER modelLocalPosition == " + modelLocalPosition);
 
@@ -525,7 +531,7 @@ public class FleetSceneManager : MonoBehaviour
         modelBounds = Utils.CalculateBounds(modelTransform);
         //Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
 
-        FleetPlanesScale();
+        FleetPlanesPositionAndScale();
 
         if (repositionPlayerToViewFleet)
         {
@@ -544,9 +550,9 @@ public class FleetSceneManager : MonoBehaviour
         return model;
     }
 
-    private void FleetPlanesScale()
+    private void FleetPlanesPositionAndScale()
     {
-        Debug.Log("FleetPlanesScale()");
+        Debug.Log("FleetPlanesPositionAndScale()");
 
         GameObject fleetPlanes = FleetPlanes;
         Transform fleetPlanesTransform = fleetPlanes.transform;
@@ -554,15 +560,46 @@ public class FleetSceneManager : MonoBehaviour
         GameObject fleetModels = FleetModels;
         Transform fleetModelsTransform = fleetModels.transform;
         Bounds fleetModelsBounds = Utils.CalculateBounds(fleetModelsTransform);
-        //Debug.LogError("FleetPlanesScale: fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
+		//Debug.LogError("FleetPlanesPositionAndScale: fleetModelsBounds == " + Utils.ToString(fleetModelsBounds));
 
-        fleetPlanesTransform.localScale = fleetModelsBounds.size;
+		fleetPlanesTransform.localScale = fleetModelsBounds.size;
+        fleetPlanesTransform.localPosition = new Vector3(-fleetModelsBounds.size.x, 0, 0);
 
         Bounds fleetPlanesBounds = Utils.CalculateBounds(fleetPlanesTransform);
-        //Debug.LogError("FleetPlanesScale: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
-    }
+		//Debug.LogError("FleetPlanesPositionAndScale: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
+	}
 
-    private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
+	private void RepositionPlayerToViewFleet()
+	{
+		Debug.Log("RepositionPlayerToViewFleet()");
+
+		GameObject fleetRoot = FleetRoot;
+		Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot);
+		//Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
+
+		float fieldOfView = Camera.main.fieldOfView;
+		//Debug.LogError("RepositionPlayerToViewFleet: fieldOfView == " + fieldOfView);
+
+		float opposite = fleetRootBounds.extents.x;
+		//Debug.LogError("RepositionPlayerToViewFleet: opposite == " + opposite);
+
+		float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView * 0.5f * 1.25f));
+		//Debug.LogError("RepositionPlayerToViewFleet: adjacent == " + adjacent);
+
+		Vector3 position = new Vector3(fleetRootBounds.center.x,
+									   fleetRootBounds.size.y * 0.5f,
+									   -fleetRootBounds.size.z - adjacent);
+
+		Player.transform.position = position;
+		Player.transform.rotation = Quaternion.identity;
+
+		position.y -= 1;
+
+		Respawn.transform.position = position;
+		Respawn.transform.rotation = Quaternion.identity;
+	}
+
+	private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
 
     private void DebugDecorate()
     {
@@ -600,35 +637,5 @@ public class FleetSceneManager : MonoBehaviour
         Gizmos.DrawWireSphere(bounds.min, 0.5f);
 
         Gizmos.color = savedColor;
-    }
-
-    private void RepositionPlayerToViewFleet()
-    {
-        Debug.Log("RepositionPlayerToViewFleet()");
-
-        GameObject fleetRoot = FleetRoot;
-        Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot);
-        //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
-
-        float fieldOfView = Camera.main.fieldOfView;
-        //Debug.LogError("RepositionPlayerToViewFleet: fieldOfView == " + fieldOfView);
-
-        float opposite = fleetRootBounds.extents.x;
-        //Debug.LogError("RepositionPlayerToViewFleet: opposite == " + opposite);
-
-        float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView / 2.0f));
-        //Debug.LogError("RepositionPlayerToViewFleet: adjacent == " + adjacent);
-
-        Vector3 position = new Vector3(fleetRootBounds.center.x,
-                                       fleetRootBounds.size.y * 0.5f,
-                                       -fleetRootBounds.size.z - adjacent);
-
-        Player.transform.position = position;
-        Player.transform.rotation = Quaternion.identity;
-
-        position.y -= 1;
-
-        Respawn.transform.position = position;
-        Respawn.transform.rotation = Quaternion.identity;
     }
 }
