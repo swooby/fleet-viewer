@@ -100,7 +100,7 @@ public class ModelInfo
 
             if (cachedModel == null)
             {
-                model = ModelLoad(Name, ModelPathLocal);
+                model = Load(Name, ModelPathLocal);
 
                 cachedModel = model;
             }
@@ -112,30 +112,15 @@ public class ModelInfo
                 model.transform.localScale = Vector3.one;
             }
 
-            // 1) Rotate so the length is along Z and bow faces -Z
-            ModelNormalizeRotation(model, ModelRotation);
-
-            // 2) Uniformly scale X/Y/Z so that bounds.size.z is the expected length
-            ModelNormalizeScale(model, Vector3.forward, LengthMeters);
-
-            // 3) Use the scaled length to position the stern at Z == 0
-            ModelNormalizePosition(model);
-
-            ModelDecorate(model);
-
-            if (VERBOSE_LOG)
-            {
-                Debug.LogError("ModelInfo.Model: gameObject.transform.position == " + model.transform.position);
-                Debug.LogError("ModelInfo.Model: gameObject.transform.rotation == " + model.transform.rotation);
-            }
+            Normalize(model);
 
             return model;
         }
     }
 
-    private static GameObject ModelLoad(string modelName, string modelPath)
+    private static GameObject Load(string modelName, string modelPath)
     {
-        Debug.Log("ModelInfo.ModelLoad(modelName:" + Utils.Quote(modelName) +
+        Debug.Log("ModelInfo.Load(modelName:" + Utils.Quote(modelName) +
                   ", modelPath:" + Utils.Quote(modelPath) + ")");
 
         GameObject model = ModelFactory.Get(modelPath);
@@ -150,17 +135,37 @@ public class ModelInfo
         {
             Transform transform = model.transform;
             Bounds bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.Load: AFTER LOAD transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.Load: AFTER LOAD transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.Load: AFTER LOAD bounds == " + Utils.ToString(bounds));
         }
 
         return model;
     }
 
-    private static void ModelNormalizeRotation(GameObject model, Vector3 rotation)
+    private void Normalize(GameObject model)
     {
-        Debug.Log("ModelInfo.ModelNormalizeRotation(model, rotation:" + rotation + ")");
+		// 1) Rotate so the length is along Z and bow faces -Z
+		NormalizeRotation(model, ModelRotation);
+
+		// 2) Uniformly scale X/Y/Z so that bounds.size.z is the expected length
+		NormalizeScale(model, Vector3.forward, LengthMeters);
+
+		// 3) Use the scaled length to position the stern at Z == 0
+		NormalizePosition(model);
+
+		Decorate(model);
+
+		if (VERBOSE_LOG)
+		{
+			Debug.LogError("ModelInfo.Normalize: gameObject.transform.position == " + model.transform.position);
+			Debug.LogError("ModelInfo.Normalize: gameObject.transform.rotation == " + model.transform.rotation);
+		}
+	}
+
+    private static void NormalizeRotation(GameObject model, Vector3 rotation)
+    {
+        Debug.Log("ModelInfo.NormalizeRotation(model, rotation:" + rotation + ")");
 
         Transform transform = model.transform;
 
@@ -169,15 +174,15 @@ public class ModelInfo
         if (VERBOSE_LOG)
         {
             Bounds bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.ModelNormalizeRotation: AFTER ROTATE transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.ModelNormalizeRotation: AFTER ROTATE transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.ModelNormalizeRotation: AFTER ROTATE bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.NormalizeRotation: AFTER ROTATE transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.NormalizeRotation: AFTER ROTATE transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.NormalizeRotation: AFTER ROTATE bounds == " + Utils.ToString(bounds));
         }
     }
 
-    private static void ModelNormalizeScale(GameObject model, Vector3 axis, float lengthMeters)
+    private static void NormalizeScale(GameObject model, Vector3 axis, float lengthMeters)
     {
-        Debug.Log("ModelInfo.ModelNormalizeScale(model, axis:" + axis + ", lengthMeters:" + lengthMeters + ")");
+        Debug.Log("ModelInfo.NormalizeScale(model, axis:" + axis + ", lengthMeters:" + lengthMeters + ")");
 
         Transform transform = model.transform;
 
@@ -204,14 +209,14 @@ public class ModelInfo
         float scale = lengthMeters / boundsLength;
         if (VERBOSE_LOG)
         {
-            Debug.LogError("ModelInfo.ModelNormalizeScale: scale == " + scale);
+            Debug.LogError("ModelInfo.NormalizeScale: scale == " + scale);
         }
 
         transform.localScale = new Vector3(scale, scale, scale);// * 1000;
         if (VERBOSE_LOG)
         {
             bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.ModelNormalizeScale: AFTER SCALE bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.NormalizeScale: AFTER SCALE bounds == " + Utils.ToString(bounds));
 
             float finalLengthMeters;
             if (axis == Vector3.forward || axis == Vector3.back)
@@ -230,13 +235,13 @@ public class ModelInfo
             {
                 throw new ArgumentException("axis must be Vector3.forward, Vector3.back, Vector3.right, Vector3.left, Vector3.up, or Vector3.down");
             }
-            Debug.LogError("ModelInfo.ModelNormalizeScale: finalLengthMeters == " + finalLengthMeters);
+            Debug.LogError("ModelInfo.NormalizeScale: finalLengthMeters == " + finalLengthMeters);
         }
     }
 
-    private static void ModelNormalizePosition(GameObject model)
+    private static void NormalizePosition(GameObject model)
     {
-        Debug.Log("ModelInfo.ModelNormalizePosition(model)");
+        Debug.Log("ModelInfo.NormalizePosition(model)");
 
         Transform transform = model.transform;
 
@@ -244,9 +249,9 @@ public class ModelInfo
 
         if (VERBOSE_LOG)
         {
-            Debug.LogError("ModelInfo.ModelNormalizePosition: BEFORE POSITION transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.ModelNormalizePosition: BEFORE POSITION transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.ModelNormalizePosition: BEFORE POSITION bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.NormalizePosition: BEFORE POSITION transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.NormalizePosition: BEFORE POSITION transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.NormalizePosition: BEFORE POSITION bounds == " + Utils.ToString(bounds));
         }
 
         if (bounds.center == Vector3.zero)
@@ -263,15 +268,15 @@ public class ModelInfo
         if (VERBOSE_LOG)
         {
             bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.ModelNormalizePosition: AFTER POSITION transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.ModelNormalizePosition: AFTER POSITION transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.ModelNormalizePosition: AFTER POSITION bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.NormalizePosition: AFTER POSITION transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.NormalizePosition: AFTER POSITION transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.NormalizePosition: AFTER POSITION bounds == " + Utils.ToString(bounds));
         }
     }
 
-    private static void ModelDecorate(GameObject model)
+    private static void Decorate(GameObject model)
     {
-        //Debug.Log("ModelInfo.ModelDecorate(model)");
+        //Debug.Log("ModelInfo.Decorate(model)");
 
         Transform transform = model.transform;
 
