@@ -26,142 +26,206 @@ public class ModelInfo
     public string ModelPathLocal { get; private set; }
     public Vector3 ModelRotation { get; private set; }
 
-	public ModelInfo(Dictionary<string, string> dictionary)
-	{
-		Name = dictionary[FIELD_NAME];
-
-		try
-		{
-			LastChecked = DateTime.Parse(dictionary[FIELD_LAST_CHECKED]);
-		}
-		catch (FormatException)
-		{
-			LastChecked = DateTime.MinValue;
-		}
-
-		try
-		{
-			LengthMeters = float.Parse(dictionary[FIELD_LENGTH]);
-		}
-		catch (FormatException)
-		{
-			LengthMeters = float.NaN;
-		}
-
-		try
-		{
-			BeamMeters = float.Parse(dictionary[FIELD_BEAM]);
-		}
-		catch (FormatException)
-		{
-			BeamMeters = float.NaN;
-		}
-
-		try
-		{
-			HeightMeters = float.Parse(dictionary[FIELD_HEIGHT]);
-		}
-		catch (FormatException)
-		{
-			HeightMeters = float.NaN;
-		}
-
-		try
-		{
-			StoreUrl = new Uri(dictionary[FIELD_STORE_URL]);
-		}
-		catch (FormatException)
-		{
-			StoreUrl = null;
-		}
-
-		try
-		{
-			ModelPathRemote = new Uri(dictionary[FIELD_MODEL_PATH_REMOTE]);
-		}
-		catch (FormatException)
-		{
-			ModelPathRemote = null;
-		}
-
-		ModelPathLocal = dictionary[FIELD_MODEL_PATH_LOCAL];
-
-		String modelRotation;
-		dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
-		ModelRotation = Utils.StringToVector3(modelRotation);
-	}
-
-	private GameObject cachedModel;
-    public GameObject Model
+    public ModelInfo(Dictionary<string, string> dictionary)
     {
-        get
+        Name = dictionary[FIELD_NAME];
+
+        try
         {
-            GameObject model;
-
-            if (cachedModel == null)
-            {
-                model = Load(Name, ModelPathLocal);
-
-                cachedModel = model;
-            }
-            else
-            {
-                model = UnityEngine.Object.Instantiate(cachedModel);
-
-                model.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-                model.transform.localScale = Vector3.one;
-            }
-
-            Normalize(model);
-
-            return model;
+            LastChecked = DateTime.Parse(dictionary[FIELD_LAST_CHECKED]);
         }
+        catch (FormatException)
+        {
+            LastChecked = DateTime.MinValue;
+        }
+
+        try
+        {
+            LengthMeters = float.Parse(dictionary[FIELD_LENGTH]);
+        }
+        catch (FormatException)
+        {
+            LengthMeters = float.NaN;
+        }
+
+        try
+        {
+            BeamMeters = float.Parse(dictionary[FIELD_BEAM]);
+        }
+        catch (FormatException)
+        {
+            BeamMeters = float.NaN;
+        }
+
+        try
+        {
+            HeightMeters = float.Parse(dictionary[FIELD_HEIGHT]);
+        }
+        catch (FormatException)
+        {
+            HeightMeters = float.NaN;
+        }
+
+        try
+        {
+            StoreUrl = new Uri(dictionary[FIELD_STORE_URL]);
+        }
+        catch (FormatException)
+        {
+            StoreUrl = null;
+        }
+
+        try
+        {
+            ModelPathRemote = new Uri(dictionary[FIELD_MODEL_PATH_REMOTE]);
+        }
+        catch (FormatException)
+        {
+            ModelPathRemote = null;
+        }
+
+        ModelPathLocal = dictionary[FIELD_MODEL_PATH_LOCAL];
+
+        String modelRotation;
+        dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
+        ModelRotation = Utils.StringToVector3(modelRotation);
     }
 
-    private static GameObject Load(string modelName, string modelPath)
-    {
-        Debug.Log("ModelInfo.Load(modelName:" + Utils.Quote(modelName) +
-                  ", modelPath:" + Utils.Quote(modelPath) + ")");
+    private GameObject cachedModel;
 
-        GameObject model = ModelFactory.Get(modelPath);
-        if (model == null)
+    public delegate void LoadModelCallback(GameObject model);
+
+    private List<LoadModelCallback> callbacks = new List<LoadModelCallback>();
+
+    public void LoadModelAsync(LoadModelCallback callback)
+    {
+		Debug.Log("+ModelInfo.LoadModelAsync(callback:" + callback + ")");
+
+		if (cachedModel == null)
         {
-            return null;
+            lock (callbacks)
+            {
+                if (cachedModel == null)
+                {
+                    callbacks.Add(callback);
+
+                    if (callbacks.Count == 1)
+                    {
+                        if (VERBOSE_LOG)
+                        {
+                            Debug.LogError("ModelInfo.LoadModelAsync: Non-Cached Load: ModelFactory.LoadModelAsync(...)");
+                        }
+                        ModelFactory.LoadModelAsync(ModelPathLocal, (model) =>
+                        {
+                            if (VERBOSE_LOG)
+                            {
+                                Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadAsync completed");
+                            }
+							if (model == null)
+                            {
+                                return;
+                            }
+
+                            model.name = Name;
+
+                            LoadModelCallback tempCallback;
+                            lock (callbacks)
+                            {
+                                while (callbacks.Count > 0)
+                                {
+                                    model = OnModelLoaded(model);
+
+                                    tempCallback = callbacks[0];
+                                    tempCallback(model);
+                                    callbacks.RemoveAt(0);
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+						if (VERBOSE_LOG)
+						{
+							Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync already in progress");
+						}
+					}
+                }
+                else
+                {
+					if (VERBOSE_LOG)
+					{
+						Debug.LogError("ModelInfo.LoadModelAsync: Handling edge condition");
+					}
+					OnModelLoaded(cachedModel);
+                }
+            }
+        }
+        else
+        {
+            if (VERBOSE_LOG)
+            {
+                Debug.LogError("ModelInfo.LoadModelAsync: Cached Load");
+            }
+            OnModelLoaded(cachedModel);
         }
 
-        model.name = modelName;
+		Debug.Log("-ModelInfo.LoadModelAsync(callback:" + callback + ")");
+	}
+
+    private GameObject OnModelLoaded(GameObject model)
+    {
+        Debug.Log("+ModelInfo.OnModelLoaded(model:" + model + ")");
+
+        if (cachedModel == null)
+        {
+            cachedModel = model;
+        }
+        else
+        {
+            model = UnityEngine.Object.Instantiate(cachedModel);
+
+            model.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            model.transform.localScale = Vector3.one;
+        }
 
         if (VERBOSE_LOG)
         {
             Transform transform = model.transform;
             Bounds bounds = Utils.CalculateBounds(transform);
-            Debug.LogError("ModelInfo.Load: AFTER LOAD transform.position == " + transform.position);
-            Debug.LogError("ModelInfo.Load: AFTER LOAD transform.rotation == " + transform.rotation);
-            Debug.LogError("ModelInfo.Load: AFTER LOAD bounds == " + Utils.ToString(bounds));
+            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.position == " + transform.position);
+            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.rotation == " + transform.rotation);
+            Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD bounds == " + Utils.ToString(bounds));
+        }
+
+        Normalize(model);
+
+		Debug.Log("-ModelInfo.OnModelLoaded(model:" + model + ")");
+
+		return model;
+    }
+
+    private GameObject Normalize(GameObject model)
+    {
+        // 1) Rotate so the length is along Z and bow faces -Z
+        NormalizeRotation(model, ModelRotation);
+
+        // 2) Uniformly scale X/Y/Z so that bounds.size.z is the expected length
+        NormalizeScale(model, Vector3.forward, LengthMeters);
+
+        // 3) Use the scaled length to position the stern at Z == 0
+        NormalizePosition(model);
+
+        // These are affecting the scaling and positioning when loading multiple ships
+        //Decorate(model);
+
+        if (VERBOSE_LOG)
+        {
+            Debug.LogError("ModelInfo.Normalize: gameObject.transform.position == " + model.transform.position);
+            Debug.LogError("ModelInfo.Normalize: gameObject.transform.rotation == " + model.transform.rotation);
         }
 
         return model;
     }
-
-    private void Normalize(GameObject model)
-    {
-		// 1) Rotate so the length is along Z and bow faces -Z
-		NormalizeRotation(model, ModelRotation);
-
-		// 2) Uniformly scale X/Y/Z so that bounds.size.z is the expected length
-		NormalizeScale(model, Vector3.forward, LengthMeters);
-
-		// 3) Use the scaled length to position the stern at Z == 0
-		NormalizePosition(model);
-
-		Decorate(model);
-
-		if (VERBOSE_LOG)
-		{
-			Debug.LogError("ModelInfo.Normalize: gameObject.transform.position == " + model.transform.position);
-			Debug.LogError("ModelInfo.Normalize: gameObject.transform.rotation == " + model.transform.rotation);
-		}
-	}
 
     private static void NormalizeRotation(GameObject model, Vector3 rotation)
     {

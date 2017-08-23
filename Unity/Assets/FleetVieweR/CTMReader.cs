@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using OpenCTM;
 using System;
+using System.Runtime.Remoting.Messaging;
 
 public class CTMReader
 {
@@ -61,35 +62,74 @@ public class CTMReader
     {
     }
 
-    // TODO:(pv) Make this [or upstream caller] an async task so that we don't block...
-    //  https://www.google.com/search?q=unity+async+load
-    public static GameObject Read(string resourcePath)
+    public static GameObject Load(string resourcePath)
     {
-        Debug.Log("CTMReader.Read(resourcePath:" + Utils.Quote(resourcePath) + ")");
-        if (VERBOSE_LOG)
-        {
-            Debug.LogWarning("CTMReader.Read: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
-        }
+        Debug.Log("CTMReader.Load(resourcePath:" + Utils.Quote(resourcePath) + ")");
 
-        MeshInfo[] meshInfos = GetMeshInfos(resourcePath);
-        if (meshInfos == null)
-        {
-            return null;
-        }
+        byte[] bytes = GetBytes(resourcePath);
 
-        GameObject gameObject = GetGameObject(meshInfos);
-        if (gameObject == null)
-        {
-            return null;
-        }
+        MeshInfo[] meshInfos = GetMeshInfos(bytes);
+
+        GameObject gameObject = meshInfos != null ? GetGameObject(meshInfos) : null;
 
         return gameObject;
     }
 
-    private static MeshInfo[] GetMeshInfos(string resourcePath)
+    public delegate void LoadCallback(GameObject gameObject);
+
+    private delegate MeshInfo[] GetMeshInfosCaller(byte[] bytes);
+
+    public static void LoadAsync(string resourcePath, LoadCallback callback)
+    {
+        Debug.Log("CTMReader.LoadAsync(resourcePath:" + Utils.Quote(resourcePath) +
+                  ", callback:" + callback + ")");
+
+        byte[] bytes = GetBytes(resourcePath);
+
+        IAsyncResult asyncResult = new GetMeshInfosCaller(GetMeshInfos)
+            .BeginInvoke(bytes, OnGetMeshInfos, callback);
+
+        if (!asyncResult.CompletedSynchronously)
+        {
+            return;
+        }
+
+        OnGetMeshInfos(asyncResult);
+    }
+
+    private static void OnGetMeshInfos(IAsyncResult asyncResult)
+    {
+        AsyncResult result = (AsyncResult)asyncResult;
+
+        GetMeshInfosCaller caller = (GetMeshInfosCaller)result.AsyncDelegate;
+
+        MeshInfo[] meshInfos = caller.EndInvoke(asyncResult);
+
+        UnityMainThreadDispatcher.Instance().Enqueue(() =>
+        {
+            GameObject gameObject = meshInfos != null ? GetGameObject(meshInfos) : null;
+
+            LoadCallback callback = (LoadCallback)asyncResult.AsyncState;
+
+            callback(gameObject);
+        });
+    }
+
+    private static byte[] GetBytes(string resourcePath)
     {
         TextAsset textAsset = Resources.Load(resourcePath) as TextAsset;
-        Stream memoryStream = new MemoryStream(textAsset.bytes);
+        byte[] bytes = textAsset.bytes;
+        return bytes;
+    }
+
+    private static MeshInfo[] GetMeshInfos(byte[] bytes)
+    {
+        if (VERBOSE_LOG)
+        {
+            Debug.LogWarning("CTMReader.GetMeshInfos: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
+        }
+
+        Stream memoryStream = new MemoryStream(bytes);
 
         //Debug.Log("CTMReader.GetMeshInfos: new CtmFileReader(memoryStream)");
         CtmFileReader reader = new CtmFileReader(memoryStream);
@@ -346,10 +386,10 @@ public class CTMReader
             MeshRenderer mr = child.AddComponent<MeshRenderer>();
 #if RUNNING_ON_ANDROID_DEVICE
             //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights)");
-            Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights) (Two Sided)");
+            //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights) (Two Sided)");
             //Shader shader = Shader.Find("Mobile/VertexLit");
             //Shader shader = Shader.Find("Standard");
-            //Shader shader = Shader.Find("Standard (Two Sided)");
+            Shader shader = Shader.Find("Standard (Two Sided)");
             //Shader shader = Shader.Find("Diffuse");
 #else
             //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights) (Two Sided)");

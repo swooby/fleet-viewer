@@ -1,40 +1,138 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// TODO:(pv) Mark as static so that update/etc isn't called on us...
 public class ModelFactory
 {
+    public const bool VERBOSE_LOG = false;
+
     private ModelFactory()
     {
     }
 
     private static Dictionary<string, GameObject> models = new Dictionary<string, GameObject>();
 
-    public static GameObject Load(string modelPath)
+    private static GameObject GetCachedModel(string modelPath)
     {
-        GameObject model;
+        GameObject cachedModel;
+        models.TryGetValue(modelPath, out cachedModel);
+        return cachedModel;
+    }
 
-        if (!models.TryGetValue(modelPath, out model))
+    private static List<LoadModelCallback> GetModelPathCallbacks(string modelPath)
+    {
+		List<LoadModelCallback> thisModelPathCallbacks;
+		if (!modelPathCallbacks.TryGetValue(modelPath, out thisModelPathCallbacks))
+		{
+			thisModelPathCallbacks = new List<LoadModelCallback>();
+			modelPathCallbacks[modelPath] = thisModelPathCallbacks;
+		}
+        return thisModelPathCallbacks;
+	}
+
+    public delegate void LoadModelCallback(GameObject model);
+
+    private static Dictionary<string, List<LoadModelCallback>> modelPathCallbacks = new Dictionary<string, List<LoadModelCallback>>();
+
+    public static void LoadModelAsync(string modelPath, LoadModelCallback callback)
+    {
+        Debug.Log("+ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
+                       ", callback:" + callback + ")");
+
+		GameObject cachedModel = GetCachedModel(modelPath);
+        if (cachedModel == null)
         {
-            //Debug.LogError("ModelFactory.Get: Non-Cached Load: CTMReader.Read(...)");
-            model = CTMReader.Read(modelPath);
+            lock (modelPathCallbacks)
+            {
+                cachedModel = GetCachedModel(modelPath);
+                if (cachedModel == null)
+                {
+                    List<LoadModelCallback> thisModelPathCallbacks = GetModelPathCallbacks(modelPath);
 
+                    thisModelPathCallbacks.Add(callback);
+
+                    if (thisModelPathCallbacks.Count == 1)
+                    {
+                        if (VERBOSE_LOG)
+                        {
+                            Debug.LogError("ModelFactory.LoadModelAsync: Non-Cached Load: CTMReader.LoadAsync(...)");
+                        }
+                        CTMReader.LoadAsync(modelPath, (model) =>
+                        {
+                            if (VERBOSE_LOG)
+                            {
+                                Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync completed");
+                            }
+							if (model == null)
+                            {
+                                return;
+                            }
+
+                            LoadModelCallback tempCallback;
+                            lock (modelPathCallbacks)
+                            {
+                                while (thisModelPathCallbacks.Count > 0)
+                                {
+                                    model = OnModelLoaded(modelPath, model);
+
+                                    tempCallback = thisModelPathCallbacks[0];
+                                    tempCallback(model);
+                                    thisModelPathCallbacks.RemoveAt(0);
+                                }
+                            }
+                        });
+                    }
+					else
+					{
+						if (VERBOSE_LOG)
+						{
+							Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync already in progress");
+						}
+					}
+				}
+                else
+                {
+					if (VERBOSE_LOG)
+					{
+						Debug.LogError("ModelFactory.LoadModelAsync: Handling edge condition");
+					}
+					OnModelLoaded(modelPath, cachedModel);
+                }
+            }
+        }
+        else
+        {
+            if (VERBOSE_LOG)
+            {
+                Debug.LogError("ModelFactory.LoadModelAsync: Cached Load");
+            }
+            OnModelLoaded(modelPath, cachedModel);
+        }
+
+		Debug.LogError("-ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
+					   ", callback:" + callback + ")");
+	}
+
+    private static GameObject OnModelLoaded(string modelPath, GameObject model)
+    {
+        Debug.LogError("+ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
+                       ", model:" + model + ")");
+
+        GameObject cachedModel = GetCachedModel(modelPath);
+        if (cachedModel == null)
+        {
             models[modelPath] = model;
         }
         else
         {
-            //Debug.LogError("ModelFactory.Get: Cached Load: Object.Instantiate(model)");
-            model = Object.Instantiate(model);
+            model = UnityEngine.Object.Instantiate(cachedModel);
 
             model.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             model.transform.localScale = Vector3.one;
         }
 
-        return model;
-    }
+		Debug.LogError("-ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
+					   ", model:" + model + ")");
 
-    public static void Release(GameObject model)
-    {
-        Object.Destroy(model);
+		return model;
     }
 }

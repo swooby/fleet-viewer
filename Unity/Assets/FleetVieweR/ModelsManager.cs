@@ -267,7 +267,9 @@ public class ModelsManager : MonoBehaviour
     {
         Debug.Log("LoadCTM(name:" + Utils.Quote(name) + ", resourcePath:" + Utils.Quote(resourcePath) + ")");
 
-        return CTMReader.Read(name, resourcePath);
+        GameObject model= CTMReader.Load(resourcePath);
+        model.name = name;
+        return model;
 
         Debug.LogWarning("LoadCTM: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
 
