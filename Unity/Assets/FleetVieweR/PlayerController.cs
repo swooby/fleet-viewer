@@ -10,6 +10,16 @@ public class PlayerController : MonoBehaviour
 
     public Text controllerDebugText;
 
+    public static bool HasEverMoved { get; private set; }
+
+    public static bool HasNeverMoved
+    {
+        get
+        {
+            return !HasEverMoved;
+        }
+    }
+
     private bool isMoving;
     private Vector2 startTouchCentered;
 
@@ -28,6 +38,11 @@ public class PlayerController : MonoBehaviour
         }
     }
     */
+
+    private Vector3 WorldToLocal(Vector3 vector)
+    {
+        return transform.worldToLocalMatrix.MultiplyVector(vector);
+    }
 
     private void FixedUpdate()
     {
@@ -52,11 +67,14 @@ public class PlayerController : MonoBehaviour
         Quaternion orientation = GvrControllerInput.Orientation;
         Vector3 accel = GvrControllerInput.Accel;
         Vector3 gyro = GvrControllerInput.Gyro;
-        Vector3 cameraMainTransformForward = Camera.main.transform.forward;
-        Vector3 cameraMainTransformRight = Camera.main.transform.right;
-        Vector3 cameraMainTransformUp = Camera.main.transform.up;
+        Transform cameraMainTransform = Camera.main.transform;
+        Vector3 cameraMainTransformForward = WorldToLocal(cameraMainTransform.forward);
+        Vector3 cameraMainTransformRight = WorldToLocal(cameraMainTransform.right);
+        Vector3 cameraMainTransformUp = WorldToLocal(cameraMainTransform.up);
         Vector2 deltaPosCentered = Vector2.zero;
         Vector3 deltaTransform = Vector3.zero;
+
+        float speed = Speed * (Input.GetKey(KeyCode.LeftShift) ? 2.0f : 1.0f);
 
         if (isMoving)
         {
@@ -64,8 +82,8 @@ public class PlayerController : MonoBehaviour
             {
                 deltaPosCentered = touchPosCentered - startTouchCentered;
 
-                transform.Translate(cameraMainTransformForward * deltaPosCentered.y * Speed * deltaTime);
-                transform.Translate(cameraMainTransformRight * deltaPosCentered.x * Speed * deltaTime);
+                transform.Translate(cameraMainTransformForward * deltaPosCentered.y * speed * deltaTime, Space.Self);
+                transform.Translate(cameraMainTransformRight * deltaPosCentered.x * speed * deltaTime, Space.Self);
             }
             else
             {
@@ -77,6 +95,7 @@ public class PlayerController : MonoBehaviour
         {
             if (isTouching)
             {
+                HasEverMoved = true;
                 isMoving = true;
                 startTouchCentered = touchPosCentered;
             }
@@ -84,27 +103,43 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            transform.Translate(cameraMainTransformForward * Speed * deltaTime);
+            HasEverMoved = true;
+            transform.Translate(cameraMainTransformForward * speed * deltaTime, Space.Self);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            transform.Translate(cameraMainTransformForward * -Speed * deltaTime);
+            HasEverMoved = true;
+            transform.Translate(cameraMainTransformForward * -speed * deltaTime, Space.Self);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Translate(cameraMainTransformRight * -Speed * deltaTime);
+            HasEverMoved = true;
+            transform.Translate(cameraMainTransformRight * -speed * deltaTime, Space.Self);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Translate(cameraMainTransformRight * Speed * deltaTime);
+            HasEverMoved = true;
+            transform.Translate(cameraMainTransformRight * speed * deltaTime, Space.Self);
         }
         if (Input.GetKey(KeyCode.Q))
         {
-            transform.Translate(cameraMainTransformUp * -Speed * deltaTime);
+            HasEverMoved = true;
+            transform.Rotate(cameraMainTransformForward, 4.0f * speed * deltaTime, Space.Self);
         }
         if (Input.GetKey(KeyCode.E))
         {
-            transform.Translate(cameraMainTransformUp * Speed * deltaTime);
+            HasEverMoved = true;
+            transform.Rotate(cameraMainTransformForward, 4.0f * -speed * deltaTime, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            HasEverMoved = true;
+            transform.Translate(cameraMainTransformUp * -speed * deltaTime, Space.Self);
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            HasEverMoved = true;
+            transform.Translate(cameraMainTransformUp * speed * deltaTime, Space.Self);
         }
 
         if (controllerDebugText != null)

@@ -72,7 +72,7 @@ public class FleetSceneManager : MonoBehaviour
 
             List<string> modelsToLoad = new List<string>();
 
-            if (true)
+            if (false)
             {
                 if (true)
                 {
@@ -608,7 +608,10 @@ public class FleetSceneManager : MonoBehaviour
 
             FleetPlanesPositionAndScale();
 
-            RepositionPlayerToViewFleet();
+            if (PlayerController.HasNeverMoved)
+            {
+                RepositionPlayerToViewFleet();
+            }
 
         // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
@@ -652,32 +655,56 @@ public class FleetSceneManager : MonoBehaviour
         GameObject fleetRoot = FleetRoot;
         Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot);
         //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
+		Vector3 fleetRootBoundsSize = fleetRootBounds.size;
 
-        float fieldOfView = Camera.main.fieldOfView;
-        //Debug.LogError("RepositionPlayerToViewFleet: fieldOfView == " + fieldOfView);
+        //
+        // https://docs.unity3d.com/Manual/FrustumSizeAtDistance.html
+        //
 
-        float opposite = fleetRootBounds.extents.z;
+		Camera camera = Camera.main;
+        float cameraFieldOfViewX = camera.fieldOfView;
+        //Debug.LogError("RepositionPlayerToViewFleet: cameraFieldOfViewX == " + cameraFieldOfViewX);
+        float cameraAspect = camera.aspect;
+		//Debug.LogError("RepositionPlayerToViewFleet: cameraAspect == " + cameraAspect);
+        float cameraFieldOfViewY = cameraFieldOfViewX / cameraAspect;
+		//Debug.LogError("RepositionPlayerToViewFleet: cameraFieldOfViewY == " + cameraFieldOfViewY);
+
+        float opposite;
+        float angle;
+
+        float fleetRootWidth = fleetRootBoundsSize.x;
+		float fleetRootDepth = fleetRootBoundsSize.z;
+
+        if (fleetRootWidth > fleetRootDepth)
+        {
+            opposite = fleetRootWidth * 0.5f;
+            angle = cameraFieldOfViewX * 0.5f;
+        }
+        else
+        {
+            opposite = fleetRootDepth * 0.5f;
+            angle = cameraFieldOfViewY * 0.5f;
+        }
         //Debug.LogError("RepositionPlayerToViewFleet: opposite == " + opposite);
+		//Debug.LogError("RepositionPlayerToViewFleet: angle == " + angle);
 
-        float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView * 0.5f));// * 1.25f));
-        //adjacent = Math.Max(adjacent, 2);
+		float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * angle));
         //Debug.LogError("RepositionPlayerToViewFleet: adjacent == " + adjacent);
 
         Vector3 position = new Vector3(fleetRootBounds.center.x,
-                                       fleetRootBounds.size.y + adjacent,
+                                       fleetRootBounds.center.y + adjacent,
                                        fleetRootBounds.center.z);
-        
-        Quaternion rotation = Quaternion.Euler(90, 180, 0);
+		Debug.LogError("RepositionPlayerToViewFleet: position == " + position);
 
-        Player.transform.position = position;
+		Quaternion rotation = Quaternion.Euler(90, 180, 0);
+
+        Player.transform.localPosition = position;
         Player.transform.rotation = rotation;
 
-        //Camera.main.transform.rotation = cameraRotation;
+        position.z += 1;
 
-        //position.z += 1;
-
-        //Respawn.transform.position = position;
-        //Respawn.transform.rotation = Quaternion.identity;
+        Respawn.transform.localPosition = position;
+        Respawn.transform.rotation = rotation;
     }
 
     private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
