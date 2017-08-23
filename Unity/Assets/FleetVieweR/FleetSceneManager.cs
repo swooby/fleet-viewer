@@ -271,7 +271,6 @@ public class FleetSceneManager : MonoBehaviour
                     modelsToLoad.Add("Defender");
                 }
                 // As of 2017/08/22, anything beyond here crashes Pixel VR
-                /*
                 for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Cutlass Black");
@@ -336,7 +335,6 @@ public class FleetSceneManager : MonoBehaviour
                 {
                     modelsToLoad.Add("Caterpillar");
                 }
-                */
                 for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Retaliator Base");
@@ -357,39 +355,39 @@ public class FleetSceneManager : MonoBehaviour
                 {
                     modelsToLoad.Add("Hull C");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("890 Jump");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Carrack");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Polaris");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Reclaimer");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Orion");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Endeavor");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Hull D");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Idris-P");
                 }
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     modelsToLoad.Add("Hull E");
                 }
@@ -658,24 +656,28 @@ public class FleetSceneManager : MonoBehaviour
         float fieldOfView = Camera.main.fieldOfView;
         //Debug.LogError("RepositionPlayerToViewFleet: fieldOfView == " + fieldOfView);
 
-        float opposite = fleetRootBounds.extents.x;
+        float opposite = fleetRootBounds.extents.z;
         //Debug.LogError("RepositionPlayerToViewFleet: opposite == " + opposite);
 
-        float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView * 0.5f * 1.25f));
-        adjacent = Math.Max(adjacent, 2);
+        float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * fieldOfView * 0.5f));// * 1.25f));
+        //adjacent = Math.Max(adjacent, 2);
         //Debug.LogError("RepositionPlayerToViewFleet: adjacent == " + adjacent);
 
         Vector3 position = new Vector3(fleetRootBounds.center.x,
-                                       fleetRootBounds.size.y * 0.5f,
-                                       -fleetRootBounds.size.z - adjacent);
+                                       fleetRootBounds.size.y + adjacent,
+                                       fleetRootBounds.center.z);
+        
+        Quaternion rotation = Quaternion.Euler(90, 180, 0);
 
         Player.transform.position = position;
-        Player.transform.rotation = Quaternion.identity;
+        Player.transform.rotation = rotation;
 
-        position.y -= 1;
+        //Camera.main.transform.rotation = cameraRotation;
 
-        Respawn.transform.position = position;
-        Respawn.transform.rotation = Quaternion.identity;
+        //position.z += 1;
+
+        //Respawn.transform.position = position;
+        //Respawn.transform.rotation = Quaternion.identity;
     }
 
     private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();

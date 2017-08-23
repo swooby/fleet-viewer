@@ -20,14 +20,14 @@ public class ModelFactory
 
     private static List<LoadModelCallback> GetModelPathCallbacks(string modelPath)
     {
-		List<LoadModelCallback> thisModelPathCallbacks;
-		if (!modelPathCallbacks.TryGetValue(modelPath, out thisModelPathCallbacks))
-		{
-			thisModelPathCallbacks = new List<LoadModelCallback>();
-			modelPathCallbacks[modelPath] = thisModelPathCallbacks;
-		}
+        List<LoadModelCallback> thisModelPathCallbacks;
+        if (!modelPathCallbacks.TryGetValue(modelPath, out thisModelPathCallbacks))
+        {
+            thisModelPathCallbacks = new List<LoadModelCallback>();
+            modelPathCallbacks[modelPath] = thisModelPathCallbacks;
+        }
         return thisModelPathCallbacks;
-	}
+    }
 
     public delegate void LoadModelCallback(GameObject model);
 
@@ -36,9 +36,9 @@ public class ModelFactory
     public static void LoadModelAsync(string modelPath, LoadModelCallback callback)
     {
         Debug.Log("+ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
-                       ", callback:" + callback + ")");
+                   ", callback:" + callback + ")");
 
-		GameObject cachedModel = GetCachedModel(modelPath);
+        GameObject cachedModel = GetCachedModel(modelPath);
         if (cachedModel == null)
         {
             lock (modelPathCallbacks)
@@ -62,7 +62,7 @@ public class ModelFactory
                             {
                                 Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync completed");
                             }
-							if (model == null)
+                            if (model == null)
                             {
                                 return;
                             }
@@ -81,21 +81,21 @@ public class ModelFactory
                             }
                         });
                     }
-					else
-					{
-						if (VERBOSE_LOG)
-						{
-							Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync already in progress");
-						}
-					}
-				}
+                    else
+                    {
+                        if (VERBOSE_LOG)
+                        {
+                            Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync already in progress");
+                        }
+                    }
+                }
                 else
                 {
-					if (VERBOSE_LOG)
-					{
-						Debug.LogError("ModelFactory.LoadModelAsync: Handling edge condition");
-					}
-					OnModelLoaded(modelPath, cachedModel);
+                    if (VERBOSE_LOG)
+                    {
+                        Debug.LogError("ModelFactory.LoadModelAsync: Handling edge condition");
+                    }
+                    OnModelLoaded(modelPath, cachedModel);
                 }
             }
         }
@@ -108,14 +108,14 @@ public class ModelFactory
             OnModelLoaded(modelPath, cachedModel);
         }
 
-		Debug.LogError("-ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
-					   ", callback:" + callback + ")");
-	}
+        Debug.Log("-ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
+                  ", callback:" + callback + ")");
+    }
 
     private static GameObject OnModelLoaded(string modelPath, GameObject model)
     {
-        Debug.LogError("+ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
-                       ", model:" + model + ")");
+        Debug.Log("+ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
+                  ", model:" + model + ")");
 
         GameObject cachedModel = GetCachedModel(modelPath);
         if (cachedModel == null)
@@ -130,9 +130,9 @@ public class ModelFactory
             model.transform.localScale = Vector3.one;
         }
 
-		Debug.LogError("-ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
-					   ", model:" + model + ")");
+        Debug.Log("-ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
+                  ", model:" + model + ")");
 
-		return model;
+        return model;
     }
 }
