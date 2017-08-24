@@ -25,20 +25,91 @@ public class FleetSceneManager : MonoBehaviour
     private GameObject Player;
     private GameObject Respawn;
 
+    private DateTime timeLoadingStarted = DateTime.MinValue;
+
+    private string messageBoxText;
+
     private void LoadNextModel(List<string> modelsToLoad)
     {
         if (modelsToLoad == null || modelsToLoad.Count == 0)
         {
+            string text;
+
+            if (timeLoadingStarted != DateTime.MinValue)
+            {
+                DateTime timeLoadingStopped = DateTime.Now;
+
+                TimeSpan duration = timeLoadingStopped.Subtract(timeLoadingStarted);
+
+                string durationString = Utils.ToString(duration);
+
+                text = "Loaded: Took " + durationString;
+                Debug.LogError("LoadNextModel: text == " + Utils.Quote(text));
+
+                timeLoadingStarted = DateTime.MinValue;
+            }
+            else
+            {
+                text = "Loaded";
+            }
+
+            SetMessageBoxText(text, 5.0f);
+
             return;
+        }
+
+        if (timeLoadingStarted == DateTime.MinValue)
+        {
+            timeLoadingStarted = DateTime.Now;
         }
 
         string modelToLoad = modelsToLoad[0];
         modelsToLoad.RemoveAt(0);
 
+        SetMessageBoxText("Loading " + modelToLoad);
+
         AddNewModel(modelToLoad, () =>
         {
             LoadNextModel(modelsToLoad);
         });
+    }
+
+    private void SetMessageBoxText(string text, float removeInSeconds = 0)
+    {
+        StartCoroutine(SetMessageBoxTextCoroutine(text, removeInSeconds));
+    }
+
+    IEnumerator SetMessageBoxTextCoroutine(string text, float removeInSeconds = 0)
+    {
+        messageBoxText = text;
+        if (removeInSeconds > 0)
+        {
+            yield return new WaitForSeconds(removeInSeconds);
+            messageBoxText = null;
+        }
+        yield return null;
+    }
+
+    private GUIStyle centeredStyle;
+
+    private void OnGUI()
+    {
+        if (!string.IsNullOrEmpty(messageBoxText))
+        {
+            if (centeredStyle == null)
+            {
+                centeredStyle = GUI.skin.GetStyle("Box");
+                centeredStyle.alignment = TextAnchor.MiddleCenter;
+                centeredStyle.wordWrap = true;
+            }
+
+            GUI.Box(new Rect((Screen.width) / 2f - (Screen.width) / 8f,
+                             (Screen.height) / 2f - (Screen.height) / 8f,
+                             (Screen.width) / 4f,
+                             (Screen.height) / 4f),
+                    messageBoxText,
+                    centeredStyle);
+        }
     }
 
     void Start()
@@ -655,25 +726,25 @@ public class FleetSceneManager : MonoBehaviour
         GameObject fleetRoot = FleetRoot;
         Bounds fleetRootBounds = Utils.CalculateBounds(fleetRoot);
         //Debug.LogError("RepositionPlayerToViewFleet: fleetRootBounds == " + Utils.ToString(fleetRootBounds));
-		Vector3 fleetRootBoundsSize = fleetRootBounds.size;
+        Vector3 fleetRootBoundsSize = fleetRootBounds.size;
 
         //
         // https://docs.unity3d.com/Manual/FrustumSizeAtDistance.html
         //
 
-		Camera camera = Camera.main;
+        Camera camera = Camera.main;
         float cameraFieldOfViewX = camera.fieldOfView;
         //Debug.LogError("RepositionPlayerToViewFleet: cameraFieldOfViewX == " + cameraFieldOfViewX);
         float cameraAspect = camera.aspect;
-		//Debug.LogError("RepositionPlayerToViewFleet: cameraAspect == " + cameraAspect);
+        //Debug.LogError("RepositionPlayerToViewFleet: cameraAspect == " + cameraAspect);
         float cameraFieldOfViewY = cameraFieldOfViewX / cameraAspect;
-		//Debug.LogError("RepositionPlayerToViewFleet: cameraFieldOfViewY == " + cameraFieldOfViewY);
+        //Debug.LogError("RepositionPlayerToViewFleet: cameraFieldOfViewY == " + cameraFieldOfViewY);
 
         float opposite;
         float angle;
 
         float fleetRootWidth = fleetRootBoundsSize.x;
-		float fleetRootDepth = fleetRootBoundsSize.z;
+        float fleetRootDepth = fleetRootBoundsSize.z;
 
         if (fleetRootWidth > fleetRootDepth)
         {
@@ -686,17 +757,17 @@ public class FleetSceneManager : MonoBehaviour
             angle = cameraFieldOfViewY * 0.5f;
         }
         //Debug.LogError("RepositionPlayerToViewFleet: opposite == " + opposite);
-		//Debug.LogError("RepositionPlayerToViewFleet: angle == " + angle);
+        //Debug.LogError("RepositionPlayerToViewFleet: angle == " + angle);
 
-		float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * angle));
+        float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * angle));
         //Debug.LogError("RepositionPlayerToViewFleet: adjacent == " + adjacent);
 
         Vector3 position = new Vector3(fleetRootBounds.center.x,
                                        fleetRootBounds.center.y + adjacent,
                                        fleetRootBounds.center.z);
-		//Debug.LogError("RepositionPlayerToViewFleet: position == " + position);
+        //Debug.LogError("RepositionPlayerToViewFleet: position == " + position);
 
-		Quaternion rotation = Quaternion.Euler(90, 180, 0);
+        Quaternion rotation = Quaternion.Euler(90, 180, 0);
 
         Player.transform.localPosition = position;
         Player.transform.rotation = rotation;

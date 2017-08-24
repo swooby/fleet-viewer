@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class Utils
@@ -17,7 +18,54 @@ public class Utils
         return bounds + ", Size: " + bounds.size + ", Min: " + bounds.min + ", Max: " + bounds.max;
     }
 
-    public static Vector3 StringToVector3(string value)
+    public static string ToString(TimeSpan duration)
+    {
+        string durationString = "";
+
+        if (duration.Days > 0)
+        {
+            durationString += duration.Days + "d";
+        }
+
+        if (duration.Hours > 0)
+        {
+            if (durationString != "")
+            {
+                durationString += ":";
+            }
+            durationString += duration.Hours + "h";
+        }
+
+        if (duration.Minutes > 0)
+        {
+            if (durationString != "")
+            {
+                durationString += ":";
+            }
+            durationString += duration.Minutes + "m";
+        }
+
+        if (duration.Seconds > 0)
+        {
+            if (durationString != "")
+            {
+                durationString += ":";
+            }
+            durationString += duration.Seconds;
+        }
+        else
+        {
+            durationString += "0";
+        }
+
+        durationString += "." + duration.Milliseconds;
+
+        durationString += "s";
+
+        return durationString;
+    }
+
+    public static Vector3 ToVector3(string value)
     {
         Vector3 result = Vector3.zero;
 
@@ -43,14 +91,14 @@ public class Utils
 
     public static Bounds CalculateBounds(Transform transform, bool unrotate = false)
     {
-		Quaternion savedRotation = transform.rotation;
+        Quaternion savedRotation = transform.rotation;
 
         if (unrotate)
         {
             transform.rotation = Quaternion.identity;
         }
 
-		Bounds bounds = new Bounds(transform.position, Vector3.zero);
+        Bounds bounds = new Bounds(transform.position, Vector3.zero);
 
         foreach (Renderer renderer in transform.GetComponentsInChildren<Renderer>())
         {

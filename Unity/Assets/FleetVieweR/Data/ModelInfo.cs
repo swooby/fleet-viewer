@@ -88,7 +88,7 @@ public class ModelInfo
 
         String modelRotation;
         dictionary.TryGetValue(FIELD_MODEL_ROTATION, out modelRotation);
-        ModelRotation = Utils.StringToVector3(modelRotation);
+        ModelRotation = Utils.ToVector3(modelRotation);
     }
 
     private GameObject cachedModel;
@@ -97,7 +97,7 @@ public class ModelInfo
 
     private List<LoadModelCallback> callbacks = new List<LoadModelCallback>();
 
-    public void LoadModelAsync(LoadModelCallback callback)
+	public void LoadModelAsync(LoadModelCallback callback)
     {
 		Debug.Log("+ModelInfo.LoadModelAsync(callback:" + callback + ")");
 
