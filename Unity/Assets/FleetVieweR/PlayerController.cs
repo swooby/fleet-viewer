@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public float Speed = 5.0f;
+    public float VelocityMetersPerSecond = 5.0f;
 
     public Text controllerDebugText;
 
@@ -51,11 +51,7 @@ public class PlayerController : MonoBehaviour
         // http://answers.unity3d.com/questions/331545/double-click-mouse-detection-.html
         //
 
-        // TODO:(pv) Shift down doubles [or more] speed
         // TODO:(pv) Momentum
-        // TODO:(pv) Roll (yaw and pitch are controlled by mouse input or VR headset)
-
-        float deltaTime = Time.fixedDeltaTime;
 
         GvrConnectionState connectionState = GvrControllerInput.State;
         GvrControllerBatteryLevel batteryLevel = GvrControllerInput.BatteryLevel;
@@ -74,7 +70,10 @@ public class PlayerController : MonoBehaviour
         Vector2 deltaPosCentered = Vector2.zero;
         Vector3 deltaTransform = Vector3.zero;
 
-        float speed = Speed * (Input.GetKey(KeyCode.LeftShift) ? 2.0f : 1.0f);
+        float deltaDistance = VelocityMetersPerSecond * (Input.GetKey(KeyCode.LeftShift) ? 3.0f : 1.0f) * Time.fixedDeltaTime;
+
+        Vector3 translate = Vector3.zero;
+        float rotate = 0.0f;
 
         if (isMoving)
         {
@@ -82,8 +81,8 @@ public class PlayerController : MonoBehaviour
             {
                 deltaPosCentered = touchPosCentered - startTouchCentered;
 
-                transform.Translate(cameraMainTransformForward * deltaPosCentered.y * speed * deltaTime, Space.Self);
-                transform.Translate(cameraMainTransformRight * deltaPosCentered.x * speed * deltaTime, Space.Self);
+                translate += deltaPosCentered.y * cameraMainTransformForward * deltaDistance;
+                translate += deltaPosCentered.x * cameraMainTransformRight * deltaDistance;
             }
             else
             {
@@ -104,42 +103,52 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             HasEverMoved = true;
-            transform.Translate(cameraMainTransformForward * speed * deltaTime, Space.Self);
+            translate += cameraMainTransformForward * deltaDistance;
         }
         if (Input.GetKey(KeyCode.S))
         {
             HasEverMoved = true;
-            transform.Translate(cameraMainTransformForward * -speed * deltaTime, Space.Self);
+            translate -= cameraMainTransformForward * deltaDistance;
         }
         if (Input.GetKey(KeyCode.A))
         {
             HasEverMoved = true;
-            transform.Translate(cameraMainTransformRight * -speed * deltaTime, Space.Self);
+            translate -= cameraMainTransformRight * deltaDistance;
         }
         if (Input.GetKey(KeyCode.D))
         {
             HasEverMoved = true;
-            transform.Translate(cameraMainTransformRight * speed * deltaTime, Space.Self);
+            translate += cameraMainTransformRight * deltaDistance;
         }
         if (Input.GetKey(KeyCode.Q))
         {
             HasEverMoved = true;
-            transform.Rotate(cameraMainTransformForward, 4.0f * speed * deltaTime, Space.Self);
+            rotate += 4.0f * deltaDistance;
         }
         if (Input.GetKey(KeyCode.E))
         {
             HasEverMoved = true;
-            transform.Rotate(cameraMainTransformForward, 4.0f * -speed * deltaTime, Space.Self);
+            rotate -= 4.0f * deltaDistance;
         }
         if (Input.GetKey(KeyCode.LeftControl))
         {
             HasEverMoved = true;
-            transform.Translate(cameraMainTransformUp * -speed * deltaTime, Space.Self);
+            translate -= cameraMainTransformUp * deltaDistance;
         }
         if (Input.GetKey(KeyCode.Space))
         {
             HasEverMoved = true;
-            transform.Translate(cameraMainTransformUp * speed * deltaTime, Space.Self);
+            translate += cameraMainTransformUp * deltaDistance;
+        }
+
+        if (translate != Vector3.zero)
+        {
+            transform.Translate(translate, Space.Self);
+        }
+
+        if (Math.Abs(rotate) > float.Epsilon)
+        {
+            transform.Rotate(cameraMainTransformForward, rotate, Space.Self);
         }
 
         if (controllerDebugText != null)
