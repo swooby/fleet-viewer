@@ -246,11 +246,11 @@ public class FleetSceneManager : MonoBehaviour
                 {
                     modelsToLoad.Add("325a");
                 }
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < 0; i++)
                 {
                     modelsToLoad.Add("315p");
                 }
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < 0; i++)
                 {
                     modelsToLoad.Add("300i");
                 }
@@ -694,7 +694,7 @@ public class FleetSceneManager : MonoBehaviour
         Vector3 position = new Vector3(fleetRootBounds.center.x,
                                        fleetRootBounds.center.y + adjacent,
                                        fleetRootBounds.center.z);
-		Debug.LogError("RepositionPlayerToViewFleet: position == " + position);
+		//Debug.LogError("RepositionPlayerToViewFleet: position == " + position);
 
 		Quaternion rotation = Quaternion.Euler(90, 180, 0);
 
