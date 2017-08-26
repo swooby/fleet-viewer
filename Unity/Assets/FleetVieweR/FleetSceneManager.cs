@@ -151,19 +151,20 @@ public class FleetSceneManager : MonoBehaviour
                     modelsToLoad.Add("Nox");
                     modelsToLoad.Add("Dragonfly");
                     modelsToLoad.Add("MPUV Cargo");
-                    /*
-					modelsToLoad.Add("Terrapin");
-					modelsToLoad.Add("Gladius");
-					modelsToLoad.Add("Gladiator");
-					modelsToLoad.Add("Prospector");
-					modelsToLoad.Add("F7C-M Super Hornet");
-					modelsToLoad.Add("Sabre");
-					modelsToLoad.Add("Vanguard Sentinel");
-					modelsToLoad.Add("Retaliator Base");
-					modelsToLoad.Add("Carrack");
-					modelsToLoad.Add("Starfarer");
-					modelsToLoad.Add("Polaris");
-                    */
+                    modelsToLoad.Add("Terrapin");
+                    modelsToLoad.Add("Gladius");
+                    modelsToLoad.Add("Gladiator");
+                    modelsToLoad.Add("Prospector");
+                    modelsToLoad.Add("F7C-M Super Hornet");
+                    modelsToLoad.Add("Sabre");
+                    modelsToLoad.Add("Vanguard Sentinel");
+                    modelsToLoad.Add("Constellation Aquila");
+                    modelsToLoad.Add("600i Touring");
+                    modelsToLoad.Add("Retaliator Base");
+                    modelsToLoad.Add("Starfarer");
+                    modelsToLoad.Add("Carrack");
+                    modelsToLoad.Add("890 Jump");
+                    modelsToLoad.Add("Polaris");
                     //modelsToLoad.Add("Idris-P");
                 }
                 else
@@ -401,6 +402,14 @@ public class FleetSceneManager : MonoBehaviour
                 for (int i = 0; i < 0; i++)
                 {
                     modelsToLoad.Add("Constellation Phoenix");
+                }
+                for (int i = 0; i < 1; i++)
+                {
+                    modelsToLoad.Add("600i Touring");
+                }
+                for (int i = 0; i < 0; i++)
+                {
+                    modelsToLoad.Add("600i Explorer");
                 }
                 for (int i = 0; i < 1; i++)
                 {

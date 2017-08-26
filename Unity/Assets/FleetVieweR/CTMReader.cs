@@ -403,6 +403,12 @@ public class CTMReader
             MeshFilter mf = child.AddComponent<MeshFilter>();
             mf.mesh = unityMesh;
 
+            if (false)
+            {
+                MeshCollider mc = child.AddComponent<MeshCollider>();
+                mc.sharedMesh = unityMesh;
+            }
+
             child.transform.SetParent(root.transform);
         }
 
