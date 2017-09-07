@@ -14,6 +14,392 @@ public class FleetSceneManager : MonoBehaviour
 
     public const bool RESET_SETTINGS = false;
 
+    private void LoadModels()
+    {
+		if (true)
+		{
+			//
+			// The simplest way to load; usually intended for testing purposes only...
+			//
+
+			// Order shortest to longest...
+			// ...to give the appearance of loading fast right from the start...
+			// ...as opposed to slowing down when loading the smaller ships.
+
+			List<string> modelsToLoad = new List<string>();
+
+			if (true)
+			{
+				if (false)
+				{
+					if (true)
+					{
+						// knight55
+                        modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+                        modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.Terrapin);
+						modelsToLoad.Add(StarCitizen.Gladius);
+						modelsToLoad.Add(StarCitizen.Gladiator);
+						modelsToLoad.Add(StarCitizen.Prospector);
+                        modelsToLoad.Add(StarCitizen.F7CM_SuperHornet);
+						modelsToLoad.Add(StarCitizen.Sabre);
+						modelsToLoad.Add(StarCitizen.Vanguard_Sentinel);
+						modelsToLoad.Add(StarCitizen.Constellation_Aquila);
+						modelsToLoad.Add(StarCitizen.Origin_600i_Touring);
+						modelsToLoad.Add(StarCitizen.Retaliator_Base);
+						modelsToLoad.Add(StarCitizen.Starfarer);
+						modelsToLoad.Add(StarCitizen.Carrack);
+						modelsToLoad.Add(StarCitizen.Origin_890_Jump);
+						modelsToLoad.Add(StarCitizen.Polaris);
+						modelsToLoad.Add(StarCitizen.Idris_P);
+					}
+					else
+					{
+						// night55
+					}
+				}
+				else
+				{
+					//modelsToLoad.Add(StarCitizen.Nox);
+					//modelsToLoad.Add(StarCitizen.Dragonfly);
+					//modelsToLoad.Add(StarCitizen.MPUV_Personnel);
+					//modelsToLoad.Add(StarCitizen.Terrapin);
+					//modelsToLoad.Add(StarCitizen.Herald);
+                    modelsToLoad.Add(StarCitizen.Constellation_Aquila);
+                    modelsToLoad.Add(StarCitizen.Origin_600i_Touring);
+					modelsToLoad.Add(StarCitizen.Polaris);
+                    modelsToLoad.Add(StarCitizen.Idris_P);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < 1; i++)
+				{
+                    modelsToLoad.Add(StarCitizen.Nox);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+                    modelsToLoad.Add(StarCitizen.Dragonfly);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+                    modelsToLoad.Add(StarCitizen.MPUV_Personnel);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Khartu_Al);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.M50);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Razor);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.P52_Merlin);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.P72_Archimedes);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Reliant_Kore);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Reliant_Tana);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Reliant_Sen);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Reliant_Mako);
+				}
+                /*
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Mustang_Omega);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Mustang_Gamma);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Mustang_Delta);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Mustang_Beta);
+				}
+                */
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Mustang_Alpha);
+				}
+                /*
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Aurora_LN);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Aurora_CL);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Aurora_MR);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Aurora_LX);
+				}
+                */
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Aurora_ES);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Avenger_Stalker);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Terrapin);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Buccaneer);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Gladius);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Eclipse);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Hull_A);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Gladiator);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Hurricane);
+				}
+                /*
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.F7CS_Hornet_Ghost);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.F7CR_Hornet_Tracker);
+				}
+				*/
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.F7C_Hornet);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Herald);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Origin_325a);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Origin_315p);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Origin_300i);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Prospector);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.F7CM_SuperHornet);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Sabre);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Defender);
+				}
+				// As of 2017/08/22, anything beyond here crashes Pixel VR
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Cutlass_Black);
+				}
+                /*
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Cutlass_Red);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Cutlass_Blue);
+				}
+				*/
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Vanduul_Scythe);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Esperia_Glaive);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Freelancer);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Esperia_Prowler);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Vanguard_Sentinel);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Vanguard_Harbinger);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Redeemer);
+				}
+				for (int i = 0; i < 1; i++) // Pixel takes m:s to load to here
+				{
+					modelsToLoad.Add(StarCitizen.Hull_B);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Constellation_Taurus);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Constellation_Aquila);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Constellation_Andromeda);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Constellation_Phoenix);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+                    modelsToLoad.Add(StarCitizen.Origin_600i_Touring);
+				}
+                /*
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.600i_Explorer);
+				}
+				*/
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Caterpillar);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Retaliator_Base);
+				}
+				for (int i = 0; i < 1; i++) // Pixel takes m:s to load to here
+				{
+					modelsToLoad.Add(StarCitizen.Crucible);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Genesis);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Starfarer);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Hull_C);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Origin_890_Jump);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Carrack);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Polaris);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Reclaimer);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Orion);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Endeavor);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Hull_D);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Idris_P);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Hull_E);
+				}
+			}
+
+			LoadNextModel(modelsToLoad);
+
+			//SortModels(SortedModels.SortType.Name);
+		}
+		else
+		{
+			foreach (ModelSettings modelSettings in AppSettings.ModelSettings)
+			{
+				AddSavedModel(modelSettings);
+
+				//go.name = Guid.NewGuid().ToString();
+				// TODO:(pv) Add scale/move/rotate control widget to GameObject...
+				// TODO:(pv) Add [eventually editable] modelName text to GameObject...
+			}
+		}
+	}
+
     private AppSettings AppSettings;
 
     private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
@@ -131,357 +517,8 @@ public class FleetSceneManager : MonoBehaviour
 
         SystemName = AppSettings.SystemName;
 
-        if (true)
-        {
-            //
-            // The simplest way to load; usually intended for testing purposes only...
-            //
 
-            // Order shortest to longest...
-            // ...to give the appearance of loading fast right from the start...
-            // ...as opposed to slowing down when loading the smaller ships.
-
-            List<string> modelsToLoad = new List<string>();
-
-            if (false)
-            {
-                if (true)
-                {
-                    // knight55
-                    modelsToLoad.Add("Nox");
-                    modelsToLoad.Add("Dragonfly");
-                    modelsToLoad.Add("MPUV Cargo");
-                    modelsToLoad.Add("Terrapin");
-                    modelsToLoad.Add("Gladius");
-                    modelsToLoad.Add("Gladiator");
-                    modelsToLoad.Add("Prospector");
-                    modelsToLoad.Add("F7C-M Super Hornet");
-                    modelsToLoad.Add("Sabre");
-                    modelsToLoad.Add("Vanguard Sentinel");
-                    modelsToLoad.Add("Constellation Aquila");
-                    modelsToLoad.Add("600i Touring");
-                    modelsToLoad.Add("Retaliator Base");
-                    modelsToLoad.Add("Starfarer");
-                    modelsToLoad.Add("Carrack");
-                    modelsToLoad.Add("890 Jump");
-                    modelsToLoad.Add("Polaris");
-                    //modelsToLoad.Add("Idris-P");
-                }
-                else
-                {
-                    // night55
-                }
-            }
-            else
-            {
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Nox");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Dragonfly");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("MPUV Personnel");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("MPUV Cargo");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Khartu-Al");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("M50");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Razor");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("P-52 Merlin");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("P-72 Archimedes");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Reliant Kore");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Reliant Tana");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Reliant Sen");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Reliant Mako");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Mustang Omega");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Mustang Gamma");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Mustang Delta");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Mustang Beta");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Mustang Alpha");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Aurora LN");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Aurora CL");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Aurora MR");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Aurora LX");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Aurora ES");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Avenger Stalker");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Terrapin");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Buccaneer");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Gladius");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Eclipse");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Hull A");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Gladiator");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Hurricane");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("F7C-S Hornet Ghost");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("F7C-R Hornet Tracker");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("F7C Hornet");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Herald");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("325a");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("315p");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("300i");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Prospector");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("F7C-M Super Hornet");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Sabre");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Defender");
-                }
-                // As of 2017/08/22, anything beyond here crashes Pixel VR
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Cutlass Black");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Cutlass Red");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Cutlass Blue");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Vanduul Scythe");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Esperia Glaive");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Freelancer");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Esperia Prowler");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Vanguard Sentinel");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Vanguard Harbinger");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Redeemer");
-                }
-                for (int i = 0; i < 1; i++) // Pixel takes m:s to load to here
-                {
-                    modelsToLoad.Add("Hull B");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Constellation Taurus");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Constellation Aquila");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Constellation Andromeda");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("Constellation Phoenix");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("600i Touring");
-                }
-                for (int i = 0; i < 0; i++)
-                {
-                    modelsToLoad.Add("600i Explorer");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Caterpillar");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Retaliator Base");
-                }
-                for (int i = 0; i < 1; i++) // Pixel takes m:s to load to here
-                {
-                    modelsToLoad.Add("Crucible");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Genesis");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Starfarer");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Hull C");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("890 Jump");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Carrack");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Polaris");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Reclaimer");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Orion");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Endeavor");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Hull D");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Idris-P");
-                }
-                for (int i = 0; i < 1; i++)
-                {
-                    modelsToLoad.Add("Hull E");
-                }
-            }
-
-            LoadNextModel(modelsToLoad);
-        }
-        else
-        {
-            foreach (ModelSettings modelSettings in AppSettings.ModelSettings)
-            {
-                AddSavedModel(modelSettings);
-            }
-        }
+        LoadModels();
 
         //RepositionPlayerToViewFleet();
     }
