@@ -61,15 +61,17 @@ public class FleetSceneManager : MonoBehaviour
 				}
 				else
 				{
-					//modelsToLoad.Add(StarCitizen.Nox);
-					//modelsToLoad.Add(StarCitizen.Dragonfly);
+					modelsToLoad.Add(StarCitizen.Nox);
+                    modelsToLoad.Add(StarCitizen.Origin_X1);
+					modelsToLoad.Add(StarCitizen.Dragonfly);
+                    modelsToLoad.Add(StarCitizen.Origin_85x);
 					//modelsToLoad.Add(StarCitizen.MPUV_Personnel);
 					//modelsToLoad.Add(StarCitizen.Terrapin);
 					//modelsToLoad.Add(StarCitizen.Herald);
-                    modelsToLoad.Add(StarCitizen.Constellation_Aquila);
-                    modelsToLoad.Add(StarCitizen.Origin_600i_Touring);
-					modelsToLoad.Add(StarCitizen.Polaris);
-                    modelsToLoad.Add(StarCitizen.Idris_P);
+					//modelsToLoad.Add(StarCitizen.Constellation_Aquila);
+					//modelsToLoad.Add(StarCitizen.Origin_600i_Touring);
+					//modelsToLoad.Add(StarCitizen.Polaris);
+					//modelsToLoad.Add(StarCitizen.Idris_P);
 				}
 			}
 			else
@@ -80,15 +82,19 @@ public class FleetSceneManager : MonoBehaviour
 				}
 				for (int i = 0; i < 1; i++)
 				{
+                    modelsToLoad.Add(StarCitizen.Origin_X1);
+				}
+				for (int i = 0; i < 1; i++)
+				{
                     modelsToLoad.Add(StarCitizen.Dragonfly);
 				}
 				for (int i = 0; i < 1; i++)
 				{
-                    modelsToLoad.Add(StarCitizen.MPUV_Personnel);
+					modelsToLoad.Add(StarCitizen.MPUV_Cargo);
 				}
 				for (int i = 0; i < 1; i++)
 				{
-					modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+					modelsToLoad.Add(StarCitizen.MPUV_Personnel);
 				}
 				for (int i = 0; i < 1; i++)
 				{
@@ -112,21 +118,25 @@ public class FleetSceneManager : MonoBehaviour
 				}
 				for (int i = 0; i < 1; i++)
 				{
-					modelsToLoad.Add(StarCitizen.Reliant_Kore);
+                    modelsToLoad.Add(StarCitizen.Origin_85x);
 				}
 				for (int i = 0; i < 1; i++)
 				{
-					modelsToLoad.Add(StarCitizen.Reliant_Tana);
-				}
-				for (int i = 0; i < 0; i++)
-				{
-					modelsToLoad.Add(StarCitizen.Reliant_Sen);
+					modelsToLoad.Add(StarCitizen.Reliant_Kore);
 				}
 				for (int i = 0; i < 0; i++)
 				{
 					modelsToLoad.Add(StarCitizen.Reliant_Mako);
 				}
-                /*
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Reliant_Sen);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Reliant_Tana);
+				}
+				/*
 				for (int i = 0; i < 1; i++)
 				{
 					modelsToLoad.Add(StarCitizen.Mustang_Omega);
@@ -220,25 +230,25 @@ public class FleetSceneManager : MonoBehaviour
 				{
 					modelsToLoad.Add(StarCitizen.Herald);
 				}
-				for (int i = 0; i < 1; i++)
+				for (int i = 0; i < 0; i++)
 				{
-					modelsToLoad.Add(StarCitizen.Origin_325a);
+					modelsToLoad.Add(StarCitizen.Origin_300i);
 				}
 				for (int i = 0; i < 0; i++)
 				{
 					modelsToLoad.Add(StarCitizen.Origin_315p);
 				}
-				for (int i = 0; i < 0; i++)
-				{
-					modelsToLoad.Add(StarCitizen.Origin_300i);
-				}
 				for (int i = 0; i < 1; i++)
 				{
-					modelsToLoad.Add(StarCitizen.Prospector);
+					modelsToLoad.Add(StarCitizen.Origin_325a);
 				}
 				for (int i = 0; i < 1; i++)
 				{
 					modelsToLoad.Add(StarCitizen.F7CM_SuperHornet);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Prospector);
 				}
 				for (int i = 0; i < 1; i++)
 				{
@@ -279,13 +289,13 @@ public class FleetSceneManager : MonoBehaviour
 				{
 					modelsToLoad.Add(StarCitizen.Esperia_Prowler);
 				}
-				for (int i = 0; i < 0; i++)
-				{
-					modelsToLoad.Add(StarCitizen.Vanguard_Sentinel);
-				}
 				for (int i = 0; i < 1; i++)
 				{
 					modelsToLoad.Add(StarCitizen.Vanguard_Harbinger);
+				}
+				for (int i = 0; i < 0; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Vanguard_Sentinel);
 				}
 				for (int i = 0; i < 1; i++)
 				{
@@ -299,13 +309,13 @@ public class FleetSceneManager : MonoBehaviour
 				{
 					modelsToLoad.Add(StarCitizen.Constellation_Taurus);
 				}
-				for (int i = 0; i < 1; i++)
-				{
-					modelsToLoad.Add(StarCitizen.Constellation_Aquila);
-				}
 				for (int i = 0; i < 0; i++)
 				{
 					modelsToLoad.Add(StarCitizen.Constellation_Andromeda);
+				}
+				for (int i = 0; i < 1; i++)
+				{
+					modelsToLoad.Add(StarCitizen.Constellation_Aquila);
 				}
 				for (int i = 0; i < 0; i++)
 				{
@@ -730,14 +740,14 @@ public class FleetSceneManager : MonoBehaviour
                 RepositionPlayerToViewFleet();
             }
 
-        // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
+            // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
-        // Calculate width of all loaded non-positioned models
-        // Evenly reposition all loaded models
+            // Calculate width of all loaded non-positioned models
+            // Evenly reposition all loaded models
 
-        // TODO:(pv) Save modelSettings...
-        //modelSettings.Position = modelPosition;
-        //modelSettings.Rotation = modelRotation;
+            // TODO:(pv) Save modelSettings...
+            //modelSettings.Position = modelPosition;
+            //modelSettings.Rotation = modelRotation;
 
             if (action != null)
             {
