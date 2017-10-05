@@ -34,37 +34,123 @@ public class FleetSceneManager : MonoBehaviour
 				{
 					if (true)
 					{
+						//
 						// knight55
-                        modelsToLoad.Add(StarCitizen.Nox);
+						//
+
+						modelsToLoad.Add(StarCitizen.Origin_X1);
 						modelsToLoad.Add(StarCitizen.Dragonfly);
-                        modelsToLoad.Add(StarCitizen.MPUV_Cargo);
-						modelsToLoad.Add(StarCitizen.Terrapin);
-						modelsToLoad.Add(StarCitizen.Gladius);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Origin_X1);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Nox);
+						// Cyclone
+						// URSA
+						// Greycat
+						// Cyclone x5
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Gladius); // Valiant
+						modelsToLoad.Add(StarCitizen.F7CM_SuperHornet);
 						modelsToLoad.Add(StarCitizen.Gladiator);
 						modelsToLoad.Add(StarCitizen.Prospector);
-                        modelsToLoad.Add(StarCitizen.F7CM_SuperHornet);
-						modelsToLoad.Add(StarCitizen.Sabre);
-						modelsToLoad.Add(StarCitizen.Vanguard_Sentinel);
-						modelsToLoad.Add(StarCitizen.Constellation_Aquila);
-						modelsToLoad.Add(StarCitizen.Origin_600i_Touring);
-						modelsToLoad.Add(StarCitizen.Retaliator_Base);
-						modelsToLoad.Add(StarCitizen.Starfarer);
-						modelsToLoad.Add(StarCitizen.Carrack);
-						modelsToLoad.Add(StarCitizen.Origin_890_Jump);
-						modelsToLoad.Add(StarCitizen.Polaris);
+						modelsToLoad.Add(StarCitizen.Sabre); // Comet
+						modelsToLoad.Add(StarCitizen.Vanguard_Sentinel); // Warden
 						modelsToLoad.Add(StarCitizen.Idris_P);
+						modelsToLoad.Add(StarCitizen.Retaliator_Base);
+                        modelsToLoad.Add(StarCitizen.Origin_325a);
+						modelsToLoad.Add(StarCitizen.Terrapin);
+						modelsToLoad.Add(StarCitizen.Hull_C);
+						modelsToLoad.Add(StarCitizen.Caterpillar);
+						modelsToLoad.Add(StarCitizen.Esperia_Prowler);
+						modelsToLoad.Add(StarCitizen.Caterpillar);
+                        modelsToLoad.Add(StarCitizen.Prospector);
+                        modelsToLoad.Add(StarCitizen.Carrack); // Loaner: Aquilla
+						modelsToLoad.Add(StarCitizen.Starfarer);
+						//modelsToLoad.Add(StarCitizen.Origin_350r);
+                        modelsToLoad.Add(StarCitizen.Origin_85x);
+						modelsToLoad.Add(StarCitizen.Polaris);
 					}
 					else
 					{
+                        //
 						// night55
+                        //
+
+						modelsToLoad.Add(StarCitizen.Origin_X1);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Nox);
+                        // Cyclone
+						// URSA
+						// Greycat
+						// Cyclone x5
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+						modelsToLoad.Add(StarCitizen.Nox);
+                        modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.Razor);
+                        modelsToLoad.Add(StarCitizen.Vanguard_Harbinger); // Hoplite
+						modelsToLoad.Add(StarCitizen.Razor);
+						modelsToLoad.Add(StarCitizen.Razor);
+						modelsToLoad.Add(StarCitizen.Razor);
+						modelsToLoad.Add(StarCitizen.Vanguard_Harbinger); // Hoplite
+                        modelsToLoad.Add(StarCitizen.Carrack);
+                        modelsToLoad.Add(StarCitizen.Terrapin);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.F7C_Hornet); // Wildfire
+						modelsToLoad.Add(StarCitizen.Avenger_Stalker); // Titan Renegade
+						modelsToLoad.Add(StarCitizen.Avenger_Stalker); // Warlock
+						modelsToLoad.Add(StarCitizen.Sabre); // Comet
+						modelsToLoad.Add(StarCitizen.Sabre); // Comet
+						modelsToLoad.Add(StarCitizen.Caterpillar);
+						modelsToLoad.Add(StarCitizen.Caterpillar);
+						modelsToLoad.Add(StarCitizen.F7C_Hornet); // Ghost
+						modelsToLoad.Add(StarCitizen.Herald);
+						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+						modelsToLoad.Add(StarCitizen.MPUV_Personnel);
+						modelsToLoad.Add(StarCitizen.Carrack);
+						modelsToLoad.Add(StarCitizen.Terrapin);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Dragonfly);
+						modelsToLoad.Add(StarCitizen.Starfarer);
+						modelsToLoad.Add(StarCitizen.Starfarer);
+						modelsToLoad.Add(StarCitizen.Caterpillar);
+						modelsToLoad.Add(StarCitizen.F7CM_SuperHornet);
 					}
 				}
 				else
 				{
+					modelsToLoad.Add(StarCitizen.Origin_85x);
 					modelsToLoad.Add(StarCitizen.Nox);
-                    modelsToLoad.Add(StarCitizen.Origin_X1);
+					modelsToLoad.Add(StarCitizen.Origin_X1);
 					modelsToLoad.Add(StarCitizen.Dragonfly);
-                    modelsToLoad.Add(StarCitizen.Origin_85x);
 					//modelsToLoad.Add(StarCitizen.MPUV_Personnel);
 					//modelsToLoad.Add(StarCitizen.Terrapin);
 					//modelsToLoad.Add(StarCitizen.Herald);
@@ -393,6 +479,8 @@ public class FleetSceneManager : MonoBehaviour
 				}
 			}
 
+            SortModels(modelsToLoad, SortedModels.SortType.Length);
+
 			LoadNextModel(modelsToLoad);
 
 			//SortModels(SortedModels.SortType.Name);
@@ -408,6 +496,27 @@ public class FleetSceneManager : MonoBehaviour
 				// TODO:(pv) Add [eventually editable] modelName text to GameObject...
 			}
 		}
+	}
+
+    private void SortModels(List<string> modelKeys, SortedModels.SortType sortType)
+    {
+        Debug.Log("SortModels(modelKeys:" + Utils.ToString(modelKeys) + ", sortType:" + sortType + ")");
+        
+		IComparer<ModelInfo> comparer = SortedModels.getComparer(sortType);
+
+        SortedList<ModelInfo, string> modelInfos = new SortedList<ModelInfo, string>(comparer);
+
+        foreach(string modelKey in modelKeys)
+        {
+            ModelInfo modelInfo = ModelInfos[modelKey];
+            Debug.Log("SortModels: modelInfo:" + modelInfo);
+			modelInfos.Add(modelInfo, modelKey);
+        }
+
+        modelKeys.Clear();
+        modelKeys.AddRange(modelInfos.Values);
+
+        Debug.Log("SortModels: modelKeys:" + Utils.ToString(modelKeys));
 	}
 
     private AppSettings AppSettings;
@@ -662,7 +771,7 @@ public class FleetSceneManager : MonoBehaviour
         modelInfo.LoadModelAsync((model) =>
         {
             caller(model);
-        });
+		});
     }
 
     private void AddSavedModel(ModelSettings modelSettings, bool repositionPlayerToViewFleet = true)

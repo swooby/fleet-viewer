@@ -5,6 +5,10 @@ using System.Text;
 
 class StarCitizen
 {
+    //
+    // NOTE:(pv) Only add ships here that have CTM model files!
+    //
+
     public const string Nox = "Nox";
     public const string Origin_X1 = "X1";
     public const string Dragonfly = "Dragonfly";
@@ -36,7 +40,6 @@ class StarCitizen
     public const string Origin_300i = "300i";
     public const string Origin_315p = "315p";
     public const string Origin_325a = "325a";
-    public const string Origin_350r = "350r";
     public const string F7CM_SuperHornet = "F7C-M Super Hornet";
     public const string Prospector = "Prospector";
     public const string Sabre = "Sabre";

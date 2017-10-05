@@ -70,14 +70,19 @@ public class ModelFactory
                             LoadModelCallback tempCallback;
                             lock (modelPathCallbacks)
                             {
-                                while (thisModelPathCallbacks.Count > 0)
+								int thisModelPathCallbacksCount = thisModelPathCallbacks.Count;
+								Debug.Log("ModelFactory.LoadModelAsync: thisModelPathCallbacks.Count:" + thisModelPathCallbacksCount);
+								while (thisModelPathCallbacksCount > 0)
                                 {
                                     model = OnModelLoaded(modelPath, model);
 
                                     tempCallback = thisModelPathCallbacks[0];
                                     tempCallback(model);
                                     thisModelPathCallbacks.RemoveAt(0);
-                                }
+
+									thisModelPathCallbacksCount = thisModelPathCallbacks.Count;
+									Debug.Log("ModelFactory.LoadModelAsync: thisModelPathCallbacks.Count:" + thisModelPathCallbacksCount);
+								}
                             }
                         });
                     }
@@ -88,25 +93,20 @@ public class ModelFactory
                             Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync already in progress");
                         }
                     }
-                }
-                else
-                {
-                    if (VERBOSE_LOG)
-                    {
-                        Debug.LogError("ModelFactory.LoadModelAsync: Handling edge condition");
-                    }
-                    OnModelLoaded(modelPath, cachedModel);
+
+                    return;
                 }
             }
         }
-        else
+
+        if (VERBOSE_LOG)
         {
-            if (VERBOSE_LOG)
-            {
-                Debug.LogError("ModelFactory.LoadModelAsync: Cached Load");
-            }
-            OnModelLoaded(modelPath, cachedModel);
+            Debug.LogError("ModelFactory.LoadModelAsync: Cached Load");
         }
+
+        GameObject loadedModel = OnModelLoaded(modelPath, cachedModel);
+
+        callback(loadedModel);
 
         Debug.Log("-ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
                   ", callback:" + callback + ")");

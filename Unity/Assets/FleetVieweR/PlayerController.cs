@@ -46,14 +46,15 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //
-        // TODO:(pv) Detect double click and switch to/from flight<->point mode.
-        // http://answers.unity3d.com/questions/331545/double-click-mouse-detection-.html
-        //
+		//
+		// TODO:(pv) Detect double click and switch to/from flight<->point mode.
+		// http://answers.unity3d.com/questions/331545/double-click-mouse-detection-.html
+		//
 
-        // TODO:(pv) Momentum
+		// TODO:(pv) Momentum
+		// TODO:(pv) float scroll = Input.GetAxis("Mouse ScrollWheel") to control speed
 
-        GvrConnectionState connectionState = GvrControllerInput.State;
+		GvrConnectionState connectionState = GvrControllerInput.State;
         GvrControllerBatteryLevel batteryLevel = GvrControllerInput.BatteryLevel;
         bool isTouching = GvrControllerInput.IsTouching;
         Vector2 touchPosCentered = GvrControllerInput.TouchPosCentered;

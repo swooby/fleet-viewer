@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -11,6 +13,37 @@ public class Utils
     public static string Quote(string value)
     {
         return value == null ? "null" : "\"" + value + "\"";
+    }
+
+    public static string ToString<T>(List<T> values)
+    {
+        if (values == null)
+        {
+            return "null";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append('[');
+        int i = 0;
+        foreach(T value in values)
+        {
+            if (i > 0)
+            {
+                sb.Append(", ");
+            }
+            String s = value.ToString();
+            if (value is string)
+            {
+                sb.Append(Quote(s));
+            }
+            else
+            {
+                sb.Append(s);
+            }
+            i++;
+        }
+        sb.Append(']');
+        return sb.ToString();
     }
 
     public static string ToString(Bounds bounds)

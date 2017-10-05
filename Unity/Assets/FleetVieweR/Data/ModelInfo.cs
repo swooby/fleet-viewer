@@ -26,7 +26,30 @@ public class ModelInfo
     public string ModelPathLocal { get; private set; }
     public Vector3 ModelRotation { get; private set; }
 
-    public ModelInfo(Dictionary<string, string> dictionary)
+	public override string ToString()
+	{
+		return string.Format("[" +
+                             "ModelInfo: Name={0}" +
+                             ", LastChecked={1}" +
+                             ", LengthMeters={2}" +
+                             ", BeamMeters={3}" +
+                             ", HeightMeters={4}" +
+                             ", StoreUrl={5}" +
+                             ", ModelPathRemote={6}" +
+                             ", ModelPathLocal={7}" +
+                             ", ModelRotation={8}" +
+                             "]", Name,
+                             LastChecked,
+                             LengthMeters,
+                             BeamMeters,
+                             HeightMeters,
+                             StoreUrl,
+                             ModelPathRemote,
+                             ModelPathLocal,
+                             ModelRotation);
+	}
+
+	public ModelInfo(Dictionary<string, string> dictionary)
     {
         Name = dictionary[FIELD_NAME];
 
@@ -115,30 +138,41 @@ public class ModelInfo
                         {
                             Debug.LogError("ModelInfo.LoadModelAsync: Non-Cached Load: ModelFactory.LoadModelAsync(...)");
                         }
-                        ModelFactory.LoadModelAsync(ModelPathLocal, (model) =>
+						DateTime timeLoadStart = DateTime.Now;
+						ModelFactory.LoadModelAsync(ModelPathLocal, (model) =>
                         {
                             if (VERBOSE_LOG)
                             {
-                                Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadAsync completed");
+                                Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync completed");
                             }
 							if (model == null)
                             {
                                 return;
                             }
 
-                            model.name = Name;
+							DateTime timeLoadStop = DateTime.Now;
+							TimeSpan duration = timeLoadStop.Subtract(timeLoadStart);
+							string durationString = Utils.ToString(duration);
+							Debug.Log("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync Took " + durationString);
+
+							model.name = Name;
 
                             LoadModelCallback tempCallback;
                             lock (callbacks)
                             {
-                                while (callbacks.Count > 0)
+                                int callbacksCount = callbacks.Count;
+                                Debug.Log("ModelInfo.LoadModelAsync: callbacks.Count:" + callbacksCount);
+                                while (callbacksCount > 0)
                                 {
                                     model = OnModelLoaded(model);
 
                                     tempCallback = callbacks[0];
                                     tempCallback(model);
                                     callbacks.RemoveAt(0);
-                                }
+
+                                    callbacksCount = callbacks.Count;
+									Debug.Log("ModelInfo.LoadModelAsync: callbacks.Count:" + callbacksCount);
+								}
                             }
                         });
                     }
@@ -149,25 +183,20 @@ public class ModelInfo
 							Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync already in progress");
 						}
 					}
-                }
-                else
-                {
-					if (VERBOSE_LOG)
-					{
-						Debug.LogError("ModelInfo.LoadModelAsync: Handling edge condition");
-					}
-					OnModelLoaded(cachedModel);
+
+                    return;
                 }
             }
         }
-        else
-        {
-            if (VERBOSE_LOG)
-            {
-                Debug.LogError("ModelInfo.LoadModelAsync: Cached Load");
-            }
-            OnModelLoaded(cachedModel);
-        }
+
+		if (VERBOSE_LOG)
+		{
+			Debug.LogError("ModelInfo.LoadModelAsync: Cached Load");
+		}
+
+		GameObject loadedModel = OnModelLoaded(cachedModel);
+
+        callback(loadedModel);
 
 		Debug.Log("-ModelInfo.LoadModelAsync(callback:" + callback + ")");
 	}
