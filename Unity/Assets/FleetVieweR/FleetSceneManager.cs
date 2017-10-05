@@ -44,10 +44,16 @@ public class FleetSceneManager : MonoBehaviour
 						modelsToLoad.Add(StarCitizen.Origin_X1);
 						modelsToLoad.Add(StarCitizen.Dragonfly);
 						modelsToLoad.Add(StarCitizen.Nox);
-						// Cyclone
-						// URSA
+						modelsToLoad.Add(StarCitizen.Cyclone_TR);
+                        modelsToLoad.Add(StarCitizen.Ursa_Rover);
 						// Greycat
-						// Cyclone x5
+						modelsToLoad.Add(StarCitizen.Cyclone);
+                        modelsToLoad.Add(StarCitizen.Cyclone_AA);
+                        modelsToLoad.Add(StarCitizen.Cyclone_RC);
+                        modelsToLoad.Add(StarCitizen.Cyclone_RN);
+						modelsToLoad.Add(StarCitizen.Cyclone_TR);
+						modelsToLoad.Add(StarCitizen.Cyclone);
+						modelsToLoad.Add(StarCitizen.Cyclone);
 						modelsToLoad.Add(StarCitizen.Nox);
 						modelsToLoad.Add(StarCitizen.Nox);
 						modelsToLoad.Add(StarCitizen.Nox);
@@ -100,10 +106,14 @@ public class FleetSceneManager : MonoBehaviour
 						modelsToLoad.Add(StarCitizen.Origin_X1);
 						modelsToLoad.Add(StarCitizen.Dragonfly);
 						modelsToLoad.Add(StarCitizen.Nox);
-                        // Cyclone
-						// URSA
+						modelsToLoad.Add(StarCitizen.Cyclone_TR);
+						modelsToLoad.Add(StarCitizen.Ursa_Rover);
 						// Greycat
-						// Cyclone x5
+						modelsToLoad.Add(StarCitizen.Cyclone);
+						modelsToLoad.Add(StarCitizen.Cyclone_AA);
+						modelsToLoad.Add(StarCitizen.Cyclone_RC);
+						modelsToLoad.Add(StarCitizen.Cyclone_RN);
+						modelsToLoad.Add(StarCitizen.Cyclone_TR);
 						modelsToLoad.Add(StarCitizen.Nox);
 						modelsToLoad.Add(StarCitizen.Nox);
 						modelsToLoad.Add(StarCitizen.Nox);

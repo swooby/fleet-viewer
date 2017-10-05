@@ -11,8 +11,15 @@ class StarCitizen
 
     public const string Nox = "Nox";
     public const string Origin_X1 = "X1";
-    public const string Dragonfly = "Dragonfly";
-    public const string MPUV_Cargo = "MPUV Cargo";
+	public const string Origin_X1_Velocity = "X1 Velocity";
+	public const string Cyclone = "Cyclone";
+	public const string Cyclone_AA = "Cyclone AA";
+	public const string Cyclone_RC = "Cyclone RC";
+	public const string Cyclone_RN = "Cyclone RN";
+	public const string Cyclone_TR = "Cyclone TR";
+	public const string Dragonfly = "Dragonfly";
+	public const string Ursa_Rover = "Ursa Rover";
+	public const string MPUV_Cargo = "MPUV Cargo";
 	public const string MPUV_Personnel = "MPUV Personnel";
 	public const string Khartu_Al = "Khartu-Al";
 	public const string M50 = "M50";
