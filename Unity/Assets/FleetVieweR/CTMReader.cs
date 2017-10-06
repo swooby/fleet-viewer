@@ -9,12 +9,37 @@ using OpenCTM;
 using System;
 using System.Runtime.Remoting.Messaging;
 
+// TODO:(pv) Make this a plugin in the Unity Store
+//  https://unity3d.com/learn/tutorials/topics/scripting/writing-plugins
+//  https://docs.unity3d.com/Manual/Plugins.html
+//  https://www.youtube.com/watch?v=uFjiNkYhBvY
+//  https://www.google.com/search?q=how+to+make+a+unity+plugin
+
+/// <summary>
+/// Original inspiration from several sources:
+///     https://github.com/Danny02/JOpenCTM
+///     https://github.com/Danny02/OpenCtm-CSharp
+///     https://github.com/unity-car-tutorials/OpenCTM-Unity
+///     https://github.com/unity-car-tutorials/OpenCTM-Unity
+/// 
+/// CTMReader loads a single CTM file in to a UnityEngine.Mesh.
+/// This implementation does not fail if the CTM has more than the Unity limit
+/// of 65K vertices or triangles per UnityEngine.Mesh.
+/// There is confusion on my part if UnityEngine.Mesh is limited to 65K vertices
+/// or triangles per mesh, so I assume the worst case of 65k vertices per mesh
+/// and assume 3 vertices per triangle to come up with a working limit of 21666
+/// triangles per UnityEngine.Mesh.
+/// In this implementation, separate UnityEngine.Mesh will be create every
+/// 21666 triangles, and all will be grouped to have the same root/parent.
+/// 
+/// NOTE: Normals and Textures are not yet supported.
+/// </summary>
 public class CTMReader
 {
     public const bool VERBOSE_LOG = false;
 
     public const int MAX_VERTICES_PER_MESH = 65000;
-    public const int MAX_TRIANGLES_PER_MESH = ((65000 / 3) * 3) / 3; // 64998 / 3 == 21666
+    public const int MAX_TRIANGLES_PER_MESH = ((MAX_VERTICES_PER_MESH / 3) * 3) / 3; // 64998 / 3 == 21666
 
     private class MeshInfo
     {

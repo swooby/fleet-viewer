@@ -128,7 +128,10 @@ public class ModelInfo
         {
             lock (callbacks)
             {
-                if (cachedModel == null)
+				//
+				// Double-check now that we got the lock
+				//
+				if (cachedModel == null)
                 {
                     callbacks.Add(callback);
 
