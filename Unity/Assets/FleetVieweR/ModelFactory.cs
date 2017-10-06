@@ -1,5 +1,7 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 /// <summary>
 /// ModelFactory loads 
@@ -19,8 +21,7 @@ public class ModelFactory
     private static GameObject GetCachedModel(string modelPath)
     {
         GameObject cachedModel;
-        models.TryGetValue(modelPath, out cachedModel);
-        return cachedModel;
+        return models.TryGetValue(modelPath, out cachedModel) ? cachedModel : null;
     }
 
     private static List<LoadModelCallback> GetModelPathCallbacks(string modelPath)
@@ -75,25 +76,25 @@ public class ModelFactory
                                 return;
                             }
 
-                            GameObject lodRoot = AddLod(null, model);
+                            GameObject lodRoot = new GameObject();
 
-                            LoadModelCallback tempCallback;
-                            lock (modelPathCallbacks)
-                            {
-								int thisModelPathCallbacksCount = thisModelPathCallbacks.Count;
-								Debug.Log("ModelFactory.LoadModelAsync: thisModelPathCallbacks.Count:" + thisModelPathCallbacksCount);
-								while (thisModelPathCallbacksCount > 0)
+                            AddLod(lodRoot, model);
+
+                            //LoadModelLodAsync(lodRoot, modelPath, 1, () =>
+                            //{
+                                LoadModelCallback tempCallback;
+                                lock (modelPathCallbacks)
                                 {
-                                    OnModelLoaded(modelPath, lodRoot);
+                                    while (thisModelPathCallbacks.Count > 0)
+                                    {
+                                        OnModelLoaded(modelPath, lodRoot);
 
-                                    tempCallback = thisModelPathCallbacks[0];
-                                    tempCallback(lodRoot);
-                                    thisModelPathCallbacks.RemoveAt(0);
-
-									thisModelPathCallbacksCount = thisModelPathCallbacks.Count;
-									Debug.Log("ModelFactory.LoadModelAsync: thisModelPathCallbacks.Count:" + thisModelPathCallbacksCount);
-								}
-                            }
+                                        tempCallback = thisModelPathCallbacks[0];
+                                        tempCallback(lodRoot);
+                                        thisModelPathCallbacks.RemoveAt(0);
+                                    }
+                                }
+                            //});
                         });
                     }
                     else
@@ -122,33 +123,55 @@ public class ModelFactory
                   ", callback:" + callback + ")");
     }
 
-    private static GameObject AddLod(GameObject lodRoot, GameObject lodModel)
+    private static void LoadModelLodAsync(GameObject lodRoot, string modelPath, int lod, Action callback)
     {
-        if (lodRoot == null)
-        {
-            lodRoot = new GameObject();
-        }
+        string filename = Path.GetFileNameWithoutExtension(modelPath);
+        string ext = Path.GetExtension(modelPath);
 
-		LODGroup lodGroup = lodRoot.GetComponent<LODGroup>();
+        string resourcePath = filename + "-fvLOD" + lod + ext;
+        Debug.Log("ModelFactory.LoadModelLodAsync: resourcePath:" + Utils.Quote(resourcePath));
+
+        CTMReader.LoadAsync(resourcePath, (model) =>
+        {
+            if (VERBOSE_LOG)
+            {
+                Debug.LogError("ModelFactory.LoadModelLodAsync: CTMReader.LoadAsync completed");
+            }
+            if (model == null)
+            {
+                callback();
+            }
+            else
+            {
+                AddLod(lodRoot, model);
+
+                LoadModelLodAsync(lodRoot, modelPath, lod + 1, callback);
+            }
+        });
+    }
+
+    private static void AddLod(GameObject lodRoot, GameObject lodModel)
+    {
+        LODGroup lodGroup = lodRoot.GetComponent<LODGroup>();
         if (lodGroup == null)
         {
-			lodGroup = lodRoot.AddComponent<LODGroup>();
+            lodGroup = lodRoot.AddComponent<LODGroup>();
             lodGroup.SetLODs(null);
-		}
+        }
 
-		List<LOD> lods = new List<LOD>(lodGroup.GetLODs());
+        List<LOD> lods = new List<LOD>(lodGroup.GetLODs());
 
         lodModel.name = "LOD " + lods.Count;
-		lodModel.transform.parent = lodRoot.transform;
-		Renderer[] renderers = new Renderer[1];
-		renderers[0] = lodModel.GetComponent<Renderer>();
-		LOD lod = new LOD(0.0f, renderers);
+        lodModel.transform.parent = lodRoot.transform;
+        Renderer[] renderers = new Renderer[1];
+        renderers[0] = lodModel.GetComponent<Renderer>();
+        LOD lod = new LOD(0.0f, renderers);
 
         lods.Add(lod);
 
-		int i = 0;
+        int i = 0;
         List<LOD>.Enumerator enumerator = lods.GetEnumerator();
-        while(enumerator.MoveNext())
+        while (enumerator.MoveNext())
         {
             lod = enumerator.Current;
             lod.screenRelativeTransitionHeight = 1.0f / (i + 1);
@@ -157,9 +180,7 @@ public class ModelFactory
 
         lodGroup.SetLODs(lods.ToArray());
         lodGroup.RecalculateBounds();
-
-        return lodRoot;
-	}
+    }
 
     private static GameObject OnModelLoaded(string modelPath, GameObject model)
     {

@@ -18,7 +18,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour
     {
         if (!Exists())
         {
-            throw new Exception("UnityMainThreadDispatcher could not find the UnityMainThreadDispatcher object. Please ensure you have added the MainThreadExecutor Prefab to your scene.");
+            throw new Exception("UnityMainThreadDispatcher could not find the UnityMainThreadDispatcher object. Please ensure you have added the UnityMainThreadDispatcher object to your scene.");
         }
         return instance;
     }

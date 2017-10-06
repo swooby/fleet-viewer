@@ -95,9 +95,7 @@ public class CTMReader
 
         MeshInfo[] meshInfos = GetMeshInfos(bytes);
 
-        GameObject gameObject = meshInfos != null ? GetGameObject(meshInfos) : null;
-
-        return gameObject;
+        return GetGameObject(meshInfos);
     }
 
     public delegate void LoadCallback(GameObject gameObject);
@@ -143,12 +141,16 @@ public class CTMReader
     private static byte[] GetBytes(string resourcePath)
     {
         TextAsset textAsset = Resources.Load(resourcePath) as TextAsset;
-        byte[] bytes = textAsset.bytes;
-        return bytes;
+        return textAsset != null ? textAsset.bytes : null;
     }
 
     private static MeshInfo[] GetMeshInfos(byte[] bytes)
     {
+        if (bytes == null)
+        {
+            return null;
+        }
+
         if (VERBOSE_LOG)
         {
             Debug.LogWarning("CTMReader.GetMeshInfos: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);

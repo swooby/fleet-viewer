@@ -163,18 +163,13 @@ public class ModelInfo
                             LoadModelCallback tempCallback;
                             lock (callbacks)
                             {
-                                int callbacksCount = callbacks.Count;
-                                Debug.Log("ModelInfo.LoadModelAsync: callbacks.Count:" + callbacksCount);
-                                while (callbacksCount > 0)
+                                while (callbacks.Count > 0)
                                 {
                                     model = OnModelLoaded(model);
 
                                     tempCallback = callbacks[0];
                                     tempCallback(model);
                                     callbacks.RemoveAt(0);
-
-                                    callbacksCount = callbacks.Count;
-									Debug.Log("ModelInfo.LoadModelAsync: callbacks.Count:" + callbacksCount);
 								}
                             }
                         });
