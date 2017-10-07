@@ -10,7 +10,7 @@ using UnityEngine;
 /// </summary>
 public class ModelFactory
 {
-    public const bool VERBOSE_LOG = false;
+    public const bool VERBOSE_LOG = true;
 
     private ModelFactory()
     {
@@ -69,20 +69,21 @@ public class ModelFactory
                         {
                             if (VERBOSE_LOG)
                             {
-                                Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync completed");
+                                Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync completed; model:" + model);
                             }
                             if (model == null)
                             {
                                 return;
                             }
 
-                            GameObject lodRoot = new GameObject();
+                            List<GameObject> lodModels = new List<GameObject>();
+                            lodModels.Add(model);
 
-                            AddLod(lodRoot, model);
+                            LoadModelLodAsync(lodModels, modelPath, 1, () =>
+                            {
+                                GameObject lodRoot = CreateModelLods(lodModels);
 
-                            //LoadModelLodAsync(lodRoot, modelPath, 1, () =>
-                            //{
-                                LoadModelCallback tempCallback;
+								LoadModelCallback tempCallback;
                                 lock (modelPathCallbacks)
                                 {
                                     while (thisModelPathCallbacks.Count > 0)
@@ -94,7 +95,7 @@ public class ModelFactory
                                         thisModelPathCallbacks.RemoveAt(0);
                                     }
                                 }
-                            //});
+                            });
                         });
                     }
                     else
@@ -123,19 +124,26 @@ public class ModelFactory
                   ", callback:" + callback + ")");
     }
 
-    private static void LoadModelLodAsync(GameObject lodRoot, string modelPath, int lod, Action callback)
+	//
+	// LOD ideas:
+	//  https://www.youtube.com/watch?v=IzlU_xvTK3Y
+	//  https://www.youtube.com/watch?v=T2QstH7GQxU
+	//
+
+	private static void LoadModelLodAsync(List<GameObject> lodModels, string modelPath, int lod, Action callback)
     {
+        string directory = Path.GetDirectoryName(modelPath);
         string filename = Path.GetFileNameWithoutExtension(modelPath);
         string ext = Path.GetExtension(modelPath);
 
-        string resourcePath = filename + "-fvLOD" + lod + ext;
+        string resourcePath = directory + "/" + filename + "-fvLOD" + lod + ext;
         Debug.Log("ModelFactory.LoadModelLodAsync: resourcePath:" + Utils.Quote(resourcePath));
 
         CTMReader.LoadAsync(resourcePath, (model) =>
         {
             if (VERBOSE_LOG)
             {
-                Debug.LogError("ModelFactory.LoadModelLodAsync: CTMReader.LoadAsync completed");
+                Debug.LogError("ModelFactory.LoadModelLodAsync: CTMReader.LoadAsync completed; model:" + model);
             }
             if (model == null)
             {
@@ -143,43 +151,47 @@ public class ModelFactory
             }
             else
             {
-                AddLod(lodRoot, model);
+                lodModels.Add(model);
 
-                LoadModelLodAsync(lodRoot, modelPath, lod + 1, callback);
+                LoadModelLodAsync(lodModels, modelPath, lod + 1, callback);
             }
         });
     }
 
-    private static void AddLod(GameObject lodRoot, GameObject lodModel)
+    private static GameObject CreateModelLods(List<GameObject> lodModels)
     {
-        LODGroup lodGroup = lodRoot.GetComponent<LODGroup>();
-        if (lodGroup == null)
-        {
-            lodGroup = lodRoot.AddComponent<LODGroup>();
-            lodGroup.SetLODs(null);
-        }
+        GameObject lodRoot = new GameObject();
+        LODGroup lodGroup = lodRoot.AddComponent<LODGroup>();
 
-        List<LOD> lods = new List<LOD>(lodGroup.GetLODs());
+        int lodCount = lodModels.Count;
 
-        lodModel.name = "LOD " + lods.Count;
-        lodModel.transform.parent = lodRoot.transform;
-        Renderer[] renderers = new Renderer[1];
-        renderers[0] = lodModel.GetComponent<Renderer>();
-        LOD lod = new LOD(0.0f, renderers);
-
-        lods.Add(lod);
+        LOD[] lods = new LOD[lodCount];
+		//Debug.LogError("ModelFactory.AddLod: lods:" + lods);
 
         int i = 0;
-        List<LOD>.Enumerator enumerator = lods.GetEnumerator();
-        while (enumerator.MoveNext())
+		float screenRelativeTransitionHeight = 1.0f;
+		foreach (GameObject lodModel in lodModels)
         {
-            lod = enumerator.Current;
-            lod.screenRelativeTransitionHeight = 1.0f / (i + 1);
+			lodModel.name = "_LOD" + i;
+			lodModel.transform.parent = lodRoot.transform;
+			Renderer[] renderers = lodModel.GetComponentsInChildren<Renderer>(true);
+			if (i == lodCount - 1)
+			{
+				screenRelativeTransitionHeight = 0.0f;
+			}
+			else
+			{
+				screenRelativeTransitionHeight *= 0.5f;
+			}
+			lods[i] = new LOD(screenRelativeTransitionHeight, renderers);
+
             i++;
         }
 
-        lodGroup.SetLODs(lods.ToArray());
+        lodGroup.SetLODs(lods);
         lodGroup.RecalculateBounds();
+
+		return lodRoot;
     }
 
     private static GameObject OnModelLoaded(string modelPath, GameObject model)

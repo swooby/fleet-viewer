@@ -497,20 +497,27 @@ public class FleetSceneManager : MonoBehaviour
 		}
 		else
 		{
-			foreach (ModelSettings modelSettings in AppSettings.ModelSettings)
-			{
-				AddSavedModel(modelSettings);
+            if (false)
+            {
+                foreach (ModelSettings modelSettings in AppSettings.ModelSettings)
+                {
+                    AddSavedModel(modelSettings);
 
-				//go.name = Guid.NewGuid().ToString();
-				// TODO:(pv) Add scale/move/rotate control widget to GameObject...
-				// TODO:(pv) Add [eventually editable] modelName text to GameObject...
+                    //go.name = Guid.NewGuid().ToString();
+                    // TODO:(pv) Add scale/move/rotate control widget to GameObject...
+                    // TODO:(pv) Add [eventually editable] modelName text to GameObject...
+                }
+            }
+            else
+            {
+                GameObject test = Utils.PrimitiveCubeMesh();
 			}
 		}
 	}
 
     private void SortModels(List<string> modelKeys, SortedModels.SortType sortType)
     {
-        Debug.Log("SortModels(modelKeys:" + Utils.ToString(modelKeys) + ", sortType:" + sortType + ")");
+        //Debug.Log("SortModels(modelKeys:" + Utils.ToString(modelKeys) + ", sortType:" + sortType + ")");
         
 		IComparer<ModelInfo> comparer = SortedModels.getComparer(sortType);
 
@@ -519,14 +526,14 @@ public class FleetSceneManager : MonoBehaviour
         foreach(string modelKey in modelKeys)
         {
             ModelInfo modelInfo = ModelInfos[modelKey];
-            Debug.Log("SortModels: modelInfo:" + modelInfo);
+            //Debug.Log("SortModels: modelInfo:" + modelInfo);
 			modelInfos.Add(modelInfo, modelKey);
         }
 
         modelKeys.Clear();
         modelKeys.AddRange(modelInfos.Values);
 
-        Debug.Log("SortModels: modelKeys:" + Utils.ToString(modelKeys));
+        //Debug.Log("SortModels: modelKeys:" + Utils.ToString(modelKeys));
 	}
 
     private AppSettings AppSettings;
