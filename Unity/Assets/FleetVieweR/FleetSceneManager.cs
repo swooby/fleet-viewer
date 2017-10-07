@@ -901,6 +901,9 @@ public class FleetSceneManager : MonoBehaviour
         //Debug.LogError("FleetPlanesPositionAndScale: AFTER localScale fleetPlanesBounds == " + Utils.ToString(fleetPlanesBounds));
     }
 
+    private Vector3 PLAYER_UP = Vector3.up;
+    //private Vector3 PLAYER_UP = Vector3.back;
+
     private void RepositionPlayerToViewFleet()
     {
         Debug.Log("RepositionPlayerToViewFleet()");
@@ -926,17 +929,38 @@ public class FleetSceneManager : MonoBehaviour
         float angle;
 
         float fleetRootWidth = fleetRootBoundsSize.x;
+        float fleetRootHeight = fleetRootBoundsSize.y;
         float fleetRootDepth = fleetRootBoundsSize.z;
 
-        if (fleetRootWidth > fleetRootDepth)
+        if (PLAYER_UP == Vector3.up)
         {
-            opposite = fleetRootWidth * 0.5f;
-            angle = cameraFieldOfViewX * 0.5f;
+            if (fleetRootWidth > fleetRootDepth)
+            {
+                opposite = fleetRootWidth * 0.5f;
+                angle = cameraFieldOfViewX * 0.5f;
+            }
+            else
+            {
+                opposite = fleetRootHeight * 0.5f;
+                angle = cameraFieldOfViewY * 0.5f;
+            }
+        }
+        else if (PLAYER_UP == Vector3.back)
+        {
+            if (fleetRootWidth > fleetRootDepth)
+            {
+                opposite = fleetRootWidth * 0.5f;
+                angle = cameraFieldOfViewX * 0.5f;
+            }
+            else
+            {
+                opposite = fleetRootDepth * 0.5f;
+                angle = cameraFieldOfViewY * 0.5f;
+            }
         }
         else
         {
-            opposite = fleetRootDepth * 0.5f;
-            angle = cameraFieldOfViewY * 0.5f;
+            throw new ArgumentException("Unsupported PLAYER_UP == " + PLAYER_UP);
         }
         //Debug.LogError("RepositionPlayerToViewFleet: opposite == " + opposite);
         //Debug.LogError("RepositionPlayerToViewFleet: angle == " + angle);
@@ -944,20 +968,49 @@ public class FleetSceneManager : MonoBehaviour
         float adjacent = (float)(opposite / Math.Tan(Mathf.Deg2Rad * angle));
         //Debug.LogError("RepositionPlayerToViewFleet: adjacent == " + adjacent);
 
-        Vector3 position = new Vector3(fleetRootBounds.center.x,
+        Vector3 playerPosition;
+        Quaternion playerRotation;
+        Vector3 spawnPosition;
+        Quaternion spawnRotation;
+
+        if (PLAYER_UP == Vector3.up)
+        {
+            playerPosition = new Vector3(fleetRootBounds.center.x,
+                                       fleetRootBounds.center.y,
+                                       -fleetRootBounds.size.z - adjacent);
+
+            playerRotation = Quaternion.Euler(0, 0, 0);
+
+            spawnPosition = playerPosition;
+            spawnPosition.y -= 1;
+
+            spawnRotation = playerRotation;
+        }
+        else if (PLAYER_UP == Vector3.back)
+        {
+            playerPosition = new Vector3(fleetRootBounds.center.x,
                                        fleetRootBounds.center.y + adjacent,
                                        fleetRootBounds.center.z);
-        //Debug.LogError("RepositionPlayerToViewFleet: position == " + position);
 
-        Quaternion rotation = Quaternion.Euler(90, 180, 0);
+            playerRotation = Quaternion.Euler(90, 180, 0);
 
-        Player.transform.localPosition = position;
-        Player.transform.rotation = rotation;
+            spawnPosition = playerPosition;
+            spawnPosition.z += 1;
 
-        position.z += 1;
+            spawnRotation = playerRotation;
+        }
+        else
+        {
+            throw new ArgumentException("Unsupported PLAYER_UP == " + PLAYER_UP);
+        }
+        //Debug.LogError("RepositionPlayerToViewFleet: playerPosition == " + playerPosition);
+        //Debug.LogError("RepositionPlayerToViewFleet: playerRotation == " + playerRotation);
 
-        Respawn.transform.localPosition = position;
-        Respawn.transform.rotation = rotation;
+        Player.transform.localPosition = playerPosition;
+        Player.transform.rotation = playerRotation;
+
+        Respawn.transform.localPosition = spawnPosition;
+        Respawn.transform.rotation = spawnRotation;
     }
 
     private Dictionary<int, Color> debugColors = new Dictionary<int, Color>();
