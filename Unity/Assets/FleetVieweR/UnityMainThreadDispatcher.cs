@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+/// <summary>
+/// IMPORTANT: Sometimes Debug.Log* causes hangs!!!!
+/// </summary>
 public class UnityMainThreadDispatcher : MonoBehaviour
 {
     private static readonly Queue<Action> executionQueue = new Queue<Action>();

@@ -16,7 +16,7 @@ public class ModelsManager : MonoBehaviour
     // TODO:(pv) Load this from a[nother] configuration file...
     Dictionary<string, string> systems = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        { Systems.StarCitizen, "Star Citizen Ships 3D Models - Data" },
+        { Systems.StarCitizen, "Fleet VieweR Star Citizen Ships 3D Models - Data" },
     };
 
     private string systemName;

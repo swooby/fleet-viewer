@@ -10,7 +10,7 @@ using UnityEngine;
 /// </summary>
 public class ModelFactory
 {
-    public const bool VERBOSE_LOG = true;
+    public const bool VERBOSE_LOG = false;
 
     private ModelFactory()
     {
@@ -136,7 +136,12 @@ public class ModelFactory
         string filename = Path.GetFileNameWithoutExtension(modelPath);
         string ext = Path.GetExtension(modelPath);
 
-        string resourcePath = directory + "/" + filename + "-fvLOD" + lod + ext;
+        if (filename.EndsWith("fv_LOD0"))
+        {
+            filename = filename.Substring(0, filename.Length - 1) + lod;
+        }
+
+        string resourcePath = directory + "/" + filename + ext;
         Debug.Log("ModelFactory.LoadModelLodAsync: resourcePath:" + Utils.Quote(resourcePath));
 
         CTMReader.LoadAsync(resourcePath, (model) =>
