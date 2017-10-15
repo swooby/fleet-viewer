@@ -34,37 +34,45 @@ public class FleetSceneManager : MonoBehaviour
 				{
 					if (true)
 					{
-						//
-						// knight55
-						//
+                        //
+                        // knight55
+                        //
 
-						modelsToLoad.Add(StarCitizen.Origin_X1);
-						modelsToLoad.Add(StarCitizen.Dragonfly);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Origin_X1);
-						modelsToLoad.Add(StarCitizen.Dragonfly);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Cyclone_TR);
-                        modelsToLoad.Add(StarCitizen.Ursa_Rover);
-						// Greycat
-						modelsToLoad.Add(StarCitizen.Cyclone);
-                        modelsToLoad.Add(StarCitizen.Cyclone_AA);
-                        modelsToLoad.Add(StarCitizen.Cyclone_RC);
-                        modelsToLoad.Add(StarCitizen.Cyclone_RN);
-						modelsToLoad.Add(StarCitizen.Cyclone_TR);
-						modelsToLoad.Add(StarCitizen.Cyclone);
-						modelsToLoad.Add(StarCitizen.Cyclone);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.Nox);
-						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
+                        modelsToLoad.Add(StarCitizen.Origin_X1);          // \
+                        modelsToLoad.Add(StarCitizen.Dragonfly);          // | Race Team Pack
+                        modelsToLoad.Add(StarCitizen.Nox);                // /
+                        modelsToLoad.Add(StarCitizen.Origin_X1);          // \
+                        modelsToLoad.Add(StarCitizen.Origin_X1_Velocity); // | X1 Three Pack
+                        modelsToLoad.Add(StarCitizen.Origin_X1); // Force // /
+                        modelsToLoad.Add(StarCitizen.Origin_X1);          // \
+                        modelsToLoad.Add(StarCitizen.Dragonfly);          // | Race Team Pack
+                        modelsToLoad.Add(StarCitizen.Nox);                // /
+                        modelsToLoad.Add(StarCitizen.Origin_X1);          // \
+                        modelsToLoad.Add(StarCitizen.Dragonfly);          // | Race Team Pack
+                        modelsToLoad.Add(StarCitizen.Nox);                // /
+                        modelsToLoad.Add(StarCitizen.Cyclone_TR);         // \
+                        modelsToLoad.Add(StarCitizen.Ursa_Rover);         // | Offroad Vehicle Pack
+						// Greycat                                        // /
+						modelsToLoad.Add(StarCitizen.Cyclone);            // \
+                        modelsToLoad.Add(StarCitizen.Cyclone_AA);         // |
+                        modelsToLoad.Add(StarCitizen.Cyclone_RC);         // | Cyclone Five Pack
+                        modelsToLoad.Add(StarCitizen.Cyclone_RN);         // |
+                        modelsToLoad.Add(StarCitizen.Cyclone_TR);         // /
+                        modelsToLoad.Add(StarCitizen.Cyclone);
+                        modelsToLoad.Add(StarCitizen.Cyclone);
+                        modelsToLoad.Add(StarCitizen.Nox);                // \
+						modelsToLoad.Add(StarCitizen.Nox);                // |
+                        modelsToLoad.Add(StarCitizen.Nox);                // | Nox Five Pack
+                        modelsToLoad.Add(StarCitizen.Nox);                // |
+                        modelsToLoad.Add(StarCitizen.Nox);                // /
+                        modelsToLoad.Add(StarCitizen.Nox);                // \
+                        modelsToLoad.Add(StarCitizen.Nox);                // |
+                        modelsToLoad.Add(StarCitizen.Nox);                // | Nox Five Pack
+                        modelsToLoad.Add(StarCitizen.Nox);                // |
+                        modelsToLoad.Add(StarCitizen.Nox);                // /
+                        modelsToLoad.Add(StarCitizen.Nox);                // \
+                        modelsToLoad.Add(StarCitizen.Nox);                // / Nox Two Pack
+                        modelsToLoad.Add(StarCitizen.MPUV_Cargo);
 						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
 						modelsToLoad.Add(StarCitizen.MPUV_Cargo);
 						modelsToLoad.Add(StarCitizen.MPUV_Cargo);

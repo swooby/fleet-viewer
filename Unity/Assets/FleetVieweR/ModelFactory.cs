@@ -136,10 +136,13 @@ public class ModelFactory
         string filename = Path.GetFileNameWithoutExtension(modelPath);
         string ext = Path.GetExtension(modelPath);
 
-        if (filename.EndsWith("fv_LOD0"))
+        if (!filename.EndsWith("fv_LOD0"))
         {
-            filename = filename.Substring(0, filename.Length - 1) + lod;
+            callback();
+            return;
         }
+
+        filename = filename.Substring(0, filename.Length - 1) + lod;
 
         string resourcePath = directory + "/" + filename + ext;
         Debug.Log("ModelFactory.LoadModelLodAsync: resourcePath:" + Utils.Quote(resourcePath));
