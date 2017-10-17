@@ -1,0 +1,10 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Remove Duplicate Vertices"/>
+ <filter name="Remove Unreferenced Vertices"/>
+ <filter name="Re-Compute Face Normals"/>
+ <filter name="Invert Faces Orientation">
+  <Param value="true" name="forceFlip" type="RichBool"/>
+  <Param value="false" name="onlySelected" type="RichBool"/>
+ </filter>
+</FilterScript>

@@ -1,0 +1,16 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Remove Duplicate Vertices"/>
+ <filter name="Remove Unreferenced Vertices"/>
+ <filter name="Transform: Flip and/or swap axis">
+  <Param value="false" name="flipX" type="RichBool"/>
+  <Param value="false" name="flipY" type="RichBool"/>
+  <Param value="true" name="flipZ" type="RichBool"/>
+  <Param value="false" name="swapXY" type="RichBool"/>
+  <Param value="false" name="swapXZ" type="RichBool"/>
+  <Param value="false" name="swapYZ" type="RichBool"/>
+  <Param value="true" name="Freeze" type="RichBool"/>
+  <Param value="false" name="allLayers" type="RichBool"/>
+ </filter>
+ <filter name="Re-Compute Face Normals"/>
+</FilterScript>

@@ -54,7 +54,7 @@ def main():
       print('                 pathRemote:%r' % pathRemote)
       meshlabForwardUpNormal = row[FIELD_MESHLAB_FORWARD_UP_NORMAL]
       if not meshlabForwardUpNormal:
-        meshlabForwardUpNormal = 'Z_Y_Normal'
+        meshlabForwardUpNormal = 'nZ_pY_Normal'
       print('     meshlabForwardUpNormal:%r' % meshlabForwardUpNormal)
       
       if not pathRemote:
@@ -69,15 +69,14 @@ def main():
         for block in response.iter_content(1024):
           handle.write(block)
 
-      meshlab_script = 'lod0_%s.mlx' % meshlabForwardUpNormal
-
+      meshlab_script = 'LOD0_%s.mlx' % meshlabForwardUpNormal
       filename_lod0_obj = filename + '_fv_LOD0.obj'
       cmd_args = [MESHLABSERVER_EXE, "-i", filename_ctm, "-o", filename_lod0_obj, '-s', meshlab_script]
       if execute(cmd_args):
         break
 
+      meshlab_script = 'LOD1.mlx'
       filename_lod1_obj = filename + '_fv_LOD1.obj'
-      meshlab_script = 'lod1.mlx'
       cmd_args = [MESHLABSERVER_EXE, "-i", filename_lod0_obj, "-o", filename_lod1_obj, '-s', meshlab_script]
       if execute(cmd_args):
         break

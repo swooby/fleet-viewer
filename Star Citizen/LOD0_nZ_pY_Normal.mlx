@@ -1,0 +1,6 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Remove Duplicate Vertices"/>
+ <filter name="Remove Unreferenced Vertices"/>
+ <filter name="Re-Compute Face Normals"/>
+</FilterScript>
