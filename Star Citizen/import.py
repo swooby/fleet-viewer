@@ -21,36 +21,68 @@
 spreadsheetId = '1ammOh0-6BHe2hYFQ5c1pdYrLlNjVaphd5bDidcdWqRo'
 sheetId = 0
 FIELD_MODEL_PATH_REMOTE = 'Model Path Remote'
-FIELD_MESHLAB_ROTATION = 'MeshLab\nRotation'
-FIELD_MESHLAB_INVERT_NORMALS = 'MeshLab\nInvert Normals'
+FIELD_MESHLAB_FORWARD_UP_NORMAL = 'MeshLab\nForward_Up_Normal'
+MESHLABSERVER_EXE = 'c:\\Program Files\\VCG\\MeshLab\\meshlabserver.exe'
+
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches.file_cache import FileCache
-session = CacheControl(requests.session(), cache=FileCache('.cache'))
-response = session.get('https://docs.google.com/spreadsheets/d/%s/export?gid=%d&format=csv' % (spreadsheetId, sheetId))
-response.raise_for_status()
-
 import csv
 import io
 import os
-with io.StringIO(response.text) as buff:
-  reader = csv.DictReader(buff)
-  for line in reader:
-    pathRemote = line[FIELD_MODEL_PATH_REMOTE]
-    print('          pathRemote:%r' % pathRemote)
-    meshlabRotation = line[FIELD_MESHLAB_ROTATION]
-    print('     meshlabRotation:%r' % meshlabRotation)
-    meshlabInvertNormals = line[FIELD_MESHLAB_INVERT_NORMALS]
-    print('meshlabInvertNormals:%r' % meshlabInvertNormals)
-    if not pathRemote:
-      continue
-    response = session.get(pathRemote)
-    response.raise_for_status()
+import subprocess
 
-    filename = os.path.splitext(os.path.split(pathRemote)[1])[0]
-    filename_ctm = filename + '.ctm'
-    filename_obj = filename + '.obj'
-    with open(filename_ctm, 'wb') as handle:
-      for block in response.iter_content(1024):
-        handle.write(block)
+def execute(cmd_args, cwd=None, check=True):
+  print('execute(%r)' % cmd_args)
+  with subprocess.Popen(cmd_args, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as p:
+    output, errors = p.communicate()
+  print(output.decode("utf-8"))
+  return p.returncode
+
+def main():
+  session = CacheControl(requests.session(), cache=FileCache('.cache'))
+  response = session.get('https://docs.google.com/spreadsheets/d/%s/export?gid=%d&format=csv' % (spreadsheetId, sheetId))
+  response.raise_for_status()
+  #print(response.content)
+
+  with io.StringIO(response.text) as buff:
+    rows = csv.DictReader(buff)
+    for row in rows:
+      #print(row)
+      pathRemote = row[FIELD_MODEL_PATH_REMOTE]
+      print('                 pathRemote:%r' % pathRemote)
+      meshlabForwardUpNormal = row[FIELD_MESHLAB_FORWARD_UP_NORMAL]
+      if not meshlabForwardUpNormal:
+        meshlabForwardUpNormal = 'Z_Y_Normal'
+      print('     meshlabForwardUpNormal:%r' % meshlabForwardUpNormal)
+      
+      if not pathRemote:
+        continue
+
+      response = session.get(pathRemote)
+      response.raise_for_status()
+
+      filename = os.path.splitext(os.path.split(pathRemote)[1])[0]
+      filename_ctm = filename + '.ctm'
+      with open(filename_ctm, 'wb') as handle:
+        for block in response.iter_content(1024):
+          handle.write(block)
+
+      meshlab_script = 'lod0_%s.mlx' % meshlabForwardUpNormal
+
+      filename_lod0_obj = filename + '_fv_LOD0.obj'
+      cmd_args = [MESHLABSERVER_EXE, "-i", filename_ctm, "-o", filename_lod0_obj, '-s', meshlab_script]
+      if execute(cmd_args):
+        break
+
+      filename_lod1_obj = filename + '_fv_LOD1.obj'
+      meshlab_script = 'lod1.mlx'
+      cmd_args = [MESHLABSERVER_EXE, "-i", filename_lod0_obj, "-o", filename_lod1_obj, '-s', meshlab_script]
+      if execute(cmd_args):
+        break
+      
+      break
+    
+if __name__ == '__main__':
+  main()
