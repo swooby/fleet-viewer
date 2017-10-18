@@ -1,0 +1,19 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Ambient Occlusion">
+  <Param value="0" description="Occlusion mode:" type="RichEnum" enum_cardinality="2" enum_val0="per-Vertex" enum_val1="per-Face (deprecated)" name="occMode" tooltip="Occlusion may be calculated per-vertex or per-face, color and quality will be saved in the chosen component."/>
+  <Param value="0" description="Directional Bias [0..1]" type="RichFloat" name="dirBias" tooltip="The balance between a uniform and a directionally biased set of lighting direction&lt;br>: - 0 means light came only uniformly from any direction&lt;br> - 1 means that all the light cames from the specified cone of directions &lt;br> - other values mix the two set of lighting directions "/>
+  <Param value="128" description="Requested views" type="RichInt" name="reqViews" tooltip="Number of different views uniformly placed around the mesh. More views means better accuracy at the cost of increased calculation time"/>
+  <Param x="0" y="1" z="0" description="Lighting Direction" type="RichPoint3f" name="coneDir" tooltip="Number of different views placed around the mesh. More views means better accuracy at the cost of increased calculation time"/>
+  <Param value="30" description="Cone amplitude" type="RichFloat" name="coneAngle" tooltip="Number of different views uniformly placed around the mesh. More views means better accuracy at the cost of increased calculation time"/>
+  <Param value="true" description="Use GPU acceleration" type="RichBool" name="useGPU" tooltip="Only works for per-vertex AO. In order to use GPU-Mode, your hardware must support FBOs, FP32 Textures and Shaders. Normally increases the performance by a factor of 4x-5x"/>
+  <Param value="512" description="Depth texture size(should be 2^n)" type="RichInt" name="depthTexSize" tooltip="Defines the depth texture size used to compute occlusion from each point of view. Higher values means better accuracy usually with low impact on performance"/>
+ </filter>
+ <filter name="Select by Vertex Quality">
+  <Param value="0" description="Min Quality" type="RichDynamicFloat" min="0" max="0.250956" name="minQ" tooltip="Minimum acceptable quality value"/>
+  <Param value="0.0001" description="Max Quality" type="RichDynamicFloat" min="0" max="0.250956" name="maxQ" tooltip="Maximum acceptable quality value"/>
+  <Param value="true" description="Inclusive Sel." type="RichBool" name="Inclusive" tooltip="If true only the faces with &lt;b>all&lt;/b> the vertices within the specified range are selected. Otherwise any face with at least one vertex within the range is selected."/>
+ </filter>
+ <filter name="Delete Selected Faces"/>
+ <filter name="Remove Unreferenced Vertices"/>
+</FilterScript>

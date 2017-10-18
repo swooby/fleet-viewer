@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #
 # Plan 1: Automated ship model download and processing
 #   1) Download Fleet VieweR Star Citizen Ships 3D Models - Data as csv
@@ -23,6 +24,10 @@ sheetId = 0
 FIELD_MODEL_PATH_REMOTE = 'Model Path Remote'
 FIELD_MESHLAB_FORWARD_UP_NORMAL = 'MeshLab\nForward_Up_Normal'
 MESHLABSERVER_EXE = 'c:\\Program Files\\VCG\\MeshLab\\meshlabserver.exe'
+# MacOS required hack:
+# $ cd /Applications/meshlab.app/Contents/MacOS/
+# $ install_name_tool -add_rpath "@executable_path/../Frameworks" meshlabserver
+#MESHLABSERVER_EXE = '/Applications/meshlab.app/Contents/MacOS/meshlabserver'
 
 
 import requests
@@ -46,10 +51,15 @@ def main():
   response.raise_for_status()
   #print(response.content)
 
+  processed = []
+
   with io.StringIO(response.text) as buff:
+
     rows = csv.DictReader(buff)
+
     for row in rows:
       #print(row)
+
       pathRemote = row[FIELD_MODEL_PATH_REMOTE]
       print('                 pathRemote:%r' % pathRemote)
       meshlabForwardUpNormal = row[FIELD_MESHLAB_FORWARD_UP_NORMAL]
@@ -57,17 +67,23 @@ def main():
         meshlabForwardUpNormal = 'nZ_pY_Normal'
       print('     meshlabForwardUpNormal:%r' % meshlabForwardUpNormal)
       
-      if not pathRemote:
+      if not pathRemote or pathRemote in processed:
         continue
 
-      response = session.get(pathRemote)
+      filename_ctm = os.path.split(pathRemote)[1]
+      filename = os.path.splitext(filename_ctm)[0]
+
+      response = session.get(pathRemote, stream=True)
+      print('response.status_code:%d' % response.status_code)
       response.raise_for_status()
 
-      filename = os.path.splitext(os.path.split(pathRemote)[1])[0]
-      filename_ctm = filename + '.ctm'
       with open(filename_ctm, 'wb') as handle:
-        for block in response.iter_content(1024):
-          handle.write(block)
+        for block in response.iter_content(chunk_size=1024):
+          if block:
+            print(".", end="")
+            handle.write(block)
+        handle.flush()
+      print("")
 
       meshlab_script = 'LOD0_%s.mlx' % meshlabForwardUpNormal
       filename_lod0_obj = filename + '_fv_LOD0.obj'
@@ -81,7 +97,9 @@ def main():
       if execute(cmd_args):
         break
       
-      break
+      processed.append(pathRemote)
+
+      #break
     
 if __name__ == '__main__':
   main()
