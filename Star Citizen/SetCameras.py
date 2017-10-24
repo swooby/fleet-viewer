@@ -2,6 +2,10 @@ import bpy
 import bmesh
 from bpy_extras.object_utils import world_to_camera_view
 import math
+import mathutils
+from mathutils import Euler
+from mathutils import Matrix
+from mathutils import Quaternion
 from mathutils import Vector
 from mathutils.geometry import normal
 
@@ -36,7 +40,6 @@ def camera_as_planes(scene, obj):
     planes.append((n, d))
 
   return planes
-
 
 def side_of_plane(p, v):
   return p[0].dot(v) + p[1]
@@ -75,7 +78,6 @@ def is_segment_in_planes(p1, p2, planes):
   # p2_clip = p1.lerp(p2, p2_fac)
   return True
 
-
 def point_in_object(obj, pt):
   xs = [v[0] for v in obj.bound_box]
   ys = [v[1] for v in obj.bound_box]
@@ -84,7 +86,6 @@ def point_in_object(obj, pt):
   return (min(xs) <= pt.x <= max(xs) and
           min(ys) <= pt.y <= max(ys) and
           min(zs) <= pt.z <= max(zs))
-
 
 def object_in_planes(obj, planes):
   matrix = obj.matrix_world
@@ -99,7 +100,6 @@ def object_in_planes(obj, planes):
            (1, 5), (2, 3), (2, 6), (3, 7),
            (4, 5), (4, 7), (5, 6), (6, 7))
   return any(is_segment_in_planes(box[e[0]], box[e[1]], planes) for e in edges)
-
 
 def objects_in_planes(objects, planes, origin):
   """
@@ -118,29 +118,40 @@ def select_objects_in_camera(scene, camera=None):
   for obj in objects_in_view:
     obj.select = True
 
+def look_at(obj, point, yaw=None, pitch=None):
+  '''
+  From https://blender.stackexchange.com/a/5220/47021
+  '''
+  obj_location = obj.matrix_world.to_translation()
+  direction = point - obj_location
+  rot_quat = direction.to_track_quat('-Z', 'Y')
+  print("look_at: obj.rotation_mode:%r" % obj.rotation_mode)
+  rot_euler = rot_quat.to_euler()
+  print("look_at: BEFORE rot_euler:%r" % rot_euler)
+  if yaw:
+    rot_euler.z += yaw
+  if pitch:
+    rot_euler.x += pitch
+  print("look_at: AFTER rot_euler:%r" % rot_euler)
+  obj.rotation_euler = rot_euler
 
-def look_at(obj, point):
-    '''
-    From https://blender.stackexchange.com/a/5220/47021
-    '''
-    obj_location = obj.matrix_world.to_translation()
-    direction = point - obj_location
-    rot_quat = direction.to_track_quat('-Z', 'Y')
-    rot_euler = rot_quat.to_euler()
-    obj.rotation_euler = rot_euler
-
-
-def object_as_camera(context, view3dArea, view3dRegion, obj):
+def object_as_camera(context, view3dAreaAndRegion, obj):
+  if not view3dAreaAndRegion:
+    view3dAreaAndRegion = getView3dAreaAndRegion(context)
+  view3dArea, view3dRegion = view3dAreaAndRegion
   override = context.copy()
   override['area'] = view3dArea
   override['region'] = view3dRegion
   override['active_object'] = obj
   bpy.ops.view3d.object_as_camera(override)
+  return view3dAreaAndRegion
 
-
-def select_border(context, view3dArea, view3dRegion, extend=True):
-  #print("view3d.height:%r" % view3d.height)
-  #print("view3d.width:%r" % view3d.width)
+def select_border(context, view3dAreaAndRegion=None, extend=True):
+  if not view3dAreaAndRegion:
+    view3dAreaAndRegion = getView3dAreaAndRegion(context)
+  view3dArea, view3dRegion = view3dAreaAndRegion
+  #print("view3dArea.height:%r" % view3dArea.height)
+  #print("view3dArea.width:%r" % view3dArea.width)
   override = context.copy()
   override['area'] = view3dArea
   override['region'] = view3dRegion
@@ -151,6 +162,7 @@ def select_border(context, view3dArea, view3dRegion, extend=True):
                                ymin=0,
                                ymax=view3dArea.height,
                                extend=extend)
+  return view3dAreaAndRegion
 
 def getView3dAreaAndRegion(context):
   for area in context.screen.areas:
@@ -158,12 +170,13 @@ def getView3dAreaAndRegion(context):
       for region in area.regions:
         if region.type == "WINDOW":
           return area, region
-        
+
+
 class SelectBridge:
   def __init__(self):
     self.context = bpy.context
   
-    self.view3dArea, self.view3dRegion = getView3dAreaAndRegion(self.context)
+    self.view3dAreaAndRegion = getView3dAreaAndRegion(self.context)
   
     self.scene = self.context.scene
 
@@ -193,7 +206,7 @@ class SelectBridge:
     self.vertices = self.table_orbit_data.vertices
     print("vertices[0].co:%r" % self.vertices[0].co)
 
-  def processEdgeIndex(self, edgeIndex=None):
+  def processEdgeIndex(self, edgeIndex=None, yawIndex=None, pitchIndex=None):
     if edgeIndex == None:
       #bpy.context.scene.objects.active = idris
       #bpy.ops.object.mode_set(mode="EDIT")
@@ -207,11 +220,40 @@ class SelectBridge:
         edgeIndex += 1
         self.processEdge(edge)
         #break
-    else:
-      edge = self.table_orbit_data.edges[edgeIndex]
-      self.processEdge(edge)
+
+      return
   
-  def processEdge(self, edge):
+    edge = self.table_orbit_data.edges[edgeIndex]
+    yaw = 0
+    pitch = 0
+
+    if yawIndex is not None and pitchIndex is not None:
+        
+      increments = len(self.table_orbit_data.edges)
+      
+      radianIncrement = math.radians(360) / increments
+      yaw = radianIncrement * yawIndex
+      pitch = radianIncrement * pitchIndex
+      
+      yawIndex += 1
+
+      if yawIndex >= increments:
+        yawIndex = 0
+        pitchIndex += 1
+    
+      if pitchIndex >= increments / 4:
+        pitchIndex = 0
+        yawIndex = 0
+        edgeIndex += 1
+
+    self.processEdge(edge, yaw, pitch)
+  
+    data = {"edgeIndex":edgeIndex, "yawIndex":yawIndex, "pitchIndex":pitchIndex}
+    print("data:%r" % data)
+    return data
+  
+  def processEdge(self, edge, yaw=None, pitch=None):
+    print("processEdge(edge, yaw:%r, pitch:%r" % (yaw, pitch))
     vertexIndices = edge.vertices
     v1 = self.vertices[vertexIndices[0]].co
     #print("v1:%r" % v1)
@@ -222,18 +264,22 @@ class SelectBridge:
 
     table_camera_location = mid + self.table_orbit_matrix_world_to_translation
     self.table_camera.location = table_camera_location
-    look_at(self.table_camera, self.table_orbit_location)
+    look_at(self.table_camera, self.table_orbit_location, yaw=yaw, pitch=pitch)
 
-    object_as_camera(self.context, self.view3dArea, self.view3dRegion, self.table_camera)
+    object_as_camera(self.context, self.view3dAreaAndRegion, self.table_camera)
 
-    bpy.context.scene.objects.active = self.idris
-    bpy.ops.object.mode_set(mode="EDIT")
-    bpy.ops.mesh.select_mode(type="FACE")
-    #select_border(self.context, self.view3dArea, self.view3dRegion)
+    if False:
+      bpy.context.scene.objects.active = self.idris
+      bpy.ops.object.mode_set(mode="EDIT")
+      bpy.ops.mesh.select_mode(type="FACE")
+      select_border(self.context, self.view3dAreaAndRegion)
+    
 
+def main(edgeIndex=None, yawIndex=None, pitchIndex=None):
+  SelectBridge().processEdgeIndex(edgeIndex, yawIndex, pitchIndex)
 
-def main(edgeIndex=None):
-  SelectBridge().processEdgeIndex(edgeIndex)
+def processEdgeIndexYawPitchAndIncrement(edgeIndex=None, yawIndex=None, pitchIndex=None):
+  return SelectBridge().processEdgeIndex(edgeIndex, yawIndex, pitchIndex)
 
   
 if __name__ == "__main__":
