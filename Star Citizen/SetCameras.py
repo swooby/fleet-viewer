@@ -118,22 +118,22 @@ def select_objects_in_camera(scene, camera=None):
   for obj in objects_in_view:
     obj.select = True
 
-def look_at(obj, point, yaw=None, pitch=None):
+def look_at(obj, world_point):
   '''
   From https://blender.stackexchange.com/a/5220/47021
   '''
-  obj_location = obj.matrix_world.to_translation()
-  direction = point - obj_location
+  obj_world_location = obj.matrix_world.to_translation()
+  direction = world_point - obj_world_location
   rot_quat = direction.to_track_quat('-Z', 'Y')
-  print("look_at: obj.rotation_mode:%r" % obj.rotation_mode)
   rot_euler = rot_quat.to_euler()
-  print("look_at: BEFORE rot_euler:%r" % rot_euler)
-  if yaw:
-    rot_euler.z += yaw
-  if pitch:
-    rot_euler.x += pitch
-  print("look_at: AFTER rot_euler:%r" % rot_euler)
   obj.rotation_euler = rot_euler
+
+def getView3dAreaAndRegion(context):
+  for area in context.screen.areas:
+    if area.type == "VIEW_3D":
+      for region in area.regions:
+        if region.type == "WINDOW":
+          return area, region
 
 def object_as_camera(context, view3dAreaAndRegion, obj):
   if not view3dAreaAndRegion:
@@ -164,13 +164,6 @@ def select_border(context, view3dAreaAndRegion=None, extend=True):
                                extend=extend)
   return view3dAreaAndRegion
 
-def getView3dAreaAndRegion(context):
-  for area in context.screen.areas:
-    if area.type == "VIEW_3D":
-      for region in area.regions:
-        if region.type == "WINDOW":
-          return area, region
-
 
 class SelectBridge:
   def __init__(self):
@@ -181,105 +174,78 @@ class SelectBridge:
     self.scene = self.context.scene
 
     self.idris = self.scene.objects["Idris_fv_LOD0"]
-    print("idris:%r" % self.idris)
-    #idris_mesh = idris.data
-    #idris_matrix_world = idris.matrix_world
-
-    self.table_camera = self.scene.objects["Table Camera"]
-    print("table_camera:%r" % self.table_camera)
-    #table_camera.position = (0.114582, -2.26953, 0.738129)
-  
-    #self.scene.camera = self.table_camera
-
     self.table_orbit = self.scene.objects["Table Orbit"]
-    print("table_orbit:%r" % self.table_orbit)
-    self.table_orbit_location = self.table_orbit.location
-    print("table_orbit.location:%r" % self.table_orbit_location)
-    self.table_orbit_matrix_world = self.table_orbit.matrix_world
-    print("table_orbit.matrix_world:%r" % self.table_orbit_matrix_world)
-    self.table_orbit_matrix_world_to_translation = self.table_orbit.matrix_world.to_translation()
-    print("table_orbit.matrix_world.to_translation():%r" % self.table_orbit_matrix_world_to_translation)
-
-    self.table_orbit_data = self.table_orbit.data
-    print("table_orbit.data:%r" % self.table_orbit_data)
-
-    self.vertices = self.table_orbit_data.vertices
-    print("vertices[0].co:%r" % self.vertices[0].co)
-
-  def processEdgeIndex(self, edgeIndex=None, yawIndex=None, pitchIndex=None):
-    if edgeIndex == None:
+    self.table_orbit_sphere = self.scene.objects["Table Orbit Sphere"]
+    self.table_orbit_sphere_camera = self.scene.objects["Table Orbit Sphere Camera"]
+    
+  def processOrbitVertexIndex(self, orbit_vertex_index=None, camera_sphere_vertex_index=None):
+    if orbit_vertex_index == None:
       #bpy.context.scene.objects.active = idris
       #bpy.ops.object.mode_set(mode="EDIT")
       #bpy.ops.mesh.select_all(action="DESELECT")
 
       #bpy.types.SpaceView3D.use_occlude_geometry = True
 
-      edgeIndex = 0
-      for edge in self.table_orbit_data.edges:
-        print("edgeIndex:%r" % edgeIndex)
-        edgeIndex += 1
-        self.processEdge(edge)
-        #break
+      orbit_vertex_index = 0
+      for vertex in self.table_orbit.data.vertices:
+        print("orbit_vertex_index:%r" % orbit_vertex_index)
+        orbit_vertex_index += 1
+        self.processOrbitVertex(vertex)
+        break
 
       return
   
-    edge = self.table_orbit_data.edges[edgeIndex]
-    yaw = 0
-    pitch = 0
-
-    if yawIndex is not None and pitchIndex is not None:
-        
-      increments = len(self.table_orbit_data.edges)
-      
-      radianIncrement = math.radians(360) / increments
-      yaw = radianIncrement * yawIndex
-      pitch = radianIncrement * pitchIndex
-      
-      yawIndex += 1
-
-      if yawIndex >= increments:
-        yawIndex = 0
-        pitchIndex += 1
+    vertex = self.table_orbit.data.vertices[orbit_vertex_index]
     
-      if pitchIndex >= increments / 4:
-        pitchIndex = 0
-        yawIndex = 0
-        edgeIndex += 1
+    if camera_sphere_vertex_index is None:
+      lookat = None
+    else:
+      orbit_position_count = len(self.table_orbit.data.vertices)
+      
+      table_orbit_sphere_data_vertices = self.table_orbit_sphere.data.vertices
+      
+      table_orbit_sphere_vertex_count = len(table_orbit_sphere_data_vertices)
+      
+      if camera_sphere_vertex_index >= table_orbit_sphere_vertex_count:
+          camera_sphere_vertex_index = 0
+      
+      table_orbit_sphere_vertex = table_orbit_sphere_data_vertices[camera_sphere_vertex_index]
+      
+      lookat = self.table_orbit_sphere.matrix_world * Vector(table_orbit_sphere_vertex.co)
+      
+      camera_sphere_vertex_index += 1
 
-    self.processEdge(edge, yaw, pitch)
+      if camera_sphere_vertex_index >= table_orbit_sphere_vertex_count:
+        camera_sphere_vertex_index = 0
+        orbit_vertex_index += 1
+
+    self.processOrbitVertex(vertex, lookat)
   
-    data = {"edgeIndex":edgeIndex, "yawIndex":yawIndex, "pitchIndex":pitchIndex}
+    data = { "orbit_vertex_index":orbit_vertex_index, "camera_sphere_vertex_index":camera_sphere_vertex_index }
     print("data:%r" % data)
     return data
   
-  def processEdge(self, edge, yaw=None, pitch=None):
-    print("processEdge(edge, yaw:%r, pitch:%r" % (yaw, pitch))
-    vertexIndices = edge.vertices
-    v1 = self.vertices[vertexIndices[0]].co
-    #print("v1:%r" % v1)
-    v2 = self.vertices[vertexIndices[1]].co
-    #print("v2:%r" % v2)
-    mid = (v1 + v2) / 2.0
-    #print("mid:%r" % mid)
+  def processOrbitVertex(self, vertex, lookat=None):
+    if lookat is None:
+      lookat = self.table_orbit.location
+    self.table_orbit_sphere.location = Vector(vertex.co)
+    
+    look_at(self.table_orbit_sphere_camera, lookat)
 
-    table_camera_location = mid + self.table_orbit_matrix_world_to_translation
-    self.table_camera.location = table_camera_location
-    look_at(self.table_camera, self.table_orbit_location, yaw=yaw, pitch=pitch)
+    object_as_camera(self.context, self.view3dAreaAndRegion, self.table_orbit_sphere_camera)
 
-    object_as_camera(self.context, self.view3dAreaAndRegion, self.table_camera)
-
-    if False:
+    if True:
       bpy.context.scene.objects.active = self.idris
       bpy.ops.object.mode_set(mode="EDIT")
       bpy.ops.mesh.select_mode(type="FACE")
       select_border(self.context, self.view3dAreaAndRegion)
     
 
-def main(edgeIndex=None, yawIndex=None, pitchIndex=None):
-  SelectBridge().processEdgeIndex(edgeIndex, yawIndex, pitchIndex)
+def main(orbit_vertex_index=None):
+  SelectBridge().processOrbitVertexIndex(orbit_vertex_index)
 
-def processEdgeIndexYawPitchAndIncrement(edgeIndex=None, yawIndex=None, pitchIndex=None):
-  return SelectBridge().processEdgeIndex(edgeIndex, yawIndex, pitchIndex)
+def processOrbitVertexIndexCameraVertexAndIncrement(orbit_vertex_index=None, camera_sphere_vertex_index=None):
+  return SelectBridge().processOrbitVertexIndex(orbit_vertex_index, camera_sphere_vertex_index)
 
   
 if __name__ == "__main__":
