@@ -241,6 +241,8 @@ class SelectBridge:
       select_border(self.context, self.view3dAreaAndRegion)
     
 
+default = { "orbit_vertex_index":0, "camera_sphere_vertex_index":0 }
+
 def main(orbit_vertex_index=None):
   SelectBridge().processOrbitVertexIndex(orbit_vertex_index)
 
