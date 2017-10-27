@@ -176,6 +176,7 @@ public class FleetSceneManager : MonoBehaviour
 					//modelsToLoad.Add(StarCitizen.Origin_600i_Touring);
 					//modelsToLoad.Add(StarCitizen.Polaris);
 					//modelsToLoad.Add(StarCitizen.Idris_P);
+                    modelsToLoad.Add(StarCitizen.Pioneer);
 				}
 			}
 			else

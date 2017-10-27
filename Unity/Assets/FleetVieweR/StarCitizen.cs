@@ -9,6 +9,9 @@ class StarCitizen
     // NOTE:(pv) Only add ships here that have CTM model files!
     //
 
+    //
+    // Sorted by Length then Name...
+    //
     public const string Nox = "Nox";
     public const string Origin_X1 = "X1";
 	public const string Origin_X1_Velocity = "X1 Velocity";
@@ -77,6 +80,7 @@ class StarCitizen
     public const string Reclaimer = "Reclaimer";
     public const string Orion = "Orion";
     public const string Endeavor = "Endeavor";
+    public const string Pioneer = "Pioneer";
     public const string Hull_D = "Hull D";
     public const string Idris_P = "Idris-P";
     public const string Hull_E = "Hull E";

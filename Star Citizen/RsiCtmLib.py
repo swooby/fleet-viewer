@@ -80,8 +80,11 @@ class RsiCtmToLods:
     for obj2 in scene.objects:
       obj2.select = obj2 == obj
 
+  def getSession(self):
+    return CacheControl(requests.session(), cache=FileCache('.cache'))
+
   def importAndProcessAll(self):
-    session = CacheControl(requests.session(), cache=FileCache('.cache'))
+    session = self.getSession()
     response = session.get('https://docs.google.com/spreadsheets/d/%s/export?gid=%d&format=csv' % (spreadsheetId, sheetId))
     response.raise_for_status()
     #print(response.content)
@@ -100,18 +103,29 @@ class RsiCtmToLods:
         if not pathRemote or pathRemote in processed:
           continue
 
-        self.downloadCtm(session, pathRemote)
-
-        filename_ctm = os.path.split(pathRemote)[1]
-        filename = os.path.splitext(filename_ctm)[0]
-
-        self.meshlabProcessCtmToObj(filename, meshlabForwardUpNormal)
+        self.importAndProcess(session, pathRemote, meshlabForwardUpNormal)
         
-        self.blenderProcessObj(filename)
-
-        self.blenderExportScene()
-
         processed.append(pathRemote)
+
+        #break
+
+  def importAndProcess(self, session, pathRemote, meshlabForwardUpNormal):
+    if not session:
+      session = self.getSession()
+    if not meshlabForwardUpNormal:
+      meshlabForwardUpNormal = 'nZ_pY_Normal'
+    print('     meshlabForwardUpNormal:%r' % meshlabForwardUpNormal)
+
+    self.downloadCtm(session, pathRemote)
+
+    filename_ctm = os.path.split(pathRemote)[1]
+    filename = os.path.splitext(filename_ctm)[0]
+
+    self.meshlabProcessCtmToObj(filename, meshlabForwardUpNormal)
+    
+    self.blenderProcessObj(filename)
+
+    self.blenderExportScene()
 
   def downloadCtm(self, session, pathRemote):
     print("Downloading %r" % pathRemote)
@@ -285,6 +299,7 @@ class RsiCtmToLods:
 def main():
   rsiCtmToLods = RsiCtmToLods()
   rsiCtmToLods.importAndProcessAll()
+  #rsiCtmToLods.importAndProcess(None, "https://robertsspaceindustries.com/media/4qayc3taiskh3r/source/CNOU_PIONEER.ctm", None)
   
 if __name__ == '__main__':
   main()
