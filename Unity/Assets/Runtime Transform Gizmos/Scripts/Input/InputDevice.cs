@@ -1,4 +1,4 @@
-﻿#if UNITY_IOS || UNITY_ANDROID || UNITY_WP_8_1
+﻿#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID || UNITY_WP_8_1)
 #define INPUT_MOBILE
 #else
 #define INPUT_PC
@@ -258,7 +258,7 @@ namespace RTEditor
         /// </summary>
         private void Update()
         {
-            #if MOBILE_INPUT
+            #if INPUT_MOBILE
             int touchCount = Input.touchCount;
             for (int touchIndex = 0; touchIndex < touchCount; ++touchIndex)
             {
