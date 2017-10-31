@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace RTEditor
 {
@@ -6,35 +6,46 @@ namespace RTEditor
     /// This class wraps all input specific functionality and its main purpose is to
     /// relieve the client code from differentiating between Touch, Mouse, VR devices.
     /// </summary>
-    public class InputDevice : MonoSingletonBase<InputDevice>
+    public abstract class InputDeviceAbstract : MonoSingletonBase<InputDeviceAbstract>
     {
-        private InputDeviceAbstract _inputDevice;
+        #region Protected Variables
+        /// <summary>
+        /// Holds the device positions in the previous frame. For a mouse dvice, the
+        /// first array element will hold the mouse position. For a touch device, there 
+        /// is an element for each possible touch.
+        /// </summary>
+        protected Vector2[] _previousFramePositions = new Vector2[MaxNumberOfTouches];
 
-        public InputDevice()
-        {
-            #if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID || UNITY_WP_8_1)
-            _inputDevice = new InputDeviceTouch();
-            #else
-            _inputDevice = new InputDeviceMouse();
-            #endif
-        }
+        /// <summary>
+        /// Holds the device offsets since the last frame. For a mouse device, the first 
+        /// array element will hold the mouse offset. For a touch device, there is an 
+        /// element for each possible touch. For touch, when no touches exist, all elements
+        /// are set to the zero vector.
+        /// </summary>
+        protected Vector2[] _deltaSinceLastFrame = new Vector2[MaxNumberOfTouches];
 
-        public void SetInputDevice(InputDeviceAbstract inputDevice)
-        {
-            _inputDevice = inputDevice;
-        }
+        /// <summary>
+        /// For a mouse device, the first 3 elements of this array hold the mouse offset
+        /// since the left, right and middle mouse buttons were pressed. For a touch device,
+        /// each array element holds the offset of the touch since the touch began. For mouse
+        /// buttons or touches that are not currently active, the offset is the zero vector.
+        /// </summary>
+        protected Vector2[] _deltaSincePressed = new Vector2[MaxNumberOfTouches];
+        #endregion
 
+        #region Public Static Properties
+        /// <summary>
+        /// Returns the maximum number of allowed touches for a touch device. A random
+        /// value of 10 was used in this case as for the moment I can not figure out how
+        /// to retrieve this value using the Unity API.
+        /// </summary>
+        public static int MaxNumberOfTouches { get { return 10; } }
+        #endregion
 
         #region Public Properties
-        public bool UsingTouch
-        {
-            get
-            {
-                return _inputDevice.UsingTouch;
-            }
-        }
+        public abstract bool UsingTouch { get; }
 
-        public int TouchCount { get { return _inputDevice.TouchCount; } }
+        public int TouchCount { get { return Input.touchCount; } }
         #endregion
 
         #region Public Methods
@@ -57,7 +68,8 @@ namespace RTEditor
         /// </returns>
         public Vector2 GetDeltaSincePressed(int deviceButtonIndex)
         {
-            return _inputDevice.GetDeltaSincePressed(deviceButtonIndex);
+            if (deviceButtonIndex < 0 || deviceButtonIndex >= MaxNumberOfTouches) return Vector2.zero;
+            return _deltaSincePressed[deviceButtonIndex];
         }
 
         /// <summary>
@@ -75,7 +87,8 @@ namespace RTEditor
         /// </returns>
         public Vector2 GetDeltaSinceLastFrame(int deviceIndex)
         {
-            return _inputDevice.GetDeltaSinceLastFrame(deviceIndex);
+            if (deviceIndex < 0 || deviceIndex >= MaxNumberOfTouches) return Vector2.zero;
+            return _deltaSinceLastFrame[deviceIndex];
         }
 
         /// <summary>
@@ -90,10 +103,7 @@ namespace RTEditor
         /// <returns>
         /// True if the specified button is pressed and false otherwise.
         /// </returns>
-        public bool IsPressed(int deviceButtonIndex)
-        {
-            return _inputDevice.IsPressed(deviceButtonIndex);
-        }
+        public abstract bool IsPressed(int deviceButtonIndex);
 
         /// <summary>
         /// Can be used to check if the device button with the specified index was
@@ -107,10 +117,7 @@ namespace RTEditor
         /// <returns>
         /// True if the specified button is pressed and false otherwise.
         /// </returns>
-        public bool WasPressedInCurrentFrame(int deviceButtonIndex)
-        {
-            return _inputDevice.WasPressedInCurrentFrame(deviceButtonIndex);
-        }
+        public abstract bool WasPressedInCurrentFrame(int deviceButtonIndex);
 
         /// <summary>
         /// Can be used to check if the device button with the specified index was
@@ -124,10 +131,7 @@ namespace RTEditor
         /// <returns>
         /// True if the specified button is pressed and false otherwise.
         /// </returns>
-        public bool WasReleasedInCurrentFrame(int deviceButtonIndex)
-        {
-            return _inputDevice.WasReleasedInCurrentFrame(deviceButtonIndex);
-        }
+        public abstract bool WasReleasedInCurrentFrame(int deviceButtonIndex);
 
         /// <summary>
         /// Returns the device position. For a mouse this is the mouse cursor position
@@ -141,10 +145,7 @@ namespace RTEditor
         /// True if the position can be retreived and false otherwise. The method can
         /// return false if a touch device is used and no touches are available.
         /// </returns>
-        public bool GetPosition(out Vector2 position)
-        {
-            return _inputDevice.GetPosition(out position);
-        }
+        public abstract bool GetPosition(out Vector2 position);
 
         /// <summary>
         /// Returns a pick ray from the device position. This ray can be used to pick entities
@@ -160,10 +161,7 @@ namespace RTEditor
         /// True if the ray can be constructed and false otherwise. The method can return false
         /// if a touch device is used and no touches are available.
         /// </returns>
-        public bool GetPickRay(Camera camera, out Ray ray)
-        {
-            return _inputDevice.GetPickRay(camera, out ray);
-        }
+        public abstract bool GetPickRay(Camera camera, out Ray ray);
 
         /// <summary>
         /// Can be used to check if the device was moved. For a mouse device, this
@@ -171,20 +169,12 @@ namespace RTEditor
         /// device it returns true only if the first touch was moved.
         /// </summary>
         /// <returns></returns>
-        public bool WasMoved()
-        {
-            return _inputDevice.WasMoved();
-        }
-        #endregion
+        public abstract bool WasMoved();
 
-        #region Private Methods
         /// <summary>
         /// Called every frame to perform any necessary updates.
         /// </summary>
-        private void Update()
-        {
-            _inputDevice.Update();
-        }
+        public abstract void Update();
         #endregion
     }
 }
