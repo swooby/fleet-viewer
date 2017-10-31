@@ -360,7 +360,7 @@ namespace RTEditor
         protected override void OnInputDeviceFirstButtonDown()
         {
             base.OnInputDeviceFirstButtonDown();
-            if (InputDevice.Instance.UsingMobile) DetectHoveredComponents(true);
+            if (InputDevice.Instance.UsingTouch) DetectHoveredComponents(true);
 
             // If there is an axis which is selected, it means the user was hovering one
             // of the rotation circles when they pressed the left mouse button. In that case

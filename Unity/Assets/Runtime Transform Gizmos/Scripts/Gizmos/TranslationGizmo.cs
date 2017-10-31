@@ -765,7 +765,7 @@ namespace RTEditor
         protected override void OnInputDeviceFirstButtonDown()
         {
             base.OnInputDeviceFirstButtonDown();
-            if (InputDevice.Instance.UsingMobile) DetectHoveredComponents(true);
+            if (InputDevice.Instance.UsingTouch) DetectHoveredComponents(true);
 
             // If the left mouse button is pressed, we will store the gizmo pick point so that we
             // can use it in our 'OnMouseMoved' implementation.
@@ -807,7 +807,7 @@ namespace RTEditor
             base.OnInputDeviceFirstButtonUp();
             _objectOffsetsFromGizmo.Clear();
 
-            if(InputDevice.Instance.UsingMobile)
+            if(InputDevice.Instance.UsingTouch)
             {
                 _selectedAxis = GizmoAxis.None;
                 _selectedMultiAxisSquare = MultiAxisSquare.None;

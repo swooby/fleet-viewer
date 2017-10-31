@@ -473,7 +473,7 @@ namespace RTEditor
         protected override void OnInputDeviceFirstButtonDown()
         {
             base.OnInputDeviceFirstButtonDown();
-            if (InputDevice.Instance.UsingMobile) DetectHoveredComponents(true);
+            if (InputDevice.Instance.UsingTouch) DetectHoveredComponents(true);
 
             // Construct a ray using the mouse cursor position
             Ray pickRay;
