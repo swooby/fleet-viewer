@@ -28,12 +28,12 @@ namespace RTEditor
 
         public int TouchCount { get { return _inputDevice.TouchCount; } }
 
-        public Vector2 GetDeltaSincePressed(int deviceButtonIndex)
+        public Vector3 GetDeltaSincePressed(int deviceButtonIndex)
         {
             return _inputDevice.GetDeltaSincePressed(deviceButtonIndex);
         }
 
-        public Vector2 GetDeltaSinceLastFrame(int deviceIndex)
+        public Vector3 GetDeltaSinceLastFrame(int deviceIndex)
         {
             return _inputDevice.GetDeltaSinceLastFrame(deviceIndex);
         }
@@ -53,7 +53,7 @@ namespace RTEditor
             return _inputDevice.WasReleasedInCurrentFrame(deviceButtonIndex);
         }
 
-        public bool GetPosition(out Vector2 position)
+        public bool GetPosition(out Vector3 position)
         {
             return _inputDevice.GetPosition(out position);
         }

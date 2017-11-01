@@ -12,37 +12,38 @@ namespace RTEditor
         private static readonly int[] INPUTS = { INPUT_CLICK, INPUT_TOUCH };
 
         private GvrLaserPointer _laserPointer;
-        private Vector3 _laserPointerStartPosition;
-        private Quaternion _laserPointerStartRotation;
 
-        public InputDeviceGvrController()
+        private GvrLaserPointer GetLaserPointerIfActiveAndEnabled()
         {
-            _laserPointer = GvrPointerInputModule.Pointer as GvrLaserPointer;
-            if (_laserPointer != null)
+            if (_laserPointer == null)
             {
-                Transform laserPointerTransform = _laserPointer.gameObject.transform;
-                _laserPointerStartPosition = laserPointerTransform.position;
-                _laserPointerStartRotation = laserPointerTransform.rotation;
+                _laserPointer = GvrPointerInputModule.Pointer as GvrLaserPointer;
             }
+            return _laserPointer != null && _laserPointer.isActiveAndEnabled ?
+                                                         _laserPointer :
+                                                         null;
         }
 
-        private Vector3 GetLaserPointerEndpoint()
+        /// <summary>
+        /// Gets the laser pointer endpoint.
+        /// </summary>
+        /// <returns>The laser pointer endpoint.</returns>
+        /// <param name="laserPointer">Laser pointer; Must be non-null and previously checked for isActiveAndEnabled.</param>
+        private static Vector3 GetLaserPointerEndpoint(GvrLaserPointer laserPointer)
         {
             Vector3 laserPointerEndPoint = Vector3.zero;
-
-            if (_laserPointer != null && _laserPointer.isActiveAndEnabled)
+            if (laserPointer != null)
             {
-                RaycastResult raycastResult = _laserPointer.CurrentRaycastResult;
+                RaycastResult raycastResult = laserPointer.CurrentRaycastResult;
                 if (raycastResult.gameObject != null)
                 {
                     laserPointerEndPoint = raycastResult.worldPosition;
                 }
                 else
                 {
-                    laserPointerEndPoint = _laserPointer.GetPointAlongPointer(_laserPointer.defaultReticleDistance);
+                    laserPointerEndPoint = laserPointer.GetPointAlongPointer(laserPointer.defaultReticleDistance);
                 }
             }
-
             return laserPointerEndPoint;
         }
 
@@ -56,152 +57,83 @@ namespace RTEditor
 
         public override bool IsPressed(int deviceButtonIndex)
         {
-            bool isPressed = Input.GetMouseButton(deviceButtonIndex);
-            //Debug.LogWarning("isPressed A:" + isPressed);
-            switch(deviceButtonIndex)
+            switch (deviceButtonIndex)
             {
                 case INPUT_CLICK:
-                    isPressed = GvrControllerInput.ClickButton;
-                    break;
+                    return GvrControllerInput.ClickButton;
                 case INPUT_TOUCH:
-                    isPressed = GvrControllerInput.IsTouching;
-                    break;
+                    return GvrControllerInput.IsTouching;
                 default:
                     throw new ArgumentOutOfRangeException("deviceButtonIndex", "deviceButtonIndex must be INPUT_CLICK or INPUT_TOUCH");
             }
-            //Debug.LogWarning("isPressed B:" + isPressed);
-            return isPressed;
         }
 
         public override bool WasPressedInCurrentFrame(int deviceButtonIndex)
         {
-            // TODO:(pv) Handle both Touch+TouchPos & Click+Move...
-            bool wasPressedInCurrentFrame = Input.GetMouseButtonDown(deviceButtonIndex);
-            //Debug.LogWarning("wasPressedInCurrentFrame A:" + wasPressedInCurrentFrame);
             switch (deviceButtonIndex)
             {
                 case INPUT_CLICK:
-                    wasPressedInCurrentFrame = GvrControllerInput.ClickButtonDown;
-                    break;
+                    return GvrControllerInput.ClickButtonDown;
                 case INPUT_TOUCH:
-                    wasPressedInCurrentFrame = GvrControllerInput.TouchDown;
-                    break;
+                    return GvrControllerInput.TouchDown;
                 default:
                     throw new ArgumentOutOfRangeException("deviceButtonIndex", "deviceButtonIndex must be INPUT_CLICK or INPUT_TOUCH");
             }
-            //Debug.LogWarning("wasPressedInCurrentFrame B:" + wasPressedInCurrentFrame);
-            return wasPressedInCurrentFrame;
         }
 
         public override bool WasReleasedInCurrentFrame(int deviceButtonIndex)
         {
-            // TODO:(pv) Handle both Touch+TouchPos & Click+Move...
-            bool wasReleasedInCurrentFrame = Input.GetMouseButtonUp(deviceButtonIndex);
-            //Debug.LogWarning("wasReleasedInCurrentFrame A:" + wasReleasedInCurrentFrame);
             switch (deviceButtonIndex)
             {
                 case INPUT_CLICK:
-                    wasReleasedInCurrentFrame = GvrControllerInput.ClickButtonUp;
-                    break;
+                    return GvrControllerInput.ClickButtonUp;
                 case INPUT_TOUCH:
-                    wasReleasedInCurrentFrame = GvrControllerInput.TouchUp;
-                    break;
+                    return GvrControllerInput.TouchUp;
                 default:
                     throw new ArgumentOutOfRangeException("deviceButtonIndex", "deviceButtonIndex must be INPUT_CLICK or INPUT_TOUCH");
             }
-            //Debug.LogWarning("wasReleasedInCurrentFrame B:" + wasReleasedInCurrentFrame);
-            return wasReleasedInCurrentFrame;
         }
 
-        public override bool GetPosition(out Vector2 position)
+        public override bool GetPosition(out Vector3 position)
         {
-            //position = Input.mousePosition;
-            //Debug.LogWarning("GetPosition: position A:" + position);
-
-            position = Vector2.zero;
-
-            Vector3 laserPointerEndPoint = GetLaserPointerEndpoint();
-            if (laserPointerEndPoint == Vector3.zero)
+            GvrLaserPointer laserPointer = GetLaserPointerIfActiveAndEnabled();
+            if (laserPointer != null)
             {
-                return false;
+                Vector3 laserPointerEndPoint = GetLaserPointerEndpoint(laserPointer);
+                if (laserPointerEndPoint != Vector3.zero)
+                {
+                    position = EditorCamera.Instance.Camera.WorldToScreenPoint(laserPointerEndPoint);
+                    return true;
+                }
             }
 
-            laserPointerEndPoint = EditorCamera.Instance.Camera.WorldToScreenPoint(laserPointerEndPoint);
-
-            position.Set(laserPointerEndPoint.x, laserPointerEndPoint.y);
-            //Debug.LogWarning("GetPosition: position B:" + position);
-
-            return true;
+            position = Vector3.zero;
+            return false;
         }
 
         public override bool GetPickRay(Camera camera, out Ray ray)
         {
-            //Vector2 mousePosition = Input.mousePosition;
-            //Debug.LogWarning("GetPickRay: mousePosition:" + mousePosition);
-            //ray = camera.ScreenPointToRay(mousePosition);
-            //Debug.LogWarning("GetPickRay: ray A:" + ray);
-
-            if (_laserPointer == null)
+            Vector3 laserPointerEndPoint;
+            if (GetPosition(out laserPointerEndPoint))
             {
-                ray = new Ray();
-                return false;
+                ray = camera.ScreenPointToRay(laserPointerEndPoint);
+                return true;
             }
 
-            /*
-            Vector3 laserPointerEndPoint = GetLaserPointerEndpoint(laserPointer);
-            if (laserPointerEndPoint == Vector3.zero)
-            {
-                ray = new Ray();
-                return false;
-            }
-
-            //Debug.LogWarning("GetPickRay: lasterPointerEndPoint A:" + laserPointerEndPoint);
-            laserPointerEndPoint = EditorCamera.Instance.Camera.WorldToScreenPoint(laserPointerEndPoint);
-            //Debug.LogWarning("GetPickRay: laserPointerEndPoint B:" + laserPointerEndPoint);
-
-            //ray = camera.ScreenPointToRay(mousePosition);
-            ray = new Ray(laserPointerEndPoint, laserPointer.gameObject.transform.forward);
-            // GvrLaserVisual..Orientation.eulerAngles);
-            */
-            Transform laserPointerTransform = _laserPointer.gameObject.transform;
-            ray = new Ray(laserPointerTransform.position, laserPointerTransform.forward);
-            //Debug.LogWarning("GetPickRay: ray B:" + ray);
-
-            return true;
+            ray = new Ray();
+            return false;
         }
 
         public override bool WasMoved()
         {
-            return true;
-            /*
-            bool wasMoved = Input.GetAxis("Mouse X") != 0.0f || Input.GetAxis("Mouse Y") != 0.0f;
-            //Debug.LogWarning("WasMoved: wasMoved A:" + wasMoved);
-
-            GvrLaserPointer laserPointer = LaserPointer;
-            if (laserPointer != null)
-            {
-                Transform laserPointerTransform = laserPointer.gameObject.transform;
-
-                Vector3 laserPointerPosition = laserPointerTransform.position;
-                Quaternion laserPointerRotation = laserPointerTransform.rotation;
-
-                wasMoved = laserPointerPosition != _laserPointerStartPosition ||
-                    laserPointerRotation != _laserPointerStartRotation;
-            }
-            else
-            {
-                wasMoved = false;
-            }
-            //Debug.LogWarning("WasMoved: wasMoved B:" + wasMoved);
-
-            return wasMoved;
-            */
+            return GetLaserPointerIfActiveAndEnabled() != null &&
+                _deltaSinceLastFrame[0] != Vector3.zero;
         }
 
         public override void Update()
         {
             // Calculate the laserPointerEndPoint delta
-            Vector2 laserPointerEndPoint;
+            Vector3 laserPointerEndPoint;
             if (!GetPosition(out laserPointerEndPoint))
             {
                 return;
@@ -221,7 +153,7 @@ namespace RTEditor
                 if (WasPressedInCurrentFrame(input) ||
                     WasReleasedInCurrentFrame(input))
                 {
-                    _deltaSincePressed[input] = Vector2.zero;
+                    _deltaSincePressed[input] = Vector3.zero;
                     continue;
                 }
                 else

@@ -729,7 +729,7 @@ namespace RTEditor
                 _multiSelectPreChangeSnapshot.TakeSnapshot();
             }
        
-            Vector2 inputDevPos;
+            Vector3 inputDevPos;
             if (!InputDevice.Instance.GetPosition(out inputDevPos)) return;
 
             // Adjust the selection shape's corners
@@ -841,7 +841,7 @@ namespace RTEditor
             if (CanPerformMultiSelect())
             {
                 // Adjust the selection shape's top left point
-                Vector2 inputDevPos;
+                Vector3 inputDevPos;
                 if (!InputDevice.Instance.GetPosition(out inputDevPos)) return;
                 GetObjectSelectionShape().SetEnclosingRectTopLeftPoint(inputDevPos);
 
@@ -1052,7 +1052,7 @@ namespace RTEditor
         {
             if (EventSystem.current == null) return false;
 
-            Vector2 inputDevPos;
+            Vector3 inputDevPos;
             if (!InputDevice.Instance.GetPosition(out inputDevPos)) return false;
 
             PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);

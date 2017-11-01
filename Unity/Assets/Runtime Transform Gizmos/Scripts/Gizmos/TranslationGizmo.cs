@@ -446,7 +446,7 @@ namespace RTEditor
 
         private Vector3 GetWorldBoxCornerClosestToCursor(List<GameObject> gameObjects)
         {
-            Vector2 inputDevPos;
+            Vector3 inputDevPos;
             if (!InputDevice.Instance.GetPosition(out inputDevPos)) return Vector3.zero;
 
             Vector3 worldPositionClosestToCursor = Vector3.zero;       
@@ -460,7 +460,7 @@ namespace RTEditor
                 List<Vector3> oobbPoints = oobb.GetCenterAndCornerPoints();
                 foreach(var oobbPt in oobbPoints)
                 {
-                    Vector2 screenPt = _camera.WorldToScreenPoint(oobbPt);
+                    Vector3 screenPt = _camera.WorldToScreenPoint(oobbPt);
                     float dist = (screenPt - inputDevPos).magnitude;
                     if(dist < minPtDistanceToCursor)
                     {
@@ -484,7 +484,7 @@ namespace RTEditor
             if (gameObjects == null) return new List<GameObject>();
 
             // Cache needed data
-            Vector2 inputDevPos;
+            Vector3 inputDevPos;
             if (!InputDevice.Instance.GetPosition(out inputDevPos)) return new List<GameObject>();
             float minDistanceToCursor = float.MaxValue;
             GameObject objectWithClosestRect = null;
@@ -525,7 +525,7 @@ namespace RTEditor
                 if(intersectedGameObjects.Count == 0)
                 {
                     // Identify the rectange point closest to the mouse cursor
-                    Vector2 pointClosestToCursor = screenRectangle.GetClosestPointToPoint(inputDevPos);
+                    Vector3 pointClosestToCursor = screenRectangle.GetClosestPointToPoint(inputDevPos);
 
                     // If the distance between the closest point and the mouse cursor is smaller than
                     // the minimum found so far, we will update the minimum distance and store the
@@ -564,7 +564,7 @@ namespace RTEditor
         private Vector3 GetWorldPositionClosestToMouseCursorForVertexSnapping(List<GameObject> gameObjects, bool considerOnlyMeshAndSpriteObjects)
         {
             // Store the mouse position for easy access
-            Vector2 inputDevPos;
+            Vector3 inputDevPos;
             if (!InputDevice.Instance.GetPosition(out inputDevPos)) return Vector3.zero;
 
             // First, check if there are any objects that have a mesh. These have priority. If at least
@@ -630,7 +630,7 @@ namespace RTEditor
                             {
                                 // Transform the vertex and world and screen space and store the results
                                 Vector3 worldSpaceVertexPosition = objectTransformMatrix.MultiplyPoint(modelSpaceVertex);
-                                Vector2 screenSpaceVertexPosition = _camera.WorldToScreenPoint(worldSpaceVertexPosition);
+                                Vector3 screenSpaceVertexPosition = _camera.WorldToScreenPoint(worldSpaceVertexPosition);
 
                                 // Check if the vertex's screen space position is closer to the mouse cursor position
                                 // than what we have found so far. If it is, store the new minimum distance and also
@@ -651,7 +651,7 @@ namespace RTEditor
                         if(!foundGroupIntersectingCursor)
                         {
                             // Identify the group's rectangle point closest to the mouse cursor
-                            Vector2 pointClosestToRect = groupScreenRectangle.GetClosestPointToPoint(inputDevPos);
+                            Vector3 pointClosestToRect = groupScreenRectangle.GetClosestPointToPoint(inputDevPos);
 
                             // If the point is closer than what we have so far, we will update the variables
                             float distanceToCursor = (pointClosestToRect - inputDevPos).magnitude;
@@ -679,7 +679,7 @@ namespace RTEditor
                     {
                         // Transform the vertex and world and screen space and store the results
                         Vector3 worldSpaceVertexPosition = objectTransformMatrix.MultiplyPoint(modelSpaceVertex);
-                        Vector2 screenSpaceVertexPosition = _camera.WorldToScreenPoint(worldSpaceVertexPosition);
+                        Vector3 screenSpaceVertexPosition = _camera.WorldToScreenPoint(worldSpaceVertexPosition);
 
                         // Check if the vertex's screen space position is closer to the mouse cursor position
                         // than what we have found so far. If it is, store the new minimum distance and also
@@ -710,7 +710,7 @@ namespace RTEditor
                     List<Vector3> worldCenterAndCornerPoints = spriteRenderer.GetWorldCenterAndCornerPoints();                  
                     foreach (var pt in worldCenterAndCornerPoints)
                     {
-                        Vector2 screenPosition = _camera.WorldToScreenPoint(pt);
+                        Vector3 screenPosition = _camera.WorldToScreenPoint(pt);
                         float distanceToCursor = (screenPosition - inputDevPos).magnitude;
 
                         if (distanceToCursor < minDistanceToCursor)
@@ -737,7 +737,7 @@ namespace RTEditor
                 {
                     // Calculate the object's screen position
                     Vector3 objectPosition = gameObject.transform.position;
-                    Vector2 screenPosition = _camera.WorldToScreenPoint(objectPosition);
+                    Vector3 screenPosition = _camera.WorldToScreenPoint(objectPosition);
 
                     // If the position is closer to the mouse cursor than what we have so far, we will update the variables
                     float distanceToCursor = (screenPosition - inputDevPos).magnitude;
@@ -1776,14 +1776,14 @@ namespace RTEditor
         private bool IsMouseCursorInsideSpecialOpSquare()
         {
             // We will need this to perform the check
-            Vector2 screenSpaceSquareCenter = _camera.WorldToScreenPoint(_gizmoTransform.position);
+            Vector3 screenSpaceSquareCenter = _camera.WorldToScreenPoint(_gizmoTransform.position);
             float halfSquareSize = ScreenSizeOfSpecialOpSquare * 0.5f;
 
             // In order to test if the mouse cursor position lies inside the square, we will first construct
             // a vector which goes from the square's center to the mouse cursor position. If the X and Y
             // components of the resulitng vector are <= to half the square size, it means the cursor position
             // lies inside the square.
-            Vector2 inputDevPos;
+            Vector3 inputDevPos;
             if (!InputDevice.Instance.GetPosition(out inputDevPos)) return false;
             Vector2 fromSquareCenterToCursorPosition = inputDevPos - screenSpaceSquareCenter;
 

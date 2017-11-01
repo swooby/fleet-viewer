@@ -263,7 +263,7 @@ namespace RTEditor
 
         private int GetIndexOfHoveredDragHandle()
         {
-            Vector2 devicePos;
+            Vector3 devicePos;
             if(!InputDevice.Instance.GetPosition(out devicePos)) return -1;
 
             List<BoxFace> allBoxFaces = BoxFaces.GetAll();

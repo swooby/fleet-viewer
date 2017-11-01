@@ -19,7 +19,7 @@ namespace RTEditor
         /// first array element will hold the mouse position. For a touch device, there 
         /// is an element for each possible touch.
         /// </summary>
-        protected Vector2[] _previousFramePositions = new Vector2[MaxNumberOfTouches];
+        protected Vector3[] _previousFramePositions = new Vector3[MaxNumberOfTouches];
 
         /// <summary>
         /// Holds the device offsets since the last frame. For a mouse device, the first 
@@ -27,7 +27,7 @@ namespace RTEditor
         /// element for each possible touch. For touch, when no touches exist, all elements
         /// are set to the zero vector.
         /// </summary>
-        protected Vector2[] _deltaSinceLastFrame = new Vector2[MaxNumberOfTouches];
+        protected Vector3[] _deltaSinceLastFrame = new Vector3[MaxNumberOfTouches];
 
         /// <summary>
         /// For a mouse device, the first 3 elements of this array hold the mouse offset
@@ -35,7 +35,7 @@ namespace RTEditor
         /// each array element holds the offset of the touch since the touch began. For mouse
         /// buttons or touches that are not currently active, the offset is the zero vector.
         /// </summary>
-        protected Vector2[] _deltaSincePressed = new Vector2[MaxNumberOfTouches];
+        protected Vector3[] _deltaSincePressed = new Vector3[MaxNumberOfTouches];
         #endregion
 
         #region IInputDevice
@@ -44,15 +44,15 @@ namespace RTEditor
 
         public int TouchCount { get { return Input.touchCount; } }
 
-        public Vector2 GetDeltaSincePressed(int deviceButtonIndex)
+        public Vector3 GetDeltaSincePressed(int deviceButtonIndex)
         {
-            if (deviceButtonIndex < 0 || deviceButtonIndex >= MaxNumberOfTouches) return Vector2.zero;
+            if (deviceButtonIndex < 0 || deviceButtonIndex >= MaxNumberOfTouches) return Vector3.zero;
             return _deltaSincePressed[deviceButtonIndex];
         }
 
-        public Vector2 GetDeltaSinceLastFrame(int deviceButtonIndex)
+        public Vector3 GetDeltaSinceLastFrame(int deviceButtonIndex)
         {
-            if (deviceButtonIndex < 0 || deviceButtonIndex >= MaxNumberOfTouches) return Vector2.zero;
+            if (deviceButtonIndex < 0 || deviceButtonIndex >= MaxNumberOfTouches) return Vector3.zero;
             return _deltaSinceLastFrame[deviceButtonIndex];
         }
 
@@ -62,7 +62,7 @@ namespace RTEditor
 
         public abstract bool WasReleasedInCurrentFrame(int deviceButtonIndex);
 
-        public abstract bool GetPosition(out Vector2 position);
+        public abstract bool GetPosition(out Vector3 position);
 
         public abstract bool GetPickRay(Camera camera, out Ray ray);
 

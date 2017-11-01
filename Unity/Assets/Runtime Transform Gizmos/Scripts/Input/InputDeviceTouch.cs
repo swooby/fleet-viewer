@@ -30,9 +30,9 @@ namespace RTEditor
             return touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled;
         }
 
-        public override bool GetPosition(out Vector2 position)
+        public override bool GetPosition(out Vector3 position)
         {
-            position = new Vector2(float.MaxValue, float.MaxValue);
+            position = new Vector3(float.MaxValue, float.MaxValue);
             if (Input.touchCount != 0)
             {
                 position = Input.GetTouch(0).position;
@@ -70,8 +70,8 @@ namespace RTEditor
             {
                 if (touchIndex >= touchCount)
                 {
-                    _deltaSinceLastFrame[0] = Vector2.zero;
-                    _previousFramePositions[0] = Vector2.zero;
+                    _deltaSinceLastFrame[0] = Vector3.zero;
+                    _previousFramePositions[0] = Vector3.zero;
                     continue;
                 }
 
@@ -80,7 +80,7 @@ namespace RTEditor
                 if (WasPressedInCurrentFrame(touchIndex) ||
                     WasReleasedInCurrentFrame(touchIndex))
                 {
-                    _deltaSincePressed[touchIndex] = Vector2.zero;
+                    _deltaSincePressed[touchIndex] = Vector3.zero;
                     continue;
                 }
                 else

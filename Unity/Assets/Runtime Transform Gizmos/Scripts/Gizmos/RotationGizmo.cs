@@ -771,12 +771,12 @@ namespace RTEditor
                 {
                     // We will need the radius of the rotation circle in screen space. This is the same as the radius of the
                     // sphere boundary scaled by '_cameraLookRotationCircleRadiusScale'.
-                    Vector2 rotationSphereScreenSpaceCenter = GetRotationSphereScreenSpaceCenter();
+                    Vector3 rotationSphereScreenSpaceCenter = GetRotationSphereScreenSpaceCenter();
                     float cameraLookRotationCircleRadius = EstimateRotationSphereScreenSpaceBoundaryCircleRadius(rotationSphereScreenSpaceCenter) * _cameraLookRotationCircleRadiusScale;
 
                     // Check if the mouse cursor position is close enough to the circle's circumference
                     const float epsilon = 5.0f;
-                    Vector2 inputDevPos;
+                    Vector3 inputDevPos;
                     bool isDevPosAvailable = InputDevice.Instance.GetPosition(out inputDevPos);
                     if (isDevPosAvailable && Mathf.Abs((inputDevPos - rotationSphereScreenSpaceCenter).magnitude - cameraLookRotationCircleRadius) <= epsilon)
                     {
@@ -792,7 +792,7 @@ namespace RTEditor
                         // intersection test. We want to store the exact point on the circle. For that reason, we will first calculate a vector
                         // which goes from the sphere center to the cursor position, normalize it and then use it to generate a new point which
                         // sits exactly on the circle circumference. We store the result inside the '_cameraLookRotationCirclePickPoint' variable.
-                        Vector2 toPickPoint = inputDevPos - rotationSphereScreenSpaceCenter;
+                        Vector3 toPickPoint = inputDevPos - rotationSphereScreenSpaceCenter;
                         toPickPoint.Normalize();
                         _cameraLookRotationCirclePickPoint = rotationSphereScreenSpaceCenter + toPickPoint * EstimateRotationSphereScreenSpaceBoundaryCircleRadius(rotationSphereScreenSpaceCenter) * _cameraLookRotationCircleRadiusScale;
                     }
@@ -855,12 +855,12 @@ namespace RTEditor
                 {
                     // We will need the radius of the rotation circle in screen space. This is the same as the radius of the
                     // sphere boundary scaled by '_cameraLookRotationCircleRadiusScale'.
-                    Vector2 rotationSphereScreenSpaceCenter = GetRotationSphereScreenSpaceCenter();
+                    Vector3 rotationSphereScreenSpaceCenter = GetRotationSphereScreenSpaceCenter();
                     float cameraLookRotationCircleRadius = EstimateRotationSphereScreenSpaceBoundaryCircleRadius(rotationSphereScreenSpaceCenter) * _cameraLookRotationCircleRadiusScale;
 
                     // Check if the mouse cursor position is close enough to the circle's circumference
                     const float epsilon = 5.0f;
-                    Vector2 inputDevPos;
+                    Vector3 inputDevPos;
                     bool isDevPosAvailable = InputDevice.Instance.GetPosition(out inputDevPos);
                     if (isDevPosAvailable && Mathf.Abs((inputDevPos - rotationSphereScreenSpaceCenter).magnitude - cameraLookRotationCircleRadius) <= epsilon) return true;
                 }

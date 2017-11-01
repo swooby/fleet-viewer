@@ -27,7 +27,7 @@ namespace RTEditor
             return Input.GetMouseButtonUp(deviceButtonIndex);
         }
 
-        public override bool GetPosition(out Vector2 position)
+        public override bool GetPosition(out Vector3 position)
         {
             position = Input.mousePosition;
             return true;
@@ -47,7 +47,7 @@ namespace RTEditor
         public override void Update()
         {
             // Calculate the mouse delta
-            Vector2 mousePos = Input.mousePosition;
+            Vector3 mousePos = Input.mousePosition;
             _deltaSinceLastFrame[0] = mousePos - _previousFramePositions[0];
 
             // Store the current mouse position as the previous position for the next frame
@@ -62,7 +62,7 @@ namespace RTEditor
                 if (WasPressedInCurrentFrame(mouseBtnIndex) ||
                     WasReleasedInCurrentFrame(mouseBtnIndex))
                 {
-                    _deltaSincePressed[mouseBtnIndex] = Vector2.zero;
+                    _deltaSincePressed[mouseBtnIndex] = Vector3.zero;
                     continue;
                 }
                 else

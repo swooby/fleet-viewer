@@ -643,10 +643,10 @@ namespace RTEditor
                     // below the square center. In that case the distance from the center will start increasing again and it would be very hard 
                     // for the user to shrink the object. For that reason, we will establish a rule that if the mouse cursor position goes below
                     // the center of the square, the scale sign is reversed and the movement will perform a decrease rather than an increase.
-                    Vector2 inputDevPos;
+                    Vector3 inputDevPos;
                     if (!InputDevice.Instance.GetPosition(out inputDevPos)) return;
 
-                    Vector2 allAxesSquareCenter = _camera.WorldToScreenPoint(_gizmoTransform.position);
+                    Vector3 allAxesSquareCenter = _camera.WorldToScreenPoint(_gizmoTransform.position);
                     Vector2 circleRadiusVector = inputDevPos - allAxesSquareCenter;   // This is the circle's radius vector which goes from the square center to the current mouse position
                     circleRadiusVector.Normalize();
 
@@ -927,14 +927,14 @@ namespace RTEditor
         private bool IsMouseCursorInsideAllAxesScaleSquare()
         {
             // We will need this to perform the check
-            Vector2 screenSpaceSquareCenter = _camera.WorldToScreenPoint(_gizmoTransform.position);
+            Vector3 screenSpaceSquareCenter = _camera.WorldToScreenPoint(_gizmoTransform.position);
             float halfSquareSize = _screenSizeOfAllAxesSquare * 0.5f;
 
             // In order to test if the mouse cursor position lies inside the square, we will first construct
             // a vector which goes from the square's center to the mouse cursor position. If the X and Y
             // components of the resulitng vector are <= to half the square size, it means the cursor position
             // lies inside the square.
-            Vector2 inputDevPos;
+            Vector3 inputDevPos;
             if (!InputDevice.Instance.GetPosition(out inputDevPos)) return false;
             Vector2 fromSquareCenterToCursorPosition = inputDevPos - screenSpaceSquareCenter;
 

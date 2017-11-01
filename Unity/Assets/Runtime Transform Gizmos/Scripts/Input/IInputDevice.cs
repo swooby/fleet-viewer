@@ -33,7 +33,7 @@ namespace RTEditor
         /// The same value is returned if the specified index is out of range. The allowed
         /// interval for this value is [0, MaxNumberOfTouches - 1].
         /// </returns>
-        Vector2 GetDeltaSincePressed(int deviceButtonIndex);
+        Vector3 GetDeltaSincePressed(int deviceButtonIndex);
 
         /// <summary>
         /// Returns the device offset since the last frame.
@@ -49,7 +49,7 @@ namespace RTEditor
         /// this value can reside in the [0, MaxNumberOfTouches] interval and it
         /// identifies a touch.
         /// </returns>
-        Vector2 GetDeltaSinceLastFrame(int deviceButtonIndex);
+        Vector3 GetDeltaSinceLastFrame(int deviceButtonIndex);
 
         /// <summary>
         /// Can be used to check if the device button with the specified index is
@@ -108,7 +108,7 @@ namespace RTEditor
         /// True if the position can be retreived and false otherwise. The method can
         /// return false if a touch device is used and no touches are available.
         /// </returns>
-        bool GetPosition(out Vector2 position);
+        bool GetPosition(out Vector3 position);
 
         /// <summary>
         /// Returns a pick ray from the device position. This ray can be used to pick entities
