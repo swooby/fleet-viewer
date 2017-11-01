@@ -17,14 +17,14 @@ namespace RTEditor
             return Input.GetMouseButton(deviceButtonIndex);
         }
 
-        public override bool WasPressedInCurrentFrame(int index)
+        public override bool WasPressedInCurrentFrame(int deviceButtonIndex)
         {
-            return Input.GetMouseButtonDown(index);
+            return Input.GetMouseButtonDown(deviceButtonIndex);
         }
 
-        public override bool WasReleasedInCurrentFrame(int index)
+        public override bool WasReleasedInCurrentFrame(int deviceButtonIndex)
         {
-            return Input.GetMouseButtonUp(index);
+            return Input.GetMouseButtonUp(deviceButtonIndex);
         }
 
         public override bool GetPosition(out Vector2 position)

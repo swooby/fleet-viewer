@@ -38,23 +38,22 @@ namespace RTEditor
         protected Vector2[] _deltaSincePressed = new Vector2[MaxNumberOfTouches];
         #endregion
 
-        #region Public Properties
+        #region IInputDevice
+
         public abstract bool UsingTouch { get; }
 
         public int TouchCount { get { return Input.touchCount; } }
-        #endregion
 
-        #region Public Methods
         public Vector2 GetDeltaSincePressed(int deviceButtonIndex)
         {
             if (deviceButtonIndex < 0 || deviceButtonIndex >= MaxNumberOfTouches) return Vector2.zero;
             return _deltaSincePressed[deviceButtonIndex];
         }
 
-        public Vector2 GetDeltaSinceLastFrame(int deviceIndex)
+        public Vector2 GetDeltaSinceLastFrame(int deviceButtonIndex)
         {
-            if (deviceIndex < 0 || deviceIndex >= MaxNumberOfTouches) return Vector2.zero;
-            return _deltaSinceLastFrame[deviceIndex];
+            if (deviceButtonIndex < 0 || deviceButtonIndex >= MaxNumberOfTouches) return Vector2.zero;
+            return _deltaSinceLastFrame[deviceButtonIndex];
         }
 
         public abstract bool IsPressed(int deviceButtonIndex);
@@ -70,6 +69,7 @@ namespace RTEditor
         public abstract bool WasMoved();
 
         public abstract void Update();
-        #endregion
+
+        #endregion IInputDevice
     }
 }

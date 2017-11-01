@@ -22,13 +22,9 @@ namespace RTEditor
 
         private Vector3 GetLaserPointerEndpoint()
         {
-            Vector3 laserPointerEndPoint;
+            Vector3 laserPointerEndPoint = Vector3.zero;
 
-            if (_laserPointer == null || !_laserPointer.isActiveAndEnabled)
-            {
-                laserPointerEndPoint = Vector3.zero;
-            }
-            else
+            if (_laserPointer != null && _laserPointer.isActiveAndEnabled)
             {
                 RaycastResult raycastResult = _laserPointer.CurrentRaycastResult;
                 if (raycastResult.gameObject != null)
@@ -54,6 +50,7 @@ namespace RTEditor
 
         public override bool IsPressed(int deviceButtonIndex)
         {
+            // TODO:(pv) Handle both Touch+TouchPos & Click+Move...
             bool isPressed = Input.GetMouseButton(deviceButtonIndex);
             //Debug.LogWarning("isPressed A:" + isPressed);
             isPressed = GvrControllerInput.ClickButton;
@@ -61,18 +58,20 @@ namespace RTEditor
             return isPressed;
         }
 
-        public override bool WasPressedInCurrentFrame(int index)
+        public override bool WasPressedInCurrentFrame(int deviceButtonIndex)
         {
-            bool wasPressedInCurrentFrame = Input.GetMouseButtonDown(index);
+            // TODO:(pv) Handle both Touch+TouchPos & Click+Move...
+            bool wasPressedInCurrentFrame = Input.GetMouseButtonDown(deviceButtonIndex);
             //Debug.LogWarning("wasPressedInCurrentFrame A:" + wasPressedInCurrentFrame);
             wasPressedInCurrentFrame = GvrControllerInput.ClickButtonDown;
             //Debug.LogWarning("wasPressedInCurrentFrame B:" + wasPressedInCurrentFrame);
             return wasPressedInCurrentFrame;
         }
 
-        public override bool WasReleasedInCurrentFrame(int index)
+        public override bool WasReleasedInCurrentFrame(int deviceButtonIndex)
         {
-            bool wasReleasedInCurrentFrame = Input.GetMouseButtonUp(index);
+            // TODO:(pv) Handle both Touch+TouchPos & Click+Move...
+            bool wasReleasedInCurrentFrame = Input.GetMouseButtonUp(deviceButtonIndex);
             //Debug.LogWarning("wasReleasedInCurrentFrame A:" + wasReleasedInCurrentFrame);
             wasReleasedInCurrentFrame = GvrControllerInput.ClickButtonUp;
             //Debug.LogWarning("wasReleasedInCurrentFrame B:" + wasReleasedInCurrentFrame);

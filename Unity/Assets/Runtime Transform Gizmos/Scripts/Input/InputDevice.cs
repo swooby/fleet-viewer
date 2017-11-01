@@ -19,56 +19,56 @@ namespace RTEditor
 #endif
         }
 
-        void SetInputDevice(InputDeviceAbstract inputDevice)
+        public void SetInputDevice(InputDeviceAbstract inputDevice)
         {
             _inputDevice = inputDevice;
         }
 
-        bool IInputDevice.UsingTouch { get { return _inputDevice.UsingTouch; } }
+        public bool UsingTouch { get { return _inputDevice.UsingTouch; } }
 
-        int IInputDevice.TouchCount { get { return _inputDevice.TouchCount; } }
+        public int TouchCount { get { return _inputDevice.TouchCount; } }
 
-        Vector2 IInputDevice.GetDeltaSincePressed(int deviceButtonIndex)
+        public Vector2 GetDeltaSincePressed(int deviceButtonIndex)
         {
             return _inputDevice.GetDeltaSincePressed(deviceButtonIndex);
         }
 
-        Vector2 IInputDevice.GetDeltaSinceLastFrame(int deviceIndex)
+        public Vector2 GetDeltaSinceLastFrame(int deviceIndex)
         {
             return _inputDevice.GetDeltaSinceLastFrame(deviceIndex);
         }
 
-        bool IInputDevice.IsPressed(int deviceButtonIndex)
+        public bool IsPressed(int deviceButtonIndex)
         {
             return _inputDevice.IsPressed(deviceButtonIndex);
         }
 
-        bool IInputDevice.WasPressedInCurrentFrame(int deviceButtonIndex)
+        public bool WasPressedInCurrentFrame(int deviceButtonIndex)
         {
             return _inputDevice.WasPressedInCurrentFrame(deviceButtonIndex);
         }
 
-        bool IInputDevice.WasReleasedInCurrentFrame(int deviceButtonIndex)
+        public bool WasReleasedInCurrentFrame(int deviceButtonIndex)
         {
             return _inputDevice.WasReleasedInCurrentFrame(deviceButtonIndex);
         }
 
-        bool IInputDevice.GetPosition(out Vector2 position)
+        public bool GetPosition(out Vector2 position)
         {
             return _inputDevice.GetPosition(out position);
         }
 
-        bool IInputDevice.GetPickRay(Camera camera, out Ray ray)
+        public bool GetPickRay(Camera camera, out Ray ray)
         {
             return _inputDevice.GetPickRay(camera, out ray);
         }
 
-        bool IInputDevice.WasMoved()
+        public bool WasMoved()
         {
             return _inputDevice.WasMoved();
         }
 
-        void IInputDevice.Update()
+        public void Update()
         {
             _inputDevice.Update();
         }

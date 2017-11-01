@@ -19,9 +19,10 @@ namespace RTEditor
         /// Returns the device offset since the specified device button was pressed.
         /// </summary>
         /// <param name="deviceButtonIndex">
-        /// For a mouse, this has to be a value in the [0, 2] interval and it identifies
-        /// one of the mouse buttons. For a touch device, this value can reside in the 
-        /// [0, MaxNumberOfTouches] interval and it identifies a touch.
+        /// Identifies the device button. For a mouse this has to reside in the 
+        /// [0, 2] interval (left, right, middle mouse button). For a touch device,
+        /// this value can reside in the [0, MaxNumberOfTouches] interval and it
+        /// identifies a touch.
         /// </param>
         /// <returns>
         /// The device offset since the specified device button was pressed. For example,
@@ -37,17 +38,18 @@ namespace RTEditor
         /// <summary>
         /// Returns the device offset since the last frame.
         /// </summary>
-        /// <param name="deviceIndex">
-        /// Identifies the device. For a mouse this has to be set to 0. Otherwise, this 
-        /// represents the index of a touch.
+        /// <param name="deviceButtonIndex">
+        /// For a mouse, this has to be a value in the [0, 2] interval and it identifies
+        /// one of the mouse buttons. For a touch device, this value can reside in the 
+        /// [0, MaxNumberOfTouches] interval and it identifies a touch.
         /// </param>
         /// <returns>
-        /// The offset of the device since the last frame. When a touch device is used,
-        /// if the touch with index 'deviceIndex' is not present, the returned value is
-        /// the zero vector. The same value is returned if the specified device index
-        /// is out of range. The allowed interval for this value is [0, MaxNumberOfTouches - 1].
+        /// Identifies the device button. For a mouse this has to reside in the 
+        /// [0, 2] interval (left, right, middle mouse button). For a touch device,
+        /// this value can reside in the [0, MaxNumberOfTouches] interval and it
+        /// identifies a touch.
         /// </returns>
-        Vector2 GetDeltaSinceLastFrame(int deviceIndex);
+        Vector2 GetDeltaSinceLastFrame(int deviceButtonIndex);
 
         /// <summary>
         /// Can be used to check if the device button with the specified index is
@@ -55,8 +57,9 @@ namespace RTEditor
         /// </summary>
         /// <param name="deviceButtonIndex">
         /// Identifies the device button. For a mouse this has to reside in the 
-        /// [0, 2] interval (left, right, middle mouse button). For touch, this
-        /// is the index of a touch.
+        /// [0, 2] interval (left, right, middle mouse button). For a touch device,
+        /// this value can reside in the [0, MaxNumberOfTouches] interval and it
+        /// identifies a touch.
         /// </param>
         /// <returns>
         /// True if the specified button is pressed and false otherwise.
@@ -69,8 +72,9 @@ namespace RTEditor
         /// </summary>
         /// <param name="deviceButtonIndex">
         /// Identifies the device button. For a mouse this has to reside in the 
-        /// [0, 2] interval (left, right, middle mouse button). For touch, this
-        /// is the index of a touch.
+        /// [0, 2] interval (left, right, middle mouse button). For a touch device,
+        /// this value can reside in the [0, MaxNumberOfTouches] interval and it
+        /// identifies a touch.
         /// </param>
         /// <returns>
         /// True if the specified button is pressed and false otherwise.
@@ -83,8 +87,9 @@ namespace RTEditor
         /// </summary>
         /// <param name="deviceButtonIndex">
         /// Identifies the device button. For a mouse this has to reside in the 
-        /// [0, 2] interval (left, right, middle mouse button). For a touch device, this
-        /// is the index of a touch.
+        /// [0, 2] interval (left, right, middle mouse button). For a touch device,
+        /// this value can reside in the [0, MaxNumberOfTouches] interval and it
+        /// identifies a touch.
         /// </param>
         /// <returns>
         /// True if the specified button is pressed and false otherwise.

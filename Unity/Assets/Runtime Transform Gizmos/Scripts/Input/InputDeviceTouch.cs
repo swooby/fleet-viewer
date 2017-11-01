@@ -17,16 +17,16 @@ namespace RTEditor
             return deviceButtonIndex < Input.touchCount;
         }
 
-        public override bool WasPressedInCurrentFrame(int index)
+        public override bool WasPressedInCurrentFrame(int deviceButtonIndex)
         {
-            if (index >= Input.touchCount) return false;
-            return Input.GetTouch(index).phase == TouchPhase.Began;
+            if (deviceButtonIndex >= Input.touchCount) return false;
+            return Input.GetTouch(deviceButtonIndex).phase == TouchPhase.Began;
         }
 
-        public override bool WasReleasedInCurrentFrame(int index)
+        public override bool WasReleasedInCurrentFrame(int deviceButtonIndex)
         {
-            if (index >= Input.touchCount) return false;
-            Touch touch = Input.GetTouch(index);
+            if (deviceButtonIndex >= Input.touchCount) return false;
+            Touch touch = Input.GetTouch(deviceButtonIndex);
             return touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled;
         }
 
