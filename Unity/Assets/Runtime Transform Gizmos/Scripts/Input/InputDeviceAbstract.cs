@@ -4,6 +4,15 @@ namespace RTEditor
 {
     public abstract class InputDeviceAbstract : IInputDevice
     {
+        #region Public Static Properties
+        /// <summary>
+        /// Returns the maximum number of allowed touches for a touch device. A random
+        /// value of 10 was used in this case as for the moment I can not figure out how
+        /// to retrieve this value using the Unity API.
+        /// </summary>
+        public static int MaxNumberOfTouches { get { return 10; } }
+        #endregion
+
         #region Protected Variables
         /// <summary>
         /// Holds the device positions in the previous frame. For a mouse dvice, the
@@ -27,15 +36,6 @@ namespace RTEditor
         /// buttons or touches that are not currently active, the offset is the zero vector.
         /// </summary>
         protected Vector2[] _deltaSincePressed = new Vector2[MaxNumberOfTouches];
-        #endregion
-
-        #region Public Static Properties
-        /// <summary>
-        /// Returns the maximum number of allowed touches for a touch device. A random
-        /// value of 10 was used in this case as for the moment I can not figure out how
-        /// to retrieve this value using the Unity API.
-        /// </summary>
-        public static int MaxNumberOfTouches { get { return 10; } }
         #endregion
 
         #region Public Properties
