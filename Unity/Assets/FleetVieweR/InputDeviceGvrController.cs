@@ -9,63 +9,39 @@ namespace RTEditor
         private Vector3 _laserPointerStartPosition;
         private Quaternion _laserPointerStartRotation;
 
-        private GvrLaserPointer LaserPointer
+        public InputDeviceGvrController()
         {
-            get
+            _laserPointer = GvrPointerInputModule.Pointer as GvrLaserPointer;
+            if (_laserPointer != null)
             {
-                if (_laserPointer == null)
-                {
-                    _laserPointer = GvrPointerInputModule.Pointer as GvrLaserPointer;
-                }
-                return _laserPointer;
+                Transform laserPointerTransform = _laserPointer.gameObject.transform;
+                _laserPointerStartPosition = laserPointerTransform.position;
+                _laserPointerStartRotation = laserPointerTransform.rotation;
             }
         }
 
-        private Vector3 GetLaserPointerEndpoint(GvrLaserPointer laserPointer = null)
+        private Vector3 GetLaserPointerEndpoint()
         {
-            if (laserPointer == null)
-            {
-                laserPointer = LaserPointer;
-            }
-
             Vector3 laserPointerEndPoint;
 
-            if (laserPointer == null || !laserPointer.isActiveAndEnabled)
+            if (_laserPointer == null || !_laserPointer.isActiveAndEnabled)
             {
                 laserPointerEndPoint = Vector3.zero;
             }
             else
             {
-                RaycastResult raycastResult = laserPointer.CurrentRaycastResult;
+                RaycastResult raycastResult = _laserPointer.CurrentRaycastResult;
                 if (raycastResult.gameObject != null)
                 {
                     laserPointerEndPoint = raycastResult.worldPosition;
                 }
                 else
                 {
-                    laserPointerEndPoint = laserPointer.GetPointAlongPointer(laserPointer.defaultReticleDistance);
+                    laserPointerEndPoint = _laserPointer.GetPointAlongPointer(_laserPointer.defaultReticleDistance);
                 }
             }
 
-            /*
-            if (laserPointerEndPoint != null && laserPointerEndPoint != Vector3.zero)
-            {
-                Debug.LogWarning("GetLaserPointerEndpoint: laserPointerEndPoint:" + laserPointerEndPoint);
-            }
-            */
-
             return laserPointerEndPoint;
-        }
-
-        private void Start()
-        {
-            GvrLaserPointer laserPointer = LaserPointer;
-            if (laserPointer != null)
-            {
-                Transform laserPointerTransform = laserPointer.gameObject.transform;
-                _laserPointerStartPosition = laserPointerTransform.position;
-                _laserPointerStartRotation = laserPointerTransform.rotation;
-            }
         }
 
         public override bool UsingTouch
@@ -108,18 +84,17 @@ namespace RTEditor
             //position = Input.mousePosition;
             //Debug.LogWarning("GetPosition: position A:" + position);
 
+            position = Vector2.zero;
+
             Vector3 laserPointerEndPoint = GetLaserPointerEndpoint();
             if (laserPointerEndPoint == Vector3.zero)
             {
-                position = Vector2.zero;
                 return false;
             }
 
-            //Debug.LogWarning("GetPosition: laserPointerEndPoint A:" + laserPointerEndPoint);
             laserPointerEndPoint = EditorCamera.Instance.Camera.WorldToScreenPoint(laserPointerEndPoint);
-            //Debug.LogWarning("GetPosition: laserPointerEndPoint B:" + laserPointerEndPoint);
 
-            position = new Vector2(laserPointerEndPoint.x, laserPointerEndPoint.y);
+            position.Set(laserPointerEndPoint.x, laserPointerEndPoint.y);
             //Debug.LogWarning("GetPosition: position B:" + position);
 
             return true;
@@ -132,8 +107,7 @@ namespace RTEditor
             ray = camera.ScreenPointToRay(mousePosition);
             //Debug.LogWarning("GetPickRay: ray A:" + ray);
 
-            GvrLaserPointer laserPointer = LaserPointer;
-            if (laserPointer == null)
+            if (_laserPointer == null)
             {
                 ray = new Ray();
                 return false;
@@ -155,7 +129,7 @@ namespace RTEditor
             ray = new Ray(laserPointerEndPoint, laserPointer.gameObject.transform.forward);
             // GvrLaserVisual..Orientation.eulerAngles);
             */
-            Transform laserPointerTransform = laserPointer.gameObject.transform;
+            Transform laserPointerTransform = _laserPointer.gameObject.transform;
             ray = new Ray(laserPointerTransform.position, laserPointerTransform.forward);
             //Debug.LogWarning("GetPickRay: ray B:" + ray);
 
@@ -192,15 +166,19 @@ namespace RTEditor
 
         public override void Update()
         {
-            // Calculate the mouse delta
-            Vector2 mousePos;
-            GetPosition(out mousePos);
-            _deltaSinceLastFrame[0] = mousePos - _previousFramePositions[0];
+            // Calculate the laserPointerEndPoint delta
+            Vector2 laserPointerEndPoint;
+            if (!GetPosition(out laserPointerEndPoint))
+            {
+                return;
+            }
 
-            // Store the current mouse position as the previous position for the next frame
-            _previousFramePositions[0] = mousePos;
+            _deltaSinceLastFrame[0] = laserPointerEndPoint - _previousFramePositions[0];
 
-            // Now we will loop through all possible mouse buttons and update the mouse offset
+            // Store the current laserPointerEndPoint position as the previous position for the next frame
+            _previousFramePositions[0] = laserPointerEndPoint;
+
+            // Now we will loop through all supported laserPointerEndPoint modes and update the mouse offset
             // since each button was pressed.
             // TODO:(pv) Handle both Touch+TouchPos & Click+Move...
             //for (int mouseBtnIndex = 0; mouseBtnIndex < 3; ++mouseBtnIndex)
