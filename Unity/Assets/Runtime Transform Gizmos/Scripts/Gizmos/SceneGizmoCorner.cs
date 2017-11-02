@@ -5,6 +5,7 @@
         TopLeft = 0,
         TopRight,
         BottomRight,
-        BottomLeft
+        BottomLeft,
+        None
     }
 }

@@ -69,6 +69,14 @@ namespace RTEditor
                 UnityEditorUndoHelper.RecordObjectForInspectorPropertyChange(_sceneGizmo);
                 _sceneGizmo.CameraAlignDuration = newFloat;
             }
+
+            bool lockPerspective = EditorGUILayout.Toggle("Lock Perspective", _sceneGizmo.LockPerspective);
+            if (lockPerspective != _sceneGizmo.LockPerspective)
+            {
+                UnityEditorUndoHelper.RecordObjectForInspectorPropertyChange(_sceneGizmo);
+                _sceneGizmo.LockPerspective = lockPerspective;
+            }
+
             EditorGUILayout.EndVertical();
         }
         #endregion

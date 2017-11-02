@@ -76,6 +76,8 @@ namespace RTEditor
         private Color _hoveredComponentColor = DefaultHoveredComponentColor;
         [SerializeField]
         private float _cameraAlignDuration = 0.3f;
+        [SerializeField]
+        private bool _lockPerspective = DefaultLockPerspective;
 
         private Texture2D[] _axisLabelTextures = new Texture2D[3];
 
@@ -99,6 +101,7 @@ namespace RTEditor
         public static Color DefaultNegativeAxisColor { get { return DefaultCubeColor; } }
         public static float DefaultScreenSize { get { return 100.0f; } }
         public static int DefaultAxisLabelCharSize { get { return 2; } }
+        public static bool DefaultLockPerspective { get { return false; } }
         #endregion
 
         #region Public Properties
@@ -110,6 +113,7 @@ namespace RTEditor
         public Color ZAxisColor { get { return _zAxisColor; } set { _zAxisColor = value; } }
         public Color HoveredComponentColor { get { return _hoveredComponentColor; } set { _hoveredComponentColor = value; } }
         public Color CubeColor { get { return _cubeColor; } set { _cubeColor = value; } }
+        public bool LockPerspective { get { return _lockPerspective; } set { _lockPerspective = value; } }
         #endregion
 
         #region Public Methods
@@ -140,12 +144,22 @@ namespace RTEditor
                 _componentAlphas[axisIndex] = 1.0f;
             }
 
+            if (_corner == SceneGizmoCorner.None)
+            {
+                return;
+            }
+
             UpdateGizmoCamera();
             StartCoroutine(DoComponentAlphaTransitions());
         }
 
         private void Update()
         {
+            if (_corner == SceneGizmoCorner.None)
+            {
+                return;
+            }
+
             UpdateGizmoCamera();
 
             _gizmoTransform.rotation = CalculateGizmoRotation();
@@ -160,6 +174,11 @@ namespace RTEditor
 
         private void OnGUI()
         {
+            if (_corner == SceneGizmoCorner.None)
+            {
+                return;
+            }
+
             Rect gizmoCamRect = _gizmoCamera.pixelRect;
             Rect labelrect = new Rect(gizmoCamRect.xMin + 35.0f, Screen.height - gizmoCamRect.yMin - 12.0f, gizmoCamRect.width, gizmoCamRect.height);
             GUI.Label(labelrect, _gizmoCamera.orthographic ? "Ortho" : "Persp");
@@ -167,13 +186,13 @@ namespace RTEditor
 
         private void OnFirstInputDeviceBtnDown()
         {
-            if (_hoveredComponent == (int)SceneGizmoComponent.Cube)
+            if (_hoveredComponent == (int)SceneGizmoComponent.Cube && !_lockPerspective)
             {
                 Camera editorCamera = EditorCamera.Instance.Camera;
                 EditorCamera.Instance.SetOrtho(!editorCamera.orthographic);
                 _gizmoCamera.orthographic = editorCamera.orthographic;
             }
-            if (_hoveredComponent == (int)SceneGizmoComponent.PositiveX) EditorCamera.Instance.AlignLookWithWorldAxis(Axis.X, false, _cameraAlignDuration);
+            else if (_hoveredComponent == (int)SceneGizmoComponent.PositiveX) EditorCamera.Instance.AlignLookWithWorldAxis(Axis.X, false, _cameraAlignDuration);
             else if (_hoveredComponent == (int)SceneGizmoComponent.NegativeX) EditorCamera.Instance.AlignLookWithWorldAxis(Axis.X, true, _cameraAlignDuration);
             else if (_hoveredComponent == (int)SceneGizmoComponent.PositiveY) EditorCamera.Instance.AlignLookWithWorldAxis(Axis.Y, false, _cameraAlignDuration);
             else if (_hoveredComponent == (int)SceneGizmoComponent.NegativeY) EditorCamera.Instance.AlignLookWithWorldAxis(Axis.Y, true, _cameraAlignDuration);
@@ -235,12 +254,17 @@ namespace RTEditor
             _componentColors[(int)SceneGizmoComponent.NegativeZ] = _negativeAxisColor;
             _componentColors[(int)SceneGizmoComponent.NegativeZ].a = _componentAlphas[(int)SceneGizmoComponent.NegativeZ];
 
-            if (_hoveredComponent >= 0) _componentColors[_hoveredComponent] = _hoveredComponentColor;
+            if (_hoveredComponent >= 0 && _hoveredComponent != (int)SceneGizmoComponent.Cube || !_lockPerspective) _componentColors[_hoveredComponent] = _hoveredComponentColor;
         }
 
         private void OnRenderObject()
         {
             if (Camera.current != _gizmoCamera) return;
+
+            if (_corner == SceneGizmoCorner.None)
+            {
+                return;
+            }
 
             Material material = MaterialPool.Instance.GizmoSolidComponent;
             material.SetVector("_LightDir", _gizmoCameraTransform.forward);
@@ -333,6 +357,7 @@ namespace RTEditor
             if (comp == SceneGizmoComponent.Cube) return 1;
 
             if (_componentAlphas[(int)comp] == 1.0f) return 1;
+
             return 0;
         }
 
@@ -388,16 +413,16 @@ namespace RTEditor
         private void UpdateGizmoCameraViewport()
         {
             Rect editorCamViewRect = EditorCamera.Instance.Camera.pixelRect;
-            if (_corner == SceneGizmoCorner.TopRight)
-                _gizmoCamera.pixelRect = new Rect(editorCamViewRect.xMax - _screenSize, editorCamViewRect.yMax - _screenSize, _screenSize, _screenSize);
-            else
             if (_corner == SceneGizmoCorner.TopLeft)
                 _gizmoCamera.pixelRect = new Rect(editorCamViewRect.xMin, editorCamViewRect.yMax - _screenSize, _screenSize, _screenSize);
             else
             if(_corner == SceneGizmoCorner.BottomRight)
                 _gizmoCamera.pixelRect = new Rect(editorCamViewRect.xMax - _screenSize, 10.0f + editorCamViewRect.yMin, _screenSize, _screenSize);
             else
+            if (_corner == SceneGizmoCorner.BottomLeft)
                 _gizmoCamera.pixelRect = new Rect(editorCamViewRect.xMin, 10.0f + editorCamViewRect.yMin, _screenSize, _screenSize);
+            else
+                _gizmoCamera.pixelRect = new Rect(editorCamViewRect.xMax - _screenSize, editorCamViewRect.yMax - _screenSize, _screenSize, _screenSize);
         }
 
         private void UpdateGizmoCameraViewVolume()
