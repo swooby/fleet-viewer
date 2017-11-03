@@ -1536,7 +1536,7 @@ GameObject:
   - component: {fileID: 1041331158}
   - component: {fileID: 1041331159}
   m_Layer: 0
-  m_Name: TestSceneManager
+  m_Name: TestManipulateSceneManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
