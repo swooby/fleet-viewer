@@ -8,273 +8,276 @@ using RTEditor;
 
 // TODO:(pv) Fix Scene Gizmo rotation snapping-back to original
 // TODO:(pv) Disable Scene Gizmo Orthogonal toggle
-public class TestSceneManager : MonoBehaviour
+
+namespace FleetVieweR
 {
-    private const string TAG = "TestSceneManager";
-
-    public const bool VERBOSE_LOG = false;
-
-    //[Tooltip("Reference to GvrControllerMain")]
-    //public GameObject controllerMain;
-    //[Tooltip("Reference to GvrControllerPointer")]
-    //public GameObject controllerPointer;
-    //[Tooltip("Reference to GvrReticlePointer")]
-    //public GameObject reticlePointer;
-
-    public GameObject ModelsRoot;
-    public GameObject TestModel;
-
-    private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
-
-    void Start()
+    public class TestSceneManager : MonoBehaviour
     {
-        //List<string> modelsToLoad = new List<string>();
-        //modelsToLoad.Add(StarCitizen.Nox);
-        //LoadNextModel(modelsToLoad);
+        private const string TAG = "TestSceneManager";
 
-        InputDevice.Instance.SetInputDevice(new InputDeviceGvrController());
-        //GvrPointerInputModule.Pointer.drawDebugRays = true;
+        public const bool VERBOSE_LOG = false;
 
-        //GvrControllerInput.OnControllerInputUpdated += GvrControllerInput_OnControllerInputUpdated;
-        //GvrTrackedController
-        //GvrPointerInputModule.Pointer.
-        //GvrControllerInput.
-        //GvrPointerManager.
-        //GvrContro
+        //[Tooltip("Reference to GvrControllerMain")]
+        //public GameObject controllerMain;
+        //[Tooltip("Reference to GvrControllerPointer")]
+        //public GameObject controllerPointer;
+        //[Tooltip("Reference to GvrReticlePointer")]
+        //public GameObject reticlePointer;
 
-        EditorObjectSelection.Instance.SelectionChanged += OnSelectionChanged;
+        public GameObject ModelsRoot;
+        public GameObject TestModel;
 
-        if (TestModel != null)
+        private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
+
+        void Start()
         {
-            AddEventTrigger(TestModel, (eventData) =>
+            //List<string> modelsToLoad = new List<string>();
+            //modelsToLoad.Add(StarCitizen.Nox);
+            //LoadNextModel(modelsToLoad);
+
+            InputDevice.Instance.SetInputDevice(new InputDeviceGvrController());
+            //GvrPointerInputModule.Pointer.drawDebugRays = true;
+
+            //GvrControllerInput.OnControllerInputUpdated += GvrControllerInput_OnControllerInputUpdated;
+            //GvrTrackedController
+            //GvrPointerInputModule.Pointer.
+            //GvrControllerInput.
+            //GvrPointerManager.
+            //GvrContro
+
+            EditorObjectSelection.Instance.SelectionChanged += OnSelectionChanged;
+
+            if (TestModel != null)
             {
-                Debug.Log("Selected Test Model");
-                EditorObjectSelection.Instance.AddObjectToSelection(TestModel, true);
-            });
-        }
-    }
-
-    private HashSet<GameObject> objectSelection = new HashSet<GameObject>();
-
-    private void Update()
-    {
-        if (GvrControllerInput.ClickButtonDown)
-        {
-            //Debug.Log("Start");
-            AddRaycastObjectToSelection();
-        }
-        else if (GvrControllerInput.ClickButtonUp)
-        {
-            //Debug.Log("End");
-            AddRaycastObjectToSelection();
-            EditorObjectSelection.Instance.SetSelectedObjects(new List<GameObject>(objectSelection), true);
-            objectSelection.Clear();
-        }
-        else if (GvrControllerInput.ClickButton)
-        {
-            //Debug.Log("Continue");
-            AddRaycastObjectToSelection();
-        }
-    }
-
-    private void AddRaycastObjectToSelection()
-    {
-        GvrLaserPointer pointer = GvrPointerInputModule.Pointer as GvrLaserPointer;
-        if (pointer != null && pointer.isActiveAndEnabled)
-        {
-            RaycastResult raycastResult = pointer.CurrentRaycastResult;
-            if (raycastResult.isValid)
-            {
-                GameObject selectedObject = raycastResult.gameObject;
-                //Debug.Log("selectedObjesct:" + selectedObject);
-                objectSelection.Add(selectedObject);
-            }
-            /*
-            else
-            {
-                Debug.Log("No Result");
-            }
-            */
-        }
-    }
-
-    private void AddEventTrigger(GameObject gameObject, UnityAction<BaseEventData> eventData)
-    {
-        EventTrigger trigger = gameObject.AddComponent<EventTrigger>();
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerClick;
-        entry.callback.AddListener(eventData);
-        trigger.triggers.Add(entry);
-    }
-
-    private void OnSelectionChanged(ObjectSelectionChangedEventArgs args)
-    {
-        Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
-        if (args.SelectActionType != ObjectSelectActionType.None)
-        {
-            var objectsWhichWereSelected = args.SelectedObjects;
-            foreach (var obj in objectsWhichWereSelected)
-            {
-                // GameObjectExtension.GetFirstEmptyParent?
-
-                GameObject rootObject = obj.transform.root.gameObject;
-
-                if (rootObject == obj) continue;
-
-                EditorObjectSelection.Instance.AddObjectToSelection(rootObject, false);
+                AddEventTrigger(TestModel, (eventData) =>
+                {
+                    Debug.Log("Selected Test Model");
+                    EditorObjectSelection.Instance.AddObjectToSelection(TestModel, true);
+                });
             }
         }
-    }
 
-    private void SetMessageBoxText(string text, float removeInSeconds = 0)
-    {
-        StartCoroutine(SetMessageBoxTextCoroutine(text, removeInSeconds));
-    }
+        private HashSet<GameObject> objectSelection = new HashSet<GameObject>();
 
-    private string messageBoxText;
-
-    IEnumerator SetMessageBoxTextCoroutine(string text, float removeInSeconds = 0)
-    {
-        messageBoxText = text;
-        if (removeInSeconds > 0)
+        private void Update()
         {
-            yield return new WaitForSeconds(removeInSeconds);
-            messageBoxText = null;
-        }
-        yield return null;
-    }
-
-    private GUIStyle centeredStyle;
-
-    private void OnGUI()
-    {
-        if (!string.IsNullOrEmpty(messageBoxText))
-        {
-            if (centeredStyle == null)
+            if (GvrControllerInput.ClickButtonDown)
             {
-                centeredStyle = GUI.skin.GetStyle("Box");
-                centeredStyle.alignment = TextAnchor.MiddleCenter;
-                centeredStyle.wordWrap = true;
+                //Debug.Log("Start");
+                AddRaycastObjectToSelection();
             }
-
-            GUI.Box(new Rect((Screen.width) / 2f - (Screen.width) / 8f,
-                             (Screen.height) / 2f - (Screen.height) / 8f,
-                             (Screen.width) / 4f,
-                             (Screen.height) / 4f),
-                    messageBoxText,
-                    centeredStyle);
-        }
-    }
-
-    private DateTime timeLoadingStarted = DateTime.MinValue;
-
-    private void LoadNextModel(List<string> modelsToLoad)
-    {
-        if (modelsToLoad == null || modelsToLoad.Count == 0)
-        {
-            string text;
-
-            if (timeLoadingStarted != DateTime.MinValue)
+            else if (GvrControllerInput.ClickButtonUp)
             {
-                DateTime timeLoadingStopped = DateTime.Now;
-
-                TimeSpan duration = timeLoadingStopped.Subtract(timeLoadingStarted);
-
-                string durationString = Utils.ToString(duration);
-
-                text = "Loaded: Took " + durationString;
-                Debug.LogError("LoadNextModel: text == " + Utils.Quote(text));
-
-                timeLoadingStarted = DateTime.MinValue;
+                //Debug.Log("End");
+                AddRaycastObjectToSelection();
+                EditorObjectSelection.Instance.SetSelectedObjects(new List<GameObject>(objectSelection), true);
+                objectSelection.Clear();
             }
-            else
+            else if (GvrControllerInput.ClickButton)
             {
-                text = "Loaded";
+                //Debug.Log("Continue");
+                AddRaycastObjectToSelection();
             }
-
-            SetMessageBoxText(text, 5.0f);
-
-            return;
         }
 
-        if (timeLoadingStarted == DateTime.MinValue)
+        private void AddRaycastObjectToSelection()
         {
-            timeLoadingStarted = DateTime.Now;
+            GvrLaserPointer pointer = GvrPointerInputModule.Pointer as GvrLaserPointer;
+            if (pointer != null && pointer.isActiveAndEnabled)
+            {
+                RaycastResult raycastResult = pointer.CurrentRaycastResult;
+                if (raycastResult.isValid)
+                {
+                    GameObject selectedObject = raycastResult.gameObject;
+                    //Debug.Log("selectedObjesct:" + selectedObject);
+                    objectSelection.Add(selectedObject);
+                }
+                /*
+                else
+                {
+                    Debug.Log("No Result");
+                }
+                */
+            }
         }
 
-        string modelToLoad = modelsToLoad[0];
-        modelsToLoad.RemoveAt(0);
-
-        SetMessageBoxText("Loading " + modelToLoad);
-
-        AddNewModel(modelToLoad, () =>
+        private void AddEventTrigger(GameObject gameObject, UnityAction<BaseEventData> eventData)
         {
-            LoadNextModel(modelsToLoad);
-        });
-    }
+            EventTrigger trigger = gameObject.AddComponent<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerClick;
+            entry.callback.AddListener(eventData);
+            trigger.triggers.Add(entry);
+        }
 
-    private void AddNewModel(string modelKey, Action action = null)
-    {
-        Debug.Log("AddNewModel(modelKey:" + Utils.Quote(modelKey) +
-                  ", action:" + action + ")");
-
-        LoadModelAsync(modelKey, (model) =>
+        private void OnSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
-            if (VERBOSE_LOG)
+            Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
+            if (args.SelectActionType != ObjectSelectActionType.None)
             {
-                Debug.LogError("AddNewModel: LoadModelAsync completed");
+                var objectsWhichWereSelected = args.SelectedObjects;
+                foreach (var obj in objectsWhichWereSelected)
+                {
+                    // GameObjectExtension.GetFirstEmptyParent?
+
+                    GameObject rootObject = obj.transform.root.gameObject;
+
+                    if (rootObject == obj) continue;
+
+                    EditorObjectSelection.Instance.AddObjectToSelection(rootObject, false);
+                }
             }
+        }
 
-            if (model == null)
+        private void SetMessageBoxText(string text, float removeInSeconds = 0)
+        {
+            StartCoroutine(SetMessageBoxTextCoroutine(text, removeInSeconds));
+        }
+
+        private string messageBoxText;
+
+        IEnumerator SetMessageBoxTextCoroutine(string text, float removeInSeconds = 0)
+        {
+            messageBoxText = text;
+            if (removeInSeconds > 0)
             {
-                Debug.LogWarning("AddNewModel: Failed to load modelKey == " + Utils.Quote(modelKey));
+                yield return new WaitForSeconds(removeInSeconds);
+                messageBoxText = null;
+            }
+            yield return null;
+        }
+
+        private GUIStyle centeredStyle;
+
+        private void OnGUI()
+        {
+            if (!string.IsNullOrEmpty(messageBoxText))
+            {
+                if (centeredStyle == null)
+                {
+                    centeredStyle = GUI.skin.GetStyle("Box");
+                    centeredStyle.alignment = TextAnchor.MiddleCenter;
+                    centeredStyle.wordWrap = true;
+                }
+
+                GUI.Box(new Rect((Screen.width) / 2f - (Screen.width) / 8f,
+                                 (Screen.height) / 2f - (Screen.height) / 8f,
+                                 (Screen.width) / 4f,
+                                 (Screen.height) / 4f),
+                        messageBoxText,
+                        centeredStyle);
+            }
+        }
+
+        private DateTime timeLoadingStarted = DateTime.MinValue;
+
+        private void LoadNextModel(List<string> modelsToLoad)
+        {
+            if (modelsToLoad == null || modelsToLoad.Count == 0)
+            {
+                string text;
+
+                if (timeLoadingStarted != DateTime.MinValue)
+                {
+                    DateTime timeLoadingStopped = DateTime.Now;
+
+                    TimeSpan duration = timeLoadingStopped.Subtract(timeLoadingStarted);
+
+                    string durationString = Utils.ToString(duration);
+
+                    text = "Loaded: Took " + durationString;
+                    Debug.LogError("LoadNextModel: text == " + Utils.Quote(text));
+
+                    timeLoadingStarted = DateTime.MinValue;
+                }
+                else
+                {
+                    text = "Loaded";
+                }
+
+                SetMessageBoxText(text, 5.0f);
+
                 return;
             }
 
-            Transform modelTransform = model.transform;
-            Bounds modelBounds = Utils.CalculateBounds(modelTransform);
-            if (VERBOSE_LOG)
+            if (timeLoadingStarted == DateTime.MinValue)
             {
-                Debug.LogError("AddNewModel: BEFORE modelBounds == " + Utils.ToString(modelBounds));
-            }
-            Vector3 modelLocalPosition = modelTransform.localPosition;
-            if (VERBOSE_LOG)
-            {
-                Debug.LogError("AddNewModel: BEFORE modelLocalPosition == " + modelLocalPosition);
+                timeLoadingStarted = DateTime.Now;
             }
 
-            GameObject modelsRoot = ModelsRoot;
-            Transform modelsRootTransform = modelsRoot.transform;
-            Bounds modelsRootBounds = Utils.CalculateBounds(modelsRootTransform);
-            if (VERBOSE_LOG)
-            {
-                Debug.LogError("AddNewModel: BEFORE modelsRootBounds == " + Utils.ToString(modelsRootBounds));
-            }
+            string modelToLoad = modelsToLoad[0];
+            modelsToLoad.RemoveAt(0);
 
-            modelTransform.SetParent(modelsRootTransform);
+            SetMessageBoxText("Loading " + modelToLoad);
 
-            modelLocalPosition.x = -(modelsRootBounds.size.x + modelBounds.extents.x);
-            if (modelsRootBounds.size.x > 0)
+            AddNewModel(modelToLoad, () =>
             {
-                modelLocalPosition.x -= 2;
-            }
-            if (VERBOSE_LOG)
-            {
-                Debug.LogError("AddNewModel: AFTER modelLocalPosition == " + modelLocalPosition);
-            }
+                LoadNextModel(modelsToLoad);
+            });
+        }
 
-            modelTransform.localPosition = modelLocalPosition;
+        private void AddNewModel(string modelKey, Action action = null)
+        {
+            Debug.Log("AddNewModel(modelKey:" + Utils.Quote(modelKey) +
+                      ", action:" + action + ")");
 
-            modelBounds = Utils.CalculateBounds(modelTransform);
-            if (VERBOSE_LOG)
+            LoadModelAsync(modelKey, (model) =>
             {
-                Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
-            }
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("AddNewModel: LoadModelAsync completed");
+                }
+
+                if (model == null)
+                {
+                    Debug.LogWarning("AddNewModel: Failed to load modelKey == " + Utils.Quote(modelKey));
+                    return;
+                }
+
+                Transform modelTransform = model.transform;
+                Bounds modelBounds = Utils.CalculateBounds(modelTransform);
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("AddNewModel: BEFORE modelBounds == " + Utils.ToString(modelBounds));
+                }
+                Vector3 modelLocalPosition = modelTransform.localPosition;
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("AddNewModel: BEFORE modelLocalPosition == " + modelLocalPosition);
+                }
+
+                GameObject modelsRoot = ModelsRoot;
+                Transform modelsRootTransform = modelsRoot.transform;
+                Bounds modelsRootBounds = Utils.CalculateBounds(modelsRootTransform);
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("AddNewModel: BEFORE modelsRootBounds == " + Utils.ToString(modelsRootBounds));
+                }
+
+                modelTransform.SetParent(modelsRootTransform);
+
+                modelLocalPosition.x = -(modelsRootBounds.size.x + modelBounds.extents.x);
+                if (modelsRootBounds.size.x > 0)
+                {
+                    modelLocalPosition.x -= 2;
+                }
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("AddNewModel: AFTER modelLocalPosition == " + modelLocalPosition);
+                }
+
+                modelTransform.localPosition = modelLocalPosition;
+
+                modelBounds = Utils.CalculateBounds(modelTransform);
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
+                }
 
             //FleetPlanesPositionAndScale();
 
             if (PlayerController.HasNeverMoved)
-            {
+                {
                 //RepositionPlayerToViewFleet();
             }
 
@@ -288,27 +291,28 @@ public class TestSceneManager : MonoBehaviour
             //modelSettings.Rotation = modelRotation;
 
             if (action != null)
-            {
-                action();
-            }
-        });
-    }
-
-    private delegate void AsyncLoadModelCaller(GameObject model);
-
-    private void LoadModelAsync(string modelKey, AsyncLoadModelCaller caller)
-    {
-        ModelInfo modelInfo;
-
-        if (!ModelInfos.TryGetValue(modelKey, out modelInfo) || modelInfo == null)
-        {
-            Debug.LogError("LoadModelAsync: Failed to load modelKey == " + Utils.Quote(modelKey));
-            return;
+                {
+                    action();
+                }
+            });
         }
 
-        modelInfo.LoadModelAsync((model) =>
+        private delegate void AsyncLoadModelCaller(GameObject model);
+
+        private void LoadModelAsync(string modelKey, AsyncLoadModelCaller caller)
         {
-            caller(model);
-        });
+            ModelInfo modelInfo;
+
+            if (!ModelInfos.TryGetValue(modelKey, out modelInfo) || modelInfo == null)
+            {
+                Debug.LogError("LoadModelAsync: Failed to load modelKey == " + Utils.Quote(modelKey));
+                return;
+            }
+
+            modelInfo.LoadModelAsync((model) =>
+            {
+                caller(model);
+            });
+        }
     }
 }

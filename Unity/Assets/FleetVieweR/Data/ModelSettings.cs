@@ -1,87 +1,90 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class ModelSettings
+namespace FleetVieweR
 {
     [Serializable]
-    public struct Vector3Serializable
+    public class ModelSettings
     {
-        public float x;
-        public float y;
-        public float z;
-
-        public Vector3Serializable(Vector3 value)
+        [Serializable]
+        public struct Vector3Serializable
         {
-            x = value.x;
-            y = value.y;
-            z = value.z;
+            public float x;
+            public float y;
+            public float z;
+
+            public Vector3Serializable(Vector3 value)
+            {
+                x = value.x;
+                y = value.y;
+                z = value.z;
+            }
+
+            public Vector3 GetValue()
+            {
+                return new Vector3(x, y, z);
+            }
         }
 
-        public Vector3 GetValue()
+        [Serializable]
+        public struct QuaternionSerializable
         {
-            return new Vector3(x, y, z);
+            public float x;
+            public float y;
+            public float z;
+            public float w;
+
+            public QuaternionSerializable(Quaternion value)
+            {
+                x = value.x;
+                y = value.y;
+                z = value.z;
+                w = value.w;
+            }
+
+            public Quaternion GetValue()
+            {
+                return new Quaternion(x, y, z, w);
+            }
         }
-    }
 
-    [Serializable]
-    public struct QuaternionSerializable
-    {
-        public float x;
-        public float y;
-        public float z;
-        public float w;
+        public string Name;
 
-        public QuaternionSerializable(Quaternion value)
+        public string Key;
+
+        private Vector3Serializable position;
+        public Vector3 Position
         {
-            x = value.x;
-            y = value.y;
-            z = value.z;
-            w = value.w;
+            get
+            {
+                return position.GetValue();
+
+            }
+            set
+            {
+                position = new Vector3Serializable(value);
+            }
         }
 
-        public Quaternion GetValue()
-		{
-            return new Quaternion(x, y, z, w);
-		}
-	}
-
-    public string Name;
-
-    public string Key;
-
-	private Vector3Serializable position;
-	public Vector3 Position
-    {
-        get
+        private QuaternionSerializable rotation;
+        public Quaternion Rotation
         {
-            return position.GetValue();
+            get
+            {
+                return rotation.GetValue();
+            }
+            set
+            {
+                rotation = new QuaternionSerializable(value);
+            }
+        }
 
-        }
-        set
+        public ModelSettings(string name, string key)
         {
-            position = new Vector3Serializable(value);
+            Name = name;
+            Key = key;
+            Position = Vector3.zero;
+            Rotation = Quaternion.identity;
         }
-    }
-
-	private QuaternionSerializable rotation;
-	public Quaternion Rotation
-    {
-        get
-        {
-            return rotation.GetValue();
-        }
-        set
-        {
-            rotation = new QuaternionSerializable(value);
-        }
-    }
-
-    public ModelSettings(string name, string key)
-    {
-        Name = name;
-        Key = key;
-        Position = Vector3.zero;
-        Rotation = Quaternion.identity;
     }
 }

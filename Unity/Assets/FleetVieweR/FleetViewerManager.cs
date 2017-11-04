@@ -1,21 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FleetViewerManager : MonoBehaviour
+namespace FleetVieweR
 {
-    //public GameObject LaunchVrHomeButton;
-    public FleetInputManager FleetInputManager;
-
-    void Start()
+    public class FleetViewerManager : MonoBehaviour
     {
-#if !UNITY_ANDROID || UNITY_EDITOR
-        /*
-        if (LaunchVrHomeButton == null)
+        //public GameObject LaunchVrHomeButton;
+        public FleetInputManager FleetInputManager;
+
+        void Start()
         {
-            return;
-        }
-        LaunchVrHomeButton.SetActive(false);
-        */
+#if !UNITY_ANDROID || UNITY_EDITOR
+            /*
+            if (LaunchVrHomeButton == null)
+            {
+                return;
+            }
+            LaunchVrHomeButton.SetActive(false);
+            */
 #else
         GvrDaydreamApi.CreateAsync((success) =>
         {
@@ -26,7 +28,7 @@ public class FleetViewerManager : MonoBehaviour
               }
         });
 #endif  // !UNITY_ANDROID || UNITY_EDITOR
-    }
+        }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
     void Update()
@@ -41,8 +43,8 @@ public class FleetViewerManager : MonoBehaviour
     }
 #endif  // UNITY_ANDROID && !UNITY_EDITOR
 
-    public void LaunchVrHome()
-    {
+        public void LaunchVrHome()
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
         GvrDaydreamApi.LaunchVrHomeAsync((success) =>
         {
@@ -53,5 +55,6 @@ public class FleetViewerManager : MonoBehaviour
             }
         });
 #endif  // UNITY_ANDROID && !UNITY_EDITOR
+        }
     }
 }

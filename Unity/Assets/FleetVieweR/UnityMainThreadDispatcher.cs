@@ -3,73 +3,76 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-/// <summary>
-/// IMPORTANT: Sometimes Debug.Log* causes hangs!!!!
-/// </summary>
-public class UnityMainThreadDispatcher : MonoBehaviour
+namespace FleetVieweR
 {
-    private static readonly Queue<Action> executionQueue = new Queue<Action>();
-
-    private static UnityMainThreadDispatcher instance = null;
-
-    public static bool Exists()
+    /// <summary>
+    /// IMPORTANT: Sometimes Debug.Log* causes hangs!!!!
+    /// </summary>
+    public class UnityMainThreadDispatcher : MonoBehaviour
     {
-        return instance != null;
-    }
+        private static readonly Queue<Action> executionQueue = new Queue<Action>();
 
-    public static UnityMainThreadDispatcher Instance()
-    {
-        if (!Exists())
+        private static UnityMainThreadDispatcher instance = null;
+
+        public static bool Exists()
         {
-            throw new Exception("UnityMainThreadDispatcher could not find the UnityMainThreadDispatcher object. Please ensure you have added the UnityMainThreadDispatcher object to your scene.");
+            return instance != null;
         }
-        return instance;
-    }
 
-    void Awake()
-    {
-        if (instance == null)
+        public static UnityMainThreadDispatcher Instance()
         {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-    }
-
-    void OnDestroy()
-    {
-        instance = null;
-    }
-
-    public void Update()
-    {
-        lock (executionQueue)
-        {
-            while (executionQueue.Count > 0)
+            if (!Exists())
             {
-                executionQueue.Dequeue().Invoke();
+                throw new Exception("UnityMainThreadDispatcher could not find the UnityMainThreadDispatcher object. Please ensure you have added the UnityMainThreadDispatcher object to your scene.");
+            }
+            return instance;
+        }
+
+        void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
             }
         }
-    }
 
-    public void Enqueue(IEnumerator action)
-    {
-        lock (executionQueue)
+        void OnDestroy()
         {
-            executionQueue.Enqueue(() =>
-            {
-                StartCoroutine(action);
-            });
+            instance = null;
         }
-    }
 
-    public void Enqueue(Action action)
-    {
-        Enqueue(ActionWrapper(action));
-    }
+        public void Update()
+        {
+            lock (executionQueue)
+            {
+                while (executionQueue.Count > 0)
+                {
+                    executionQueue.Dequeue().Invoke();
+                }
+            }
+        }
 
-    IEnumerator ActionWrapper(Action a)
-    {
-        a();
-        yield return null;
+        public void Enqueue(IEnumerator action)
+        {
+            lock (executionQueue)
+            {
+                executionQueue.Enqueue(() =>
+                {
+                    StartCoroutine(action);
+                });
+            }
+        }
+
+        public void Enqueue(Action action)
+        {
+            Enqueue(ActionWrapper(action));
+        }
+
+        IEnumerator ActionWrapper(Action a)
+        {
+            a();
+            yield return null;
+        }
     }
 }
