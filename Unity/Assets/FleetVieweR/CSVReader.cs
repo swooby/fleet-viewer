@@ -70,103 +70,117 @@ namespace FleetVieweR
             }
         }
 
-        public static List<T> Read<T>(string resourcePath, OnKeyValue<T> callback) where T : class
+        public static List<T> ParseResource<T>(string resourcePath, OnKeyValue<T> callback) where T : class
         {
-            Debug.Log("CSVReader.Read(resourcePath:" + Utils.Quote(resourcePath) + ", ...");
+            Debug.Log("CSVReader.ParseResource(resourcePath:" + Utils.Quote(resourcePath) + ", ...");
+            TextAsset data = Resources.Load(resourcePath) as TextAsset;
+            return ParseText(data, callback);
+        }
+
+        public static List<T> ParseText<T>(TextAsset data, OnKeyValue<T> callback) where T : class
+        {
+            return (data != null) ? ParseText(data.text, callback) : new CSVInfo<T>().OnEndOfLine(null, null);
+        }
+
+        public static List<T> ParseText<T>(string text, OnKeyValue<T> callback) where T : class
+        {
+            //Debug.Log("CSVReader.ParseText(text:" + Utils.Quote(text) + ", ...");
+            using (StringReader reader = new StringReader(text))
+            {
+                return ParseText(reader, callback);
+            }
+        }
+
+        public static List<T> ParseText<T>(StringReader reader, OnKeyValue<T> callback) where T : class
+        {
+            Debug.Log("CSVReader.ParseText(reader:" + reader + ", ...");
 
             CSVInfo<T> csvInfo = new CSVInfo<T>();
-
-            TextAsset data = Resources.Load(resourcePath) as TextAsset;
-
-            if (data == null) return csvInfo.OnEndOfLine(null, null);
 
             char separator = ',';
             char qualifier = '"';
 
             StringBuilder sb = new StringBuilder();
 
-            using (StringReader reader = new StringReader(data.text))
+            bool inQuote = false;
+
+            while (reader.Peek() != -1)
             {
-                bool inQuote = false;
+                char readChar = (char)reader.Read();
 
-                while (reader.Peek() != -1)
+                if (readChar == '\n' || (readChar == '\r' && (char)reader.Peek() == '\n'))
                 {
-                    char readChar = (char)reader.Read();
-
-                    if (readChar == '\n' || (readChar == '\r' && (char)reader.Peek() == '\n'))
+                    // If it's a \r\n combo consume the \n part and throw it away.
+                    if (readChar == '\r')
                     {
-                        // If it's a \r\n combo consume the \n part and throw it away.
+                        reader.Read();
+                    }
+
+                    if (inQuote)
+                    {
                         if (readChar == '\r')
                         {
-                            reader.Read();
+                            sb.Append('\r');
                         }
-
-                        if (inQuote)
-                        {
-                            if (readChar == '\r')
-                            {
-                                sb.Append('\r');
-                            }
-                            sb.Append('\n');
-                        }
-                        else
-                        {
-                            csvInfo.OnEndOfLine(sb, callback);
-                        }
+                        sb.Append('\n');
                     }
-                    else if (sb.Length == 0 && !inQuote)
+                    else
                     {
-                        if (readChar == qualifier)
-                        {
-                            inQuote = true;
-                        }
-                        else if (readChar == separator)
-                        {
-                            csvInfo.AddValue(sb);
-                        }
-                        else if (char.IsWhiteSpace(readChar))
-                        {
-                            // Ignore leading whitespace
-                        }
-                        else
-                        {
-                            sb.Append(readChar);
-                        }
+                        csvInfo.OnEndOfLine(sb, callback);
+                    }
+                }
+                else if (sb.Length == 0 && !inQuote)
+                {
+                    if (readChar == qualifier)
+                    {
+                        inQuote = true;
                     }
                     else if (readChar == separator)
                     {
-                        if (inQuote)
-                        {
-                            sb.Append(separator);
-                        }
-                        else
-                        {
-                            csvInfo.AddValue(sb);
-                        }
+                        csvInfo.AddValue(sb);
                     }
-                    else if (readChar == qualifier)
+                    else if (char.IsWhiteSpace(readChar))
                     {
-                        if (inQuote)
+                        // Ignore leading whitespace
+                    }
+                    else
+                    {
+                        sb.Append(readChar);
+                    }
+                }
+                else if (readChar == separator)
+                {
+                    if (inQuote)
+                    {
+                        sb.Append(separator);
+                    }
+                    else
+                    {
+                        csvInfo.AddValue(sb);
+                    }
+                }
+                else if (readChar == qualifier)
+                {
+                    if (inQuote)
+                    {
+                        if ((char)reader.Peek() == qualifier)
                         {
-                            if ((char)reader.Peek() == qualifier)
-                            {
-                                reader.Read();
-                                sb.Append(qualifier);
-                            }
-                            else
-                            {
-                                inQuote = false;
-                            }
+                            reader.Read();
+                            sb.Append(qualifier);
                         }
                         else
                         {
-                            sb.Append(readChar);
+                            inQuote = false;
                         }
                     }
                     else
                     {
                         sb.Append(readChar);
                     }
+                }
+                else
+                {
+                    sb.Append(readChar);
                 }
             }
 
