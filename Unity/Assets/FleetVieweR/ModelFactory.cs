@@ -67,11 +67,11 @@ namespace FleetVieweR
                             {
                                 Debug.LogError("ModelFactory.LoadModelAsync: Non-Cached Load: CTMReader.LoadAsync(...)");
                             }
-                            CTMReader.LoadAsync(modelPath, (model) =>
+                            InternalLoadModelAsync(modelPath, (model) =>
                             {
                                 if (VERBOSE_LOG)
                                 {
-                                    Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync completed; model:" + model);
+                                    Debug.LogError("ModelFactory.LoadModelAsync: Non-Cached Load completed; model:" + model);
                                 }
                                 if (model == null)
                                 {
@@ -104,7 +104,7 @@ namespace FleetVieweR
                         {
                             if (VERBOSE_LOG)
                             {
-                                Debug.LogError("ModelFactory.LoadModelAsync: CTMReader.LoadAsync already in progress");
+                                Debug.LogError("ModelFactory.LoadModelAsync: Non-Cached Load already in progress");
                             }
                         }
 
@@ -124,6 +124,23 @@ namespace FleetVieweR
 
             Debug.Log("-ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
                       ", callback:" + callback + ")");
+        }
+
+        private static void InternalLoadModelAsync(string modelPath, CTMReader.LoadCallback callback)
+        {
+            ConfigInfo.EnsureFileCached(modelPath, (cachedPath) =>
+            {
+                if (String.IsNullOrEmpty(cachedPath))
+                {
+                    Debug.Log("EnsureFileCached: not cached; trying local resource");
+                    CTMReader.LoadResourceAsync(modelPath, callback);
+                }
+                else
+                {
+                    Debug.Log("EnsureFileCached: cached; loading cached file");
+                    CTMReader.LoadFileAsync(cachedPath, callback);
+                }
+            });
         }
 
         //
@@ -149,7 +166,7 @@ namespace FleetVieweR
             string resourcePath = directory + "/" + filename + ext;
             Debug.Log("ModelFactory.LoadModelLodAsync: resourcePath:" + Utils.Quote(resourcePath));
 
-            CTMReader.LoadAsync(resourcePath, (model) =>
+            InternalLoadModelAsync(resourcePath, (model) =>
             {
                 if (VERBOSE_LOG)
                 {

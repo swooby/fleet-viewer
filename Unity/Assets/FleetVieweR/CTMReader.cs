@@ -89,37 +89,51 @@ namespace FleetVieweR
         {
         }
 
-        public static GameObject Load(string resourcePath)
+        public static MemoryStream GetResourcePathByteStream(string resourcePath)
         {
-            Debug.Log("CTMReader.Load(resourcePath:" + Utils.Quote(resourcePath) + ")");
+            TextAsset textAsset = Resources.Load(resourcePath) as TextAsset;
+            byte[] bytes = textAsset != null ? textAsset.bytes : null;
+            return bytes != null ? new MemoryStream(bytes) : null;
+        }
 
-            byte[] bytes = GetBytes(resourcePath);
-
-            MeshInfo[] meshInfos = GetMeshInfos(bytes);
-
+        public static GameObject LoadResource(string resourcePath)
+        {
+            Debug.Log("CTMReader.LoadResource(resourcePath:" + Utils.Quote(resourcePath) + ")");
+            MemoryStream stream = GetResourcePathByteStream(resourcePath);
+            MeshInfo[] meshInfos = GetMeshInfos(stream);
             return GetGameObject(meshInfos);
         }
 
         public delegate void LoadCallback(GameObject gameObject);
 
-        private delegate MeshInfo[] GetMeshInfosCaller(byte[] bytes);
-
-        public static void LoadAsync(string resourcePath, LoadCallback callback)
+        // TODO:(pv) Experiment w/ converting this to a Unity Coroutine
+        public static void LoadResourceAsync(string resourcePath, LoadCallback callback)
         {
-            Debug.Log("CTMReader.LoadAsync(resourcePath:" + Utils.Quote(resourcePath) +
+            Debug.Log("CTMReader.LoadResourceAsync(resourcePath:" + Utils.Quote(resourcePath) +
                       ", callback:" + callback + ")");
+            MemoryStream stream = GetResourcePathByteStream(resourcePath);
+            LoadAsync(stream, callback);
+        }
 
-            byte[] bytes = GetBytes(resourcePath);
+        public static void LoadFileAsync(string filePath, LoadCallback callback)
+        {
+            Debug.Log("CTMReader.LoadFileAsync(filePath:" + Utils.Quote(filePath) +
+                      ", callback:" + callback + ")");
+            FileStream fileStream = new FileStream(filePath, FileMode.Open);
+            LoadAsync(fileStream, callback);
+        }
 
+        private delegate MeshInfo[] GetMeshInfosCaller(Stream stream);
+
+        public static void LoadAsync(Stream stream, LoadCallback callback)
+        {
+            Debug.Log("CTMReader.LoadAsync(stream, callback");
             IAsyncResult asyncResult = new GetMeshInfosCaller(GetMeshInfos)
-                .BeginInvoke(bytes, OnGetMeshInfos, callback);
-
-            if (!asyncResult.CompletedSynchronously)
+                .BeginInvoke(stream, OnGetMeshInfos, callback);
+            if (asyncResult.CompletedSynchronously)
             {
-                return;
+                OnGetMeshInfos(asyncResult);
             }
-
-            OnGetMeshInfos(asyncResult);
         }
 
         private static void OnGetMeshInfos(IAsyncResult asyncResult)
@@ -140,15 +154,9 @@ namespace FleetVieweR
             });
         }
 
-        private static byte[] GetBytes(string resourcePath)
+        private static MeshInfo[] GetMeshInfos(Stream stream)
         {
-            TextAsset textAsset = Resources.Load(resourcePath) as TextAsset;
-            return textAsset != null ? textAsset.bytes : null;
-        }
-
-        private static MeshInfo[] GetMeshInfos(byte[] bytes)
-        {
-            if (bytes == null)
+            if (stream == null)
             {
                 return null;
             }
@@ -158,14 +166,10 @@ namespace FleetVieweR
                 Debug.LogWarning("CTMReader.GetMeshInfos: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
             }
 
-            Stream memoryStream = new MemoryStream(bytes);
-
             //Debug.Log("CTMReader.GetMeshInfos: new CtmFileReader(memoryStream)");
-            CtmFileReader reader = new CtmFileReader(memoryStream);
+            CtmFileReader reader = new CtmFileReader(stream);
             //Debug.Log("CTMReader.GetMeshInfos: reader.decode()");
             OpenCTM.Mesh ctmMesh = reader.decode();
-            //Debug.Log("CTMReader.GetMeshInfos: ctmMesh.checkIntegrity()");
-            ctmMesh.checkIntegrity();
 
             if (VERBOSE_LOG)
             {
@@ -414,12 +418,12 @@ namespace FleetVieweR
 
                 MeshRenderer mr = child.AddComponent<MeshRenderer>();
 #if RUNNING_ON_ANDROID_DEVICE
-            //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights)");
-            //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights) (Two Sided)");
-            //Shader shader = Shader.Find("Mobile/VertexLit");
-            //Shader shader = Shader.Find("Standard");
-            Shader shader = Shader.Find("Standard (Two Sided)");
-            //Shader shader = Shader.Find("Diffuse");
+                //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights)");
+                //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights) (Two Sided)");
+                //Shader shader = Shader.Find("Mobile/VertexLit");
+                //Shader shader = Shader.Find("Standard");
+                Shader shader = Shader.Find("Standard (Two Sided)");
+                //Shader shader = Shader.Find("Diffuse");
 #else
                 //Shader shader = Shader.Find("Mobile/VertexLit (Only Directional Lights) (Two Sided)");
                 //Shader shader = Shader.Find("Standard");
@@ -432,7 +436,7 @@ namespace FleetVieweR
                 MeshFilter mf = child.AddComponent<MeshFilter>();
                 mf.mesh = unityMesh;
 
-                if (false)
+                if (true)
                 {
                     MeshCollider mc = child.AddComponent<MeshCollider>();
                     mc.sharedMesh = unityMesh;

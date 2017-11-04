@@ -149,7 +149,7 @@ namespace FleetVieweR
         public void LoadModelInfos(string configurationFilePath)
         {
             ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
-            CSVReader.Read<ModelInfo>(configurationFilePath, (dictionary) =>
+            CSVReader.ParseResource<ModelInfo>(configurationFilePath, (dictionary) =>
             {
                 ModelInfo modelInfo = new ModelInfo(dictionary);
                 ModelInfos[modelInfo.Name] = modelInfo;
@@ -269,7 +269,7 @@ namespace FleetVieweR
         {
             Debug.Log("LoadCTM(name:" + Utils.Quote(name) + ", resourcePath:" + Utils.Quote(resourcePath) + ")");
 
-            GameObject model = CTMReader.Load(resourcePath);
+            GameObject model = CTMReader.LoadResource(resourcePath);
             model.name = name;
             return model;
 

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1005740981413",
+    "firebase_url": "https://swooby-fleet-viewer.firebaseio.com",
+    "project_id": "swooby-fleet-viewer",
+    "storage_bucket": "swooby-fleet-viewer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005740981413:android:5b4d0b321a29208d",
+        "android_client_info": {
+          "package_name": "com.swooby.fleetviewer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005740981413-hibei81v4b4aj5lthpjg1lin0a1tk72f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.swooby.fleetviewer",
+            "certificate_hash": "2eefa5d4d725b594f4e9285dcb5fac3dd58a51bf"
+          }
+        },
+        {
+          "client_id": "1005740981413-jifm93a56o07ogclk298mbevp9nd88ri.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIiHlwuWmDbQKIIKYRPOpR6ufQwpdzXJE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005740981413-jifm93a56o07ogclk298mbevp9nd88ri.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

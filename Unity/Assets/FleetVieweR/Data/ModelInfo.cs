@@ -124,81 +124,77 @@ namespace FleetVieweR
 
         public void LoadModelAsync(LoadModelCallback callback)
         {
-            Debug.Log("+ModelInfo.LoadModelAsync(callback:" + callback + ")");
-
-            if (cachedModel == null)
+            try
             {
-                lock (callbacks)
+                Debug.Log("+ModelInfo.LoadModelCoroutine(callback:" + callback + ")");
+
+                if (cachedModel == null)
                 {
-                    //
-                    // Double-check now that we got the lock
-                    //
-                    if (cachedModel == null)
+                    callbacks.Add(callback);
+
+                    if (callbacks.Count == 1)
                     {
-                        callbacks.Add(callback);
+                        if (VERBOSE_LOG)
+                        {
+                            Debug.LogError("ModelInfo.LoadModelCoroutine: Non-Cached Load: ModelFactory.LoadModelAsync(...)");
+                        }
 
-                        if (callbacks.Count == 1)
+                        DateTime timeLoadStart = DateTime.Now;
+                        ModelFactory.LoadModelAsync(ModelPathLocal, (model) =>
                         {
                             if (VERBOSE_LOG)
                             {
-                                Debug.LogError("ModelInfo.LoadModelAsync: Non-Cached Load: ModelFactory.LoadModelAsync(...)");
+                                Debug.LogError("ModelInfo.LoadModelCoroutine: ModelFactory.LoadModelAsync completed");
                             }
-                            DateTime timeLoadStart = DateTime.Now;
-                            ModelFactory.LoadModelAsync(ModelPathLocal, (model) =>
+
+                            DateTime timeLoadStop = DateTime.Now;
+                            TimeSpan duration = timeLoadStop.Subtract(timeLoadStart);
+                            string durationString = Utils.ToString(duration);
+                            Debug.Log("ModelInfo.LoadModelCoroutine: ModelFactory.LoadModelAsync Took " + durationString);
+
+                            if (model != null)
                             {
-                                if (VERBOSE_LOG)
-                                {
-                                    Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync completed");
-                                }
-                                if (model == null)
-                                {
-                                    return;
-                                }
-
-                                DateTime timeLoadStop = DateTime.Now;
-                                TimeSpan duration = timeLoadStop.Subtract(timeLoadStart);
-                                string durationString = Utils.ToString(duration);
-                                Debug.Log("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync Took " + durationString);
-
                                 model.name = Name;
-
-                                LoadModelCallback tempCallback;
-                                lock (callbacks)
-                                {
-                                    while (callbacks.Count > 0)
-                                    {
-                                        model = OnModelLoaded(model);
-
-                                        tempCallback = callbacks[0];
-                                        tempCallback(model);
-                                        callbacks.RemoveAt(0);
-                                    }
-                                }
-                            });
-                        }
-                        else
-                        {
-                            if (VERBOSE_LOG)
-                            {
-                                Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync already in progress");
                             }
-                        }
 
-                        return;
+                            LoadModelCallback tempCallback;
+                            lock (callbacks)
+                            {
+                                while (callbacks.Count > 0)
+                                {
+                                    model = OnModelLoaded(model);
+
+                                    tempCallback = callbacks[0];
+                                    tempCallback(model);
+                                    callbacks.RemoveAt(0);
+                                }
+                            }
+                        });
                     }
+                    else
+                    {
+                        if (VERBOSE_LOG)
+                        {
+                            Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync already in progress");
+                        }
+                    }
+
+                    return;
                 }
-            }
 
-            if (VERBOSE_LOG)
+                if (VERBOSE_LOG)
+                {
+                    Debug.LogError("ModelInfo.LoadModelAsync: Cached Load");
+                }
+
+                GameObject loadedModel = OnModelLoaded(cachedModel);
+
+                callback(loadedModel);
+            }
+            finally
             {
-                Debug.LogError("ModelInfo.LoadModelAsync: Cached Load");
+                Debug.Log("-ModelInfo.LoadModelAsync(callback:" + callback + ")");
             }
-
-            GameObject loadedModel = OnModelLoaded(cachedModel);
-
-            callback(loadedModel);
-
-            Debug.Log("-ModelInfo.LoadModelAsync(callback:" + callback + ")");
         }
 
         private GameObject OnModelLoaded(GameObject model)

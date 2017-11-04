@@ -274,23 +274,23 @@ namespace FleetVieweR
                     Debug.LogError("AddNewModel: AFTER SetParent modelBounds == " + Utils.ToString(modelBounds));
                 }
 
-            //FleetPlanesPositionAndScale();
+                //FleetPlanesPositionAndScale();
 
-            if (PlayerController.HasNeverMoved)
+                if (PlayerController.HasNeverMoved)
                 {
-                //RepositionPlayerToViewFleet();
-            }
+                    //RepositionPlayerToViewFleet();
+                }
 
-            // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
+                // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
-            // Calculate width of all loaded non-positioned models
-            // Evenly reposition all loaded models
+                // Calculate width of all loaded non-positioned models
+                // Evenly reposition all loaded models
 
-            // TODO:(pv) Save modelSettings...
-            //modelSettings.Position = modelPosition;
-            //modelSettings.Rotation = modelRotation;
+                // TODO:(pv) Save modelSettings...
+                //modelSettings.Position = modelPosition;
+                //modelSettings.Rotation = modelRotation;
 
-            if (action != null)
+                if (action != null)
                 {
                     action();
                 }

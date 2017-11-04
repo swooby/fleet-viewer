@@ -52,7 +52,7 @@ namespace FleetVieweR
             return new WWW(url);
         }
 
-        public delegate void EnsureFileCachedCallback(bool success);
+        public delegate void EnsureFileCachedCallback(string cachedPath);
 
         public static void EnsureFileCached(string filePath, EnsureFileCachedCallback callback)
         {
@@ -67,57 +67,68 @@ namespace FleetVieweR
                 Debug.Log("EnsureFileCached: GetMetadataAsync completed");
                 if (taskMetadata.IsFaulted || taskMetadata.IsCanceled)
                 {
-                    callback(false);
+                    callback(null);
                     return;
                 }
 
-                StorageMetadata metadata = taskMetadata.Result;
+                StorageMetadata remoteMetadata = taskMetadata.Result;
 
-                DateTime lastUpdatedRemote = metadata.UpdatedTimeMillis;
-                long sizeBytes = metadata.SizeBytes;
+                string message;
 
-                DateTime lastUpdatedLocal = DateTime.MinValue;
+                DateTime lastUpdatedLocal;
                 if (File.Exists(filePathLocal))
                 {
                     lastUpdatedLocal = File.GetLastWriteTime(filePathLocal);
-                }
 
-                if (lastUpdatedLocal != DateTime.MinValue &&
-                    lastUpdatedLocal >= lastUpdatedRemote)
+                    DateTime lastUpdatedRemote = remoteMetadata.UpdatedTimeMillis;
+
+                    if (lastUpdatedLocal >= lastUpdatedRemote)
+                    {
+                        Debug.Log("EnsureFileCached: File is cached and up to date");
+                        callback(filePathLocal);
+                        return;
+                    }
+
+                    message = "EnsureFileCached: File is cached but out of date";
+                }
+                else
                 {
-                    callback(true);
-                    return;
-                }
+                    message = "EnsureFileCached: File is not cached";
 
-                Debug.Log("Downloading " + filePathRemote + " to " + filePathLocal);
-                Directory.CreateDirectory(Path.GetDirectoryName(filePathLocal));
+                    string filePathLocalDirectoryName = Path.GetDirectoryName(filePathLocal);
+                    if (!Directory.Exists(filePathLocalDirectoryName))
+                    {
+                        Directory.CreateDirectory(filePathLocalDirectoryName);
+                    }
+                }
+                message += "; Downloading " + filePathRemote + " to " + filePathLocal;
+                Debug.Log(message);
+
+                long sizeBytes = remoteMetadata.SizeBytes;
+
                 storageReference
-                    .GetFileAsync(
-                        filePathLocal,
-                        new Firebase.Storage.StorageProgress<DownloadState>(state =>
-                        {
-                            Debug.Log(String.Format("Progress: {0} of {1} bytes transferred.",
-                                                    state.BytesTransferred, sizeBytes));
-                        }), CancellationToken.None)
+                    .GetFileAsync(filePathLocal, new StorageProgress<DownloadState>(state =>
+                    {
+                        Debug.Log(String.Format("EnsureFileCached: Progress: {0} of {1} bytes transferred.",
+                                                state.BytesTransferred, sizeBytes));
+                    }), CancellationToken.None)
                     .ContinueWith(taskDownload =>
                     {
-                        bool success;
                         if (taskDownload.IsFaulted)
                         {
-                            //Debug.LogError("Download error");
-                            success = false;
+                            Debug.LogError("Download error");
+                            filePathLocal = null;
                         }
                         else if (taskDownload.IsCanceled)
                         {
-                            //Debug.LogWarning("Download canceled");
-                            success = false;
+                            Debug.LogWarning("Download canceled");
+                            filePathLocal = null;
                         }
                         else
                         {
-                            //Debug.Log("Download finished");
-                            success = true;
+                            Debug.Log("Download finished");
                         }
-                        callback(success);
+                        callback(filePathLocal);
                     });
             });
         }

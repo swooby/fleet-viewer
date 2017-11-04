@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.RegularExpressions;
 using UnityEngine;
-using OpenCTM;
 
 namespace FleetVieweR
 {
@@ -712,7 +708,7 @@ namespace FleetVieweR
             {
                 SystemInfo system;
                 SortedDictionary<string, SystemInfo> systems = new SortedDictionary<string, SystemInfo>(StringComparer.OrdinalIgnoreCase);
-                CSVReader.Read<SystemInfo>("Systems", (dictionary) =>
+                    CSVReader.ParseResource<SystemInfo>("Fleet VieweR - Systems", (dictionary) =>
                 {
                     system = new SystemInfo(dictionary);
                     systems[system.Name] = system;
@@ -738,7 +734,7 @@ namespace FleetVieweR
             Debug.Log("LoadModelInfos(configPath:" + Utils.Quote(configPath) + ")");
 
             ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
-            CSVReader.Read<ModelInfo>(configPath, (dictionary) =>
+            CSVReader.ParseResource<ModelInfo>(configPath, (dictionary) =>
             {
                 ModelInfo modelInfo = new ModelInfo(dictionary);
                 ModelInfos[modelInfo.Name] = modelInfo;
@@ -792,7 +788,7 @@ namespace FleetVieweR
 
             if (!ModelInfos.TryGetValue(modelKey, out modelInfo) || modelInfo == null)
             {
-                Debug.LogError("LoadModel: Failed to load modelKey == " + Utils.Quote(modelKey));
+                Debug.LogError("LoadModelAsync: Failed to load modelKey == " + Utils.Quote(modelKey));
                 return;
             }
 
@@ -877,16 +873,16 @@ namespace FleetVieweR
                     RepositionPlayerToViewFleet();
                 }
 
-            // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
+                // TODO:(pv) Auto-arrange/position according to scale and previously loaded models...
 
-            // Calculate width of all loaded non-positioned models
-            // Evenly reposition all loaded models
+                // Calculate width of all loaded non-positioned models
+                // Evenly reposition all loaded models
 
-            // TODO:(pv) Save modelSettings...
-            //modelSettings.Position = modelPosition;
-            //modelSettings.Rotation = modelRotation;
+                // TODO:(pv) Save modelSettings...
+                //modelSettings.Position = modelPosition;
+                //modelSettings.Rotation = modelRotation;
 
-            if (action != null)
+                if (action != null)
                 {
                     action();
                 }
