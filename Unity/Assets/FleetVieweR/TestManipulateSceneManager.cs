@@ -11,9 +11,9 @@ using RTEditor;
 
 namespace FleetVieweR
 {
-    public class TestSceneManager : MonoBehaviour
+    public class TestManipulateSceneManager : MonoBehaviour
     {
-        private const string TAG = "TestSceneManager";
+        private const string TAG = "TestManipulateSceneManager";
 
         public const bool VERBOSE_LOG = false;
 

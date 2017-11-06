@@ -1567,7 +1567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ModelsRoot: {fileID: 1569849317}
-  TestModel: {fileID: 1441082736}
+  TestModel: {fileID: 856314164}
 --- !u!1 &1189127304
 GameObject:
   m_ObjectHideFlags: 0
@@ -1662,7 +1662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scrollGridUpDownShortcut:
     _keys: 2000000000000000
-    _numberOfKeys: 1
+    _numberOfKeys: 0
     _lCtrl: 0
     _lCmd: 0
     _lAlt: 0
@@ -1677,12 +1677,12 @@ MonoBehaviour:
     _name: Scroll grid up/down
   _scrollGridUpDownStepShortcut:
     _keys: 2000000000000000
-    _numberOfKeys: 1
+    _numberOfKeys: 0
     _lCtrl: 1
     _lCmd: 0
     _lAlt: 0
     _lShift: 0
-    _useModifiers: 1
+    _useModifiers: 0
     _useStrictModifierCheck: 1
     _lMouseBtn: 0
     _rMouseBtn: 0
@@ -1771,7 +1771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _activateTranslationGizmoShortcut:
-    _keys: 7700000000000000
+    _keys: 3100000000000000
     _numberOfKeys: 1
     _lCtrl: 0
     _lCmd: 0
@@ -1786,7 +1786,7 @@ MonoBehaviour:
     _useStrictMouseCheck: 1
     _name: Activate move gizmo
   _activateRotationGizmoShortcut:
-    _keys: 6500000000000000
+    _keys: 3200000000000000
     _numberOfKeys: 1
     _lCtrl: 0
     _lCmd: 0
@@ -1802,7 +1802,7 @@ MonoBehaviour:
     _name: Activate rotation gizmo
   _activateScaleGizmoShortcut:
     _keys: 7200000000000000
-    _numberOfKeys: 1
+    _numberOfKeys: 0
     _lCtrl: 0
     _lCmd: 0
     _lAlt: 0
@@ -1817,7 +1817,7 @@ MonoBehaviour:
     _name: Activate scale gizmo
   _activateVolumeScaleGizmoShortcut:
     _keys: 7500000000000000
-    _numberOfKeys: 1
+    _numberOfKeys: 0
     _lCtrl: 0
     _lCmd: 0
     _lAlt: 0
@@ -1831,7 +1831,7 @@ MonoBehaviour:
     _useStrictMouseCheck: 1
     _name: Activate volume scale gizmo
   _activateGlobalTransformShortcut:
-    _keys: 6700000000000000
+    _keys: 6f00000000000000
     _numberOfKeys: 1
     _lCtrl: 0
     _lCmd: 0
@@ -1862,7 +1862,7 @@ MonoBehaviour:
     _name: Activate local transform
   _turnOffGizmosShortcut:
     _keys: 7100000000000000
-    _numberOfKeys: 1
+    _numberOfKeys: 0
     _lCtrl: 0
     _lCmd: 0
     _lAlt: 0
@@ -2134,13 +2134,13 @@ MonoBehaviour:
     _useStrictMouseCheck: 0
     _name: Multi deselect
   _duplicateSelectionShortcut:
-    _keys: 6400000000000000
+    _keys: 0d00000000000000
     _numberOfKeys: 1
     _lCtrl: 1
     _lCmd: 0
     _lAlt: 0
     _lShift: 0
-    _useModifiers: 1
+    _useModifiers: 0
     _useStrictModifierCheck: 0
     _lMouseBtn: 0
     _rMouseBtn: 0
