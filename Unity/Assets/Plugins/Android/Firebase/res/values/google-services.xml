@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="firebase_database_url" translatable="false">https://swooby-fleet-viewer.firebaseio.com</string>
+  <string name="gcm_defaultSenderId" translatable="false">1005740981413</string>
+  <string name="google_storage_bucket" translatable="false">swooby-fleet-viewer.appspot.com</string>
+  <string name="project_id" translatable="false">swooby-fleet-viewer</string>
+  <string name="google_api_key" translatable="false">AIzaSyDIiHlwuWmDbQKIIKYRPOpR6ufQwpdzXJE</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDIiHlwuWmDbQKIIKYRPOpR6ufQwpdzXJE</string>
+  <string name="google_app_id" translatable="false">1:1005740981413:android:5b4d0b321a29208d</string>
+  <string name="default_web_client_id" translatable="false">1005740981413-jifm93a56o07ogclk298mbevp9nd88ri.apps.googleusercontent.com</string>
+</resources>
