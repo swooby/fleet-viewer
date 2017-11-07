@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace FleetVieweR
 {
@@ -85,6 +86,11 @@ namespace FleetVieweR
         public static string ToString(Bounds bounds)
         {
             return bounds + ", Size: " + bounds.size + ", Min: " + bounds.min + ", Max: " + bounds.max;
+        }
+
+        public static string ToString(RaycastResult raycastResult)
+        {
+            return String.Format("{{gameObject:{0}}}", raycastResult.gameObject);
         }
 
         public static string ToString(TimeSpan duration)
