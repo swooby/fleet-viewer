@@ -19,6 +19,23 @@ namespace FleetVieweR
             return value == null ? "null" : "\"" + value + "\"";
         }
 
+        public static string ToString(System.Object o)
+        {
+            String s = o == null ? "null" : o.ToString();
+            if (o is string)
+            {
+                s = Quote(s);
+            }
+            else
+            {
+                if (o != null && s == "")
+                {
+                    s = o.GetType().Name;
+                }
+            }
+            return s;
+        }
+
         public static string ToString<T>(List<T> values)
         {
             if (values == null)
@@ -29,21 +46,13 @@ namespace FleetVieweR
             StringBuilder sb = new StringBuilder();
             sb.Append('[');
             int i = 0;
-            foreach (T value in values)
+            foreach (T temp in values)
             {
                 if (i > 0)
                 {
                     sb.Append(", ");
                 }
-                String s = value.ToString();
-                if (value is string)
-                {
-                    sb.Append(Quote(s));
-                }
-                else
-                {
-                    sb.Append(s);
-                }
+                sb.Append(ToString(temp));
                 i++;
             }
             sb.Append(']');
@@ -60,21 +69,13 @@ namespace FleetVieweR
             StringBuilder sb = new StringBuilder();
             sb.Append('[');
             int i = 0;
-            foreach (T value in values)
+            foreach (T temp in values)
             {
                 if (i > 0)
                 {
                     sb.Append(", ");
                 }
-                String s = value.ToString();
-                if (value is string)
-                {
-                    sb.Append(Quote(s));
-                }
-                else
-                {
-                    sb.Append(s);
-                }
+                sb.Append(ToString(temp));
                 i++;
             }
             sb.Append(']');
