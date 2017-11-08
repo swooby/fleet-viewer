@@ -11,6 +11,56 @@ using RTEditor;
 
 namespace FleetVieweR
 {
+    ///
+    /// Preferred RuntimeTransformGizmos' settings:
+    ///     Runtime Editor Application:
+    ///         Enable Undo/Redo: True
+    ///         Use Custom Camera: True Main Camera
+    ///         Use Unity Colliders: True
+    ///     XZ Grid Settings:
+    ///         Is Visible: True
+    ///         Scroll grip up/down: Num keys 0
+    ///         Scroll grip up/down (STEP): Num keys 0
+    ///     Editor Gizmo System:
+    ///         Translation: True
+    ///         Rotation: True
+    ///         Activate move gizmo: Alpha1
+    ///         Activate rotation gizmo: Alpha2
+    ///         Activate global transform: O
+    ///         Activate local transform: L
+    ///         Turn off gizmos: Num keys 0
+    ///         Toggle pivot: P
+    ///     Editor Object Selection:
+    ///         Can Select Empty Objects: True
+    ///         Can Click-Select: True
+    ///         Can Multi-Select: True
+    ///         Default: True
+    ///         TransparentFX: True
+    ///         Ignore Raycast: True
+    ///         Water: True
+    ///         UI: True
+    ///         Default: True
+    ///         TransparentFX: True
+    ///         Ignore Raycast: True
+    ///         Water: True
+    ///         UI: True
+    ///         Draw Selection Boxes: True
+    ///         Append to selection: Num keys 0
+    ///         Multi deselect: Num keys 0
+    ///         Duplicate selection: Num keys 0
+    ///         Delete selection: Delete
+    ///     Scene Gizmo:
+    ///         Lock Perspective: True
+    ///     Translation Gizmo:
+    ///         Gizmo Base Scale: 2
+    ///         Preserve Gizmo Screen Size: True
+    ///         No keymappings
+    ///     Rotation Gizmo:
+    ///         Gizmo Base Scale: 4
+    ///         Preserve Gizmo Screen Size: True
+    ///         Full Circle X/Y/Z: ?
+    ///         No keymappings
+    ///
     public class TestManipulateSceneManager : MonoBehaviour
     {
         private const string TAG = "TestManipulateSceneManager";
