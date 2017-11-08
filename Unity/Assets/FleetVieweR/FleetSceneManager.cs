@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase.Analytics;
 
 namespace FleetVieweR
 {
@@ -643,6 +644,8 @@ namespace FleetVieweR
 
         void Start()
         {
+            FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventAppOpen);
+
             Input.backButtonLeavesApp = true;
 
             FleetRoot = GameObject.FindGameObjectWithTag("FleetModels");
