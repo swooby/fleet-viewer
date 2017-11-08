@@ -22,7 +22,7 @@ namespace FleetVieweR
     public class AppSettings
     {
         public const string DEFAULT_SYSTEM_NAME = "Star Citizen";
-        public const string DEFAULT_MODEL_KEY = "Nox";
+        public const string DEFAULT_MODEL_KEY = StarCitizen.Nox;
 
         private const string PREF_KEY = "AppSettings";
 

@@ -28,7 +28,7 @@ namespace FleetVieweR
     ///         Activate rotation gizmo: Alpha2
     ///         Activate global transform: O
     ///         Activate local transform: L
-    ///         Turn off gizmos: Num keys 0
+    ///         Turn off gizmos: 0
     ///         Toggle pivot: P
     ///     Editor Object Selection:
     ///         Can Select Empty Objects: True
@@ -47,7 +47,7 @@ namespace FleetVieweR
     ///         Draw Selection Boxes: True
     ///         Append to selection: Num keys 0
     ///         Multi deselect: Num keys 0
-    ///         Duplicate selection: Num keys 0
+    ///         Duplicate selection: Return (Setting to Num keys 0 causes weird unusable lag bug!)
     ///         Delete selection: Delete
     ///     Scene Gizmo:
     ///         Lock Perspective: True
@@ -60,6 +60,11 @@ namespace FleetVieweR
     ///         Preserve Gizmo Screen Size: True
     ///         Full Circle X/Y/Z: ?
     ///         No keymappings
+    ///
+    /// Preferred GvrLaserPointer Settings:
+    ///     Hybrid
+    ///     Default Reticle Distance: 0.5
+    ///     Draw Debug Rays (for now)
     ///
     public class TestManipulateSceneManager : MonoBehaviour
     {
@@ -77,6 +82,8 @@ namespace FleetVieweR
         public GameObject ModelsRoot;
         public GameObject TestModel;
 
+        private InputDeviceGvrController inputDeviceGvrController;
+
         private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
 
         void Start()
@@ -85,7 +92,10 @@ namespace FleetVieweR
             //modelsToLoad.Add(StarCitizen.Nox);
             //LoadNextModel(modelsToLoad);
 
-            InputDevice.Instance.SetInputDevice(new InputDeviceGvrController());
+#if UNITY_ANDROID // TODO:(pv) Better way to detect Daydream/Carboard?
+            inputDeviceGvrController = new InputDeviceGvrController();
+            InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
+#endif
             //GvrPointerInputModule.Pointer.drawDebugRays = true;
 
             //GvrControllerInput.OnControllerInputUpdated += GvrControllerInput_OnControllerInputUpdated;
@@ -97,6 +107,7 @@ namespace FleetVieweR
 
             EditorObjectSelection.Instance.SelectionChanged += OnSelectionChanged;
 
+            /*
             if (TestModel != null)
             {
                 AddEventTrigger(TestModel, (eventData) =>
@@ -105,78 +116,12 @@ namespace FleetVieweR
                     EditorObjectSelection.Instance.AddObjectToSelection(TestModel, true);
                 });
             }
-        }
-
-        private HashSet<GameObject> objectSelection = new HashSet<GameObject>();
-
-        private void Update()
-        {
-            if (GvrControllerInput.ClickButtonDown)
-            {
-                //Debug.Log("Start");
-                AddRaycastObjectToSelection();
-            }
-            else if (GvrControllerInput.ClickButtonUp)
-            {
-                //Debug.Log("End");
-                AddRaycastObjectToSelection();
-                EditorObjectSelection.Instance.SetSelectedObjects(new List<GameObject>(objectSelection), true);
-                objectSelection.Clear();
-            }
-            else if (GvrControllerInput.ClickButton)
-            {
-                //Debug.Log("Continue");
-                AddRaycastObjectToSelection();
-            }
-        }
-
-        private void AddRaycastObjectToSelection()
-        {
-            GvrLaserPointer pointer = GvrPointerInputModule.Pointer as GvrLaserPointer;
-            if (pointer != null && pointer.isActiveAndEnabled)
-            {
-                RaycastResult raycastResult = pointer.CurrentRaycastResult;
-                if (raycastResult.isValid)
-                {
-                    GameObject selectedObject = raycastResult.gameObject;
-                    //Debug.Log("selectedObjesct:" + selectedObject);
-                    objectSelection.Add(selectedObject);
-                }
-                /*
-                else
-                {
-                    Debug.Log("No Result");
-                }
-                */
-            }
-        }
-
-        private void AddEventTrigger(GameObject gameObject, UnityAction<BaseEventData> eventData)
-        {
-            EventTrigger trigger = gameObject.AddComponent<EventTrigger>();
-            EventTrigger.Entry entry = new EventTrigger.Entry();
-            entry.eventID = EventTriggerType.PointerClick;
-            entry.callback.AddListener(eventData);
-            trigger.triggers.Add(entry);
+            */
         }
 
         private void OnSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
             Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
-            if (args.SelectActionType != ObjectSelectActionType.None)
-            {
-                var objectsWhichWereSelected = args.SelectedObjects;
-                foreach (var obj in objectsWhichWereSelected)
-                {
-                    // GameObjectExtension.GetFirstEmptyParent?
-
-                    GameObject rootObject = obj.transform.root.gameObject;
-
-                    if (rootObject == obj) continue;
-
-                    EditorObjectSelection.Instance.AddObjectToSelection(rootObject, false);
-                }
-            }
         }
 
         private void SetMessageBoxText(string text, float removeInSeconds = 0)
