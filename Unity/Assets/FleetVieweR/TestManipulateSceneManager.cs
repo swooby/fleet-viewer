@@ -5,9 +5,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using RTEditor;
+using DaydreamElements.ClickMenu;
 
 // TODO:(pv) Fix Scene Gizmo rotation snapping-back to original
-// TODO:(pv) Disable Scene Gizmo Orthogonal toggle
 
 namespace FleetVieweR
 {
@@ -76,16 +76,21 @@ namespace FleetVieweR
         public GameObject ModelsRoot;
         [Tooltip("Reference to GvrControllerPointer")]
         public GameObject GvrControllerPointer;
+        [Tooltip("Reference to ClickMenuRoot")]
+        public ClickMenuRoot MenuRoot;
 
         private InputDeviceGvrController inputDeviceGvrController;
 
         private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
 
-        void Start()
+        private void Awake()
         {
             Input.backButtonLeavesApp = true;
 
-#if UNITY_ANDROID // TODO:(pv) Better way to detect Daydream/Carboard?
+            //MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
+            MenuRoot.OnItemSelected += OnClickMenuItemSelected;
+
+#if UNITY_ANDROID // TODO:(pv) Better way to detect Daydream/Cardboard?
             inputDeviceGvrController = new InputDeviceGvrController();
             InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
 #endif
@@ -96,8 +101,11 @@ namespace FleetVieweR
                 EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
             }
 
-            EditorObjectSelection.Instance.SelectionChanged += OnSelectionChanged;
+            EditorObjectSelection.Instance.SelectionChanged += OnEditorObjectSelectionChanged;
+        }
 
+        void Start()
+        {
             //List<string> modelsToLoad = new List<string>();
             //modelsToLoad.Add(StarCitizen.Nox);
             //LoadNextModel(modelsToLoad);
@@ -112,7 +120,43 @@ namespace FleetVieweR
             }
         }
 
-        private void OnSelectionChanged(ObjectSelectionChangedEventArgs args)
+        private void OnClickMenuItemSelected(ClickMenuItem item)
+        {
+            switch (item.id)
+            {
+                case 100: // EVA
+                    break;
+                case 200: // Add
+                    break;
+                case 300: // Move
+                    break;
+                case 400: // Save
+                    break;
+                case 500: // Exit
+                    Exit();
+                    break;
+                case 600: // Load
+                    break;
+                case 700: // Rotate
+                    break;
+                case 800: // Remove
+                    break;
+            }
+        }
+
+        private void Exit()
+        {
+            // TODO:(pv) Prompt to save first...
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+//#elif UNITY_WEBPLAYER
+            //Application.OpenURL(webplayerQuitURL);
+#else
+            Application.Quit();
+#endif
+        }
+
+        private void OnEditorObjectSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
             //Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
             //Debug.Log(TAG + " OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));

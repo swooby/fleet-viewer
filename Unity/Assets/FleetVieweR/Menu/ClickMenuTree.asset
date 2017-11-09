@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9d91655c326ddc4cb1c5682d54bf4ac, type: 3}
+  m_Name: ClickMenuTree
+  m_EditorClassIdentifier: 
+  id: 0
+  icon: {fileID: 0}
+  background: {fileID: 0}
+  toolTip: 
+  closeAfterSelected: 1
+  tree:
+    serializedRoot:
+    - value: {fileID: 11400000}
+      childrenCount: 8
+      expanded: 1
+    - value: {fileID: 11400000, guid: c2b12156feba540e39d4e2da9a124072, type: 2}
+      childrenCount: 0
+      expanded: 1
+    - value: {fileID: 11400000, guid: 854bf34134c1b44f7b81936272378296, type: 2}
+      childrenCount: 0
+      expanded: 1
+    - value: {fileID: 11400000, guid: 279b6aa41559048fe9d812d92cae7a1c, type: 2}
+      childrenCount: 0
+      expanded: 1
+    - value: {fileID: 11400000, guid: 5078bb6036c5d482d96b72133dceab71, type: 2}
+      childrenCount: 0
+      expanded: 1
+    - value: {fileID: 11400000, guid: ab9b85497b16e4fe5bfc9ae6f944c96a, type: 2}
+      childrenCount: 0
+      expanded: 1
+    - value: {fileID: 11400000, guid: 16e9e4f0cbe134a46a1e603f6ca09eac, type: 2}
+      childrenCount: 0
+      expanded: 1
+    - value: {fileID: 11400000, guid: 4d170f7351e1b41b2bc0209866de9648, type: 2}
+      childrenCount: 0
+      expanded: 1
+    - value: {fileID: 11400000, guid: 3188b8d7f553141df8ea4d97e533887b, type: 2}
+      childrenCount: 0
+      expanded: 1
+    expanded: 1
