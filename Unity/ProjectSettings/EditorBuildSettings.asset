@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/FleetVieweR/GVRDemo.unity
     guid: 833924288b37f452687afb562711ece9
-  - enabled: 1
+  - enabled: 0
     path: Assets/FleetVieweR/FleetVieweR.unity
     guid: 09ade471679ff4dcd82a2a8026bfb00a
+  - enabled: 1
+    path: Assets/FleetVieweR/TestManipulate.unity
+    guid: d1d71a8dd910841c0921653de8b9f64a
