@@ -83,6 +83,8 @@ namespace FleetVieweR
 
         void Start()
         {
+            Input.backButtonLeavesApp = true;
+
 #if UNITY_ANDROID // TODO:(pv) Better way to detect Daydream/Carboard?
             inputDeviceGvrController = new InputDeviceGvrController();
             InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
@@ -99,6 +101,15 @@ namespace FleetVieweR
             //List<string> modelsToLoad = new List<string>();
             //modelsToLoad.Add(StarCitizen.Nox);
             //LoadNextModel(modelsToLoad);
+        }
+
+        void Update()
+        {
+            // Exit when (X) is tapped.
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
         }
 
         private void OnSelectionChanged(ObjectSelectionChangedEventArgs args)
