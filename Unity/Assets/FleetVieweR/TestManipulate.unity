@@ -1775,7 +1775,7 @@ MonoBehaviour:
       _selectionBoxCornerLinePercentage: 0.5
       _selectionBoxLineColor: {r: 0, g: 1, b: 0, a: 1}
       _boxSizeAdd: 0.005
-      _drawBoxes: 0
+      _drawBoxes: 1
   _appendToSelectionShortcut:
     _keys: 0000000000000000
     _numberOfKeys: 0

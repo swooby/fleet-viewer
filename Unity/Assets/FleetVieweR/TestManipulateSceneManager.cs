@@ -109,11 +109,6 @@ namespace FleetVieweR
             //Debug.Log(TAG + " OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
             switch (args.SelectActionType)
             {
-                case ObjectSelectActionType.SetSelectedObjectsCall:
-                    {
-                        EditorObjectSelection.Instance.ObjectSelectionSettings.ObjectSelectionBoxRenderSettings.DrawBoxes = true;
-                        break;
-                    }
                 case ObjectSelectActionType.Click:
                 case ObjectSelectActionType.MultiSelect:
                     {
@@ -132,22 +127,12 @@ namespace FleetVieweR
                                 }
                             }
                         }
-
                         if (selectedObjects.Count > 0)
                         {
                             // Per documentation, allowUndoRedo should always be false when inside of a handler
                             // TODO:(pv) Experiment to see if this can be nicely set true
                             EditorObjectSelection.Instance.SetSelectedObjects(selectedObjects, false);
                         }
-                        else
-                        {
-                            EditorObjectSelection.Instance.ObjectSelectionSettings.ObjectSelectionBoxRenderSettings.DrawBoxes = true;
-                        }
-                        break;
-                    }
-                case ObjectSelectActionType.None:
-                    {
-                        EditorObjectSelection.Instance.ObjectSelectionSettings.ObjectSelectionBoxRenderSettings.DrawBoxes = false;
                         break;
                     }
             }
