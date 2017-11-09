@@ -25,6 +25,7 @@ public abstract class GvrBasePointerRaycaster : BaseRaycaster {
   protected GvrBasePointerRaycaster() {
   }
 
+  /*
   protected override void OnEnable() {
     // Prevent BaseRaycaster from calling RaycasterManager.AddRaycaster(this)
     // https://bitbucket.org/Unity-Technologies/ui/src/6a975b5d7ec71f5cf99b615bc31d1d14e6e246db/UnityEngine.UI/EventSystem/Raycasters/BaseRaycaster.cs?at=2017.1&fileviewer=file-view-default#BaseRaycaster.cs-38
@@ -34,6 +35,7 @@ public abstract class GvrBasePointerRaycaster : BaseRaycaster {
     // Prevent BaseRaycaster from calling RaycasterManager.RemoveRaycasters(this)
     // https://bitbucket.org/Unity-Technologies/ui/src/6a975b5d7ec71f5cf99b615bc31d1d14e6e246db/UnityEngine.UI/EventSystem/Raycasters/BaseRaycaster.cs?at=2017.1&fileviewer=file-view-default#BaseRaycaster.cs-43
   }
+  */
 
   public GvrBasePointer.PointerRay GetLastRay() {
     return lastRay;
