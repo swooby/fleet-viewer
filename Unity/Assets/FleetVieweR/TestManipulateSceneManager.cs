@@ -80,7 +80,7 @@ namespace FleetVieweR
         //public GameObject reticlePointer;
 
         public GameObject ModelsRoot;
-        public GameObject TestModel;
+        public GameObject GvrControllerPointer;
 
         private InputDeviceGvrController inputDeviceGvrController;
 
@@ -104,6 +104,13 @@ namespace FleetVieweR
             //GvrControllerInput.
             //GvrPointerManager.
             //GvrContro
+
+            if (GvrControllerPointer != null)
+            {
+                List<GameObject> selectionMask = GvrControllerPointer.GetAllChildren();
+                selectionMask.Add(GvrControllerPointer);
+                EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
+            }
 
             EditorObjectSelection.Instance.SelectionChanged += OnSelectionChanged;
 

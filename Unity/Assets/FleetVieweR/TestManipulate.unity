@@ -1501,6 +1501,11 @@ Transform:
   m_Father: {fileID: 1569849318}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &980286398 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 555767533, guid: 34c21f523e72f45509a4e37ed0293c3b,
+    type: 2}
+  m_PrefabInternal: {fileID: 813291101}
 --- !u!1 &1041331157
 GameObject:
   m_ObjectHideFlags: 0
@@ -1542,7 +1547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ModelsRoot: {fileID: 1569849317}
-  TestModel: {fileID: 856314164}
+  GvrControllerPointer: {fileID: 980286398}
 --- !u!1 &1149122530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,7 +1775,7 @@ MonoBehaviour:
       _selectionBoxCornerLinePercentage: 0.5
       _selectionBoxLineColor: {r: 0, g: 1, b: 0, a: 1}
       _boxSizeAdd: 0.005
-      _drawBoxes: 1
+      _drawBoxes: 0
   _appendToSelectionShortcut:
     _keys: 0000000000000000
     _numberOfKeys: 0
