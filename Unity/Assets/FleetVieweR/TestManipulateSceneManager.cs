@@ -72,14 +72,9 @@ namespace FleetVieweR
 
         public const bool VERBOSE_LOG = false;
 
-        //[Tooltip("Reference to GvrControllerMain")]
-        //public GameObject controllerMain;
-        //[Tooltip("Reference to GvrControllerPointer")]
-        //public GameObject controllerPointer;
-        //[Tooltip("Reference to GvrReticlePointer")]
-        //public GameObject reticlePointer;
-
+        [Tooltip("Reference to ModelsRoot")]
         public GameObject ModelsRoot;
+        [Tooltip("Reference to GvrControllerPointer")]
         public GameObject GvrControllerPointer;
 
         private InputDeviceGvrController inputDeviceGvrController;
@@ -88,23 +83,10 @@ namespace FleetVieweR
 
         void Start()
         {
-            //List<string> modelsToLoad = new List<string>();
-            //modelsToLoad.Add(StarCitizen.Nox);
-            //LoadNextModel(modelsToLoad);
-
 #if UNITY_ANDROID // TODO:(pv) Better way to detect Daydream/Carboard?
             inputDeviceGvrController = new InputDeviceGvrController();
             InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
 #endif
-            //GvrPointerInputModule.Pointer.drawDebugRays = true;
-
-            //GvrControllerInput.OnControllerInputUpdated += GvrControllerInput_OnControllerInputUpdated;
-            //GvrTrackedController
-            //GvrPointerInputModule.Pointer.
-            //GvrControllerInput.
-            //GvrPointerManager.
-            //GvrContro
-
             if (GvrControllerPointer != null)
             {
                 List<GameObject> selectionMask = GvrControllerPointer.GetAllChildren();
@@ -114,48 +96,58 @@ namespace FleetVieweR
 
             EditorObjectSelection.Instance.SelectionChanged += OnSelectionChanged;
 
-            /*
-            if (TestModel != null)
-            {
-                AddEventTrigger(TestModel, (eventData) =>
-                {
-                    Debug.Log("Selected Test Model");
-                    EditorObjectSelection.Instance.AddObjectToSelection(TestModel, true);
-                });
-            }
-            */
+            //List<string> modelsToLoad = new List<string>();
+            //modelsToLoad.Add(StarCitizen.Nox);
+            //LoadNextModel(modelsToLoad);
         }
 
         private void OnSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
-            Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
+            //Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
+            //Debug.Log(TAG + " OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));
+            //Debug.Log(TAG + " OnSelectionChanged: args.DeselectActionType:" + args.DeselectActionType);
+            //Debug.Log(TAG + " OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
             switch (args.SelectActionType)
             {
-                case ObjectSelectActionType.Click:
+                case ObjectSelectActionType.SetSelectedObjectsCall:
                     {
-                        GameObject selectedObject = args.SelectedObjects[0];
-                        Debug.Log(TAG + " OnSelectionChanged: selectedObject:" + selectedObject);
-
-                        GameObject modelRoot = FindModelRoot(ModelsRoot, selectedObject);
-                        Debug.Log(TAG + " OnSelectionChanged: modelRoot:" + modelRoot);
-                        if (modelRoot != null)
+                        EditorObjectSelection.Instance.ObjectSelectionSettings.ObjectSelectionBoxRenderSettings.DrawBoxes = true;
+                        break;
+                    }
+                case ObjectSelectActionType.Click:
+                case ObjectSelectActionType.MultiSelect:
+                    {
+                        List<GameObject> selectedObjects = new List<GameObject>();
+                        foreach (GameObject selectedObject in args.SelectedObjects)
                         {
-                            List<GameObject> selectedObjects = new List<GameObject>();
-                            selectedObjects.Add(modelRoot);
+                            //Debug.Log(TAG + " OnSelectionChanged: selectedObject:" + selectedObject);
+                            GameObject modelRoot = FindModelRoot(ModelsRoot, selectedObject);
+                            //Debug.Log(TAG + " OnSelectionChanged: modelRoot:" + modelRoot);
+                            if (modelRoot != null)
+                            {
+                                EditorObjectSelection.Instance.RemoveObjectFromSelection(selectedObject, false);
+                                if (!selectedObjects.Contains(modelRoot))
+                                {
+                                    selectedObjects.Add(modelRoot);
+                                }
+                            }
+                        }
 
-                            // TODO:(pv) Consider getting allowUndoRedo to work nicely...
+                        if (selectedObjects.Count > 0)
+                        {
+                            // Per documentation, allowUndoRedo should always be false when inside of a handler
+                            // TODO:(pv) Experiment to see if this can be nicely set true
                             EditorObjectSelection.Instance.SetSelectedObjects(selectedObjects, false);
+                        }
+                        else
+                        {
+                            EditorObjectSelection.Instance.ObjectSelectionSettings.ObjectSelectionBoxRenderSettings.DrawBoxes = true;
                         }
                         break;
                     }
                 case ObjectSelectActionType.None:
                     {
-                        break;
-                    }
-                case ObjectSelectActionType.MultiSelect:
-                    {
-                        // TODO:(pv) Support Multi-Select to traverse up object parents to find all selected modelRoots
-                        // TODO:(pv) Prevent the reticle/laserpointer/controller from being selected
+                        EditorObjectSelection.Instance.ObjectSelectionSettings.ObjectSelectionBoxRenderSettings.DrawBoxes = false;
                         break;
                     }
             }
