@@ -122,6 +122,58 @@ namespace FleetVieweR
         private void OnSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
             Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
+            switch (args.SelectActionType)
+            {
+                case ObjectSelectActionType.Click:
+                    {
+                        GameObject selectedObject = args.SelectedObjects[0];
+                        Debug.Log(TAG + " OnSelectionChanged: selectedObject:" + selectedObject);
+
+                        GameObject modelRoot = FindModelRoot(ModelsRoot, selectedObject);
+                        Debug.Log(TAG + " OnSelectionChanged: modelRoot:" + modelRoot);
+                        if (modelRoot != null)
+                        {
+                            List<GameObject> selectedObjects = new List<GameObject>();
+                            selectedObjects.Add(modelRoot);
+
+                            // TODO:(pv) Consider getting allowUndoRedo to work nicely...
+                            EditorObjectSelection.Instance.SetSelectedObjects(selectedObjects, false);
+                        }
+                        break;
+                    }
+                case ObjectSelectActionType.None:
+                    {
+                        break;
+                    }
+                case ObjectSelectActionType.MultiSelect:
+                    {
+                        // TODO:(pv) Support Multi-Select to traverse up object parents to find all selected modelRoots
+                        // TODO:(pv) Prevent the reticle/laserpointer/controller from being selected
+                        break;
+                    }
+            }
+        }
+
+        private static GameObject FindModelRoot(GameObject modelsRoot, GameObject child)
+        {
+            while (true)
+            {
+                Transform parentTransform = child.transform.parent;
+                if (parentTransform == null)
+                {
+                    break;
+                }
+
+                GameObject parent = parentTransform.gameObject;
+                if (parent == modelsRoot)
+                {
+                    return child;
+                }
+
+                child = parent;
+            }
+
+            return null;
         }
 
         private void SetMessageBoxText(string text, float removeInSeconds = 0)

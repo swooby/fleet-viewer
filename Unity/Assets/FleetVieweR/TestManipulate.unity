@@ -1766,7 +1766,7 @@ MonoBehaviour:
     _canMultiSelect: 1
     _objectSelectionBoxRenderSettings:
       _selectionBoxStyle: 0
-      _selectionBoxRenderMode: 0
+      _selectionBoxRenderMode: 1
       _selectionBoxCornerLinePercentage: 0.5
       _selectionBoxLineColor: {r: 0, g: 1, b: 0, a: 1}
       _boxSizeAdd: 0.005
