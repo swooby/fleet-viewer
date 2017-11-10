@@ -124,22 +124,22 @@ namespace FleetVieweR
         {
             switch (item.id)
             {
-                case 100: // EVA
+                case 100: // EVA Disables TransformGizmo & RotationGizmo, Enables EVA
                     break;
-                case 200: // Add
+                case 200: // Add Brings up model Carrasel (sp)
                     break;
-                case 300: // Move
+                case 300: // Move Disables EVA & RotationGizmo, Enables TransformGizmo
                     break;
-                case 400: // Save
+                case 400: // Save Name fleet file and Save to cloud
                     break;
                 case 500: // Exit
                     Exit();
                     break;
-                case 600: // Load
+                case 600: // Load Browse and Load models from cloud
                     break;
-                case 700: // Rotate
+                case 700: // Rotate Disables EVA & TransformGizmo, Enables RotationGizmo
                     break;
-                case 800: // Remove
+                case 800: // Remove (Hidden if no item(s) selected) Remove Selected Item(s)
                     break;
             }
         }
