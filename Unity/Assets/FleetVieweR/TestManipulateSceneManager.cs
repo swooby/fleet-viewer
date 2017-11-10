@@ -109,6 +109,8 @@ namespace FleetVieweR
             //List<string> modelsToLoad = new List<string>();
             //modelsToLoad.Add(StarCitizen.Nox);
             //LoadNextModel(modelsToLoad);
+
+            EnableEvaMode(true);
         }
 
         void Update()
@@ -142,6 +144,20 @@ namespace FleetVieweR
                 case 800: // Remove (Hidden if no item(s) selected) Remove Selected Item(s)
                     break;
             }
+        }
+
+        private void EnableEvaMode(bool enable)
+        {
+            PlayerController.AllowTouchMovement = enable;
+            EnableObjectSelection(!enable);
+        }
+
+        private void EnableObjectSelection(bool enable)
+        {
+            ObjectSelectionSettings objectSelectionSettings = EditorObjectSelection.Instance.ObjectSelectionSettings;
+            objectSelectionSettings.CanSelectEmptyObjects =
+                    objectSelectionSettings.CanClickSelect =
+                    objectSelectionSettings.CanMultiSelect = enable;
         }
 
         private void Exit()

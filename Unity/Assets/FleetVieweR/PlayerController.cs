@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+        public static bool AllowTouchMovement { get; set; }
+
     private bool isMoving;
     private Vector2 startTouchCentered;
 
@@ -81,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
         if (isMoving)
         {
-            if (isTouching)
+                if (isTouching && AllowTouchMovement)
             {
                 deltaPosCentered = touchPosCentered - startTouchCentered;
 
