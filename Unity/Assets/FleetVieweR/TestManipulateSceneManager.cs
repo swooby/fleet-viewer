@@ -28,7 +28,7 @@ namespace FleetVieweR
     ///         Activate rotation gizmo: Alpha2
     ///         Activate global transform: O
     ///         Activate local transform: L
-    ///         Turn off gizmos: 0
+    ///         Turn off gizmos: Alpha0
     ///         Toggle pivot: P
     ///     Editor Object Selection:
     ///         Can Select Empty Objects: True
@@ -45,11 +45,13 @@ namespace FleetVieweR
     ///         Water: True
     ///         UI: True
     ///         Draw Selection Boxes: True
+    ///         SELECTION BOX RENDER MODE: From Parent To Bottom
     ///         Append to selection: Num keys 0
     ///         Multi deselect: Num keys 0
     ///         Duplicate selection: Return (Setting to Num keys 0 causes weird unusable lag bug!)
     ///         Delete selection: Delete
     ///     Scene Gizmo:
+    ///         Corner: None (Currently no way known to set Orthogonal projection in VR)
     ///         Lock Perspective: True
     ///     Translation Gizmo:
     ///         Gizmo Base Scale: 2
@@ -71,6 +73,7 @@ namespace FleetVieweR
         private const string TAG = "TestManipulateSceneManager";
 
         public const bool VERBOSE_LOG = false;
+        public const bool VERBOSE_LOG_EDITOR_OBJECT_SELECTION = false;
 
         [Tooltip("Reference to ModelsRoot")]
         public GameObject ModelsRoot;
@@ -174,10 +177,13 @@ namespace FleetVieweR
 
         private void OnEditorObjectSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
-            //Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
-            //Debug.Log(TAG + " OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));
-            //Debug.Log(TAG + " OnSelectionChanged: args.DeselectActionType:" + args.DeselectActionType);
-            //Debug.Log(TAG + " OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
+            if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
+            {
+                Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
+                Debug.Log(TAG + " OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));
+                Debug.Log(TAG + " OnSelectionChanged: args.DeselectActionType:" + args.DeselectActionType);
+                Debug.Log(TAG + " OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
+            }
             switch (args.SelectActionType)
             {
                 case ObjectSelectActionType.Click:
@@ -186,9 +192,15 @@ namespace FleetVieweR
                         List<GameObject> selectedObjects = new List<GameObject>();
                         foreach (GameObject selectedObject in args.SelectedObjects)
                         {
-                            //Debug.Log(TAG + " OnSelectionChanged: selectedObject:" + selectedObject);
+                            if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
+                            {
+                                Debug.Log(TAG + " OnSelectionChanged: selectedObject:" + selectedObject);
+                            }
                             GameObject modelRoot = FindModelRoot(ModelsRoot, selectedObject);
-                            //Debug.Log(TAG + " OnSelectionChanged: modelRoot:" + modelRoot);
+                            if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
+                            {
+                                Debug.Log(TAG + " OnSelectionChanged: modelRoot:" + modelRoot);
+                            }
                             if (modelRoot != null)
                             {
                                 EditorObjectSelection.Instance.RemoveObjectFromSelection(selectedObject, false);
