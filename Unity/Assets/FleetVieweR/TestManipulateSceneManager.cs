@@ -90,12 +90,12 @@ namespace FleetVieweR
             //MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
             MenuRoot.OnItemSelected += OnClickMenuItemSelected;
 
-#if UNITY_ANDROID // TODO:(pv) Better way to detect Daydream/Cardboard?
-            inputDeviceGvrController = new InputDeviceGvrController();
-            InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
-#endif
             if (GvrControllerPointer != null)
             {
+#if UNITY_ANDROID // TODO:(pv) Better way to detect Daydream/Cardboard?
+                inputDeviceGvrController = new InputDeviceGvrController();
+                InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
+#endif
                 List<GameObject> selectionMask = GvrControllerPointer.GetAllChildren();
                 selectionMask.Add(GvrControllerPointer);
                 EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
