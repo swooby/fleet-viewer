@@ -130,6 +130,22 @@ namespace FleetVieweR
             }
         }
 
+        private bool? playerControllerAllowTouchMovementBeforeForcedDisabled;
+
+        private void PlayerControllerAllowTouchMovementForceDisable()
+        {
+            playerControllerAllowTouchMovementBeforeForcedDisabled = PlayerController.AllowTouchMovement;
+            PlayerController.AllowTouchMovement = false;
+        }
+
+        private void PlayerControllerAllowTouchMovementRestore()
+        {
+            if (playerControllerAllowTouchMovementBeforeForcedDisabled.HasValue)
+            {
+                PlayerController.AllowTouchMovement = playerControllerAllowTouchMovementBeforeForcedDisabled.Value;
+            }
+        }
+
         private void Gizmo_GizmoHoverEnter(Gizmo gizmo)
         {
             //Debug.LogWarning("Gizmo_GizmoHoverEnter(" + gizmo + ")");
@@ -152,21 +168,11 @@ namespace FleetVieweR
             PlayerControllerAllowTouchMovementRestore();
         }
 
-        private bool? playerControllerAllowTouchMovementBeforeForcedDisabled;
-
-        private void PlayerControllerAllowTouchMovementForceDisable()
+        private ClickMenuTree MenuRoot_GetClickMenuTree()
         {
-            playerControllerAllowTouchMovementBeforeForcedDisabled = PlayerController.AllowTouchMovement;
-            PlayerController.AllowTouchMovement = false;
+            return MenuTree;
         }
 
-        private void PlayerControllerAllowTouchMovementRestore()
-        {
-            if (playerControllerAllowTouchMovementBeforeForcedDisabled.HasValue)
-            {
-                PlayerController.AllowTouchMovement = playerControllerAllowTouchMovementBeforeForcedDisabled.Value;
-            }
-        }
         {
             switch (item.id)
             {
