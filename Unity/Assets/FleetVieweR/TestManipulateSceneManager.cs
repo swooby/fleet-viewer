@@ -90,8 +90,9 @@ namespace FleetVieweR
         {
             Input.backButtonLeavesApp = true;
 
-            //MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
-            MenuRoot.OnItemSelected += OnClickMenuItemSelected;
+            MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
+            MenuRoot.OnMenuClosed += MenuRoot_OnMenuClosed;
+            MenuRoot.OnItemSelected += MenuRoot_OnItemSelected;
 
             if (GvrControllerPointer != null)
             {
@@ -104,7 +105,11 @@ namespace FleetVieweR
                 EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
             }
 
-            EditorObjectSelection.Instance.SelectionChanged += OnEditorObjectSelectionChanged;
+            EditorObjectSelection.Instance.SelectionChanged += EditorObjectSelection_OnSelectionChanged;
+            EditorGizmoSystem.Instance.TranslationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
+            EditorGizmoSystem.Instance.TranslationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
+            EditorGizmoSystem.Instance.RotationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
+            EditorGizmoSystem.Instance.RotationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
         }
 
         void Start()
@@ -125,7 +130,43 @@ namespace FleetVieweR
             }
         }
 
-        private void OnClickMenuItemSelected(ClickMenuItem item)
+        private void Gizmo_GizmoHoverEnter(Gizmo gizmo)
+        {
+            //Debug.LogWarning("Gizmo_GizmoHoverEnter(" + gizmo + ")");
+            PlayerControllerAllowTouchMovementForceDisable();
+        }
+
+        private void Gizmo_GizmoHoverExit(Gizmo gizmo)
+        {
+            //Debug.LogWarning("Gizmo_GizmoHoverExit(" + gizmo + ")");
+            PlayerControllerAllowTouchMovementRestore();
+        }
+
+        private void MenuRoot_OnMenuOpened()
+        {
+            PlayerControllerAllowTouchMovementForceDisable();
+        }
+
+        private void MenuRoot_OnMenuClosed()
+        {
+            PlayerControllerAllowTouchMovementRestore();
+        }
+
+        private bool? playerControllerAllowTouchMovementBeforeForcedDisabled;
+
+        private void PlayerControllerAllowTouchMovementForceDisable()
+        {
+            playerControllerAllowTouchMovementBeforeForcedDisabled = PlayerController.AllowTouchMovement;
+            PlayerController.AllowTouchMovement = false;
+        }
+
+        private void PlayerControllerAllowTouchMovementRestore()
+        {
+            if (playerControllerAllowTouchMovementBeforeForcedDisabled.HasValue)
+            {
+                PlayerController.AllowTouchMovement = playerControllerAllowTouchMovementBeforeForcedDisabled.Value;
+            }
+        }
         {
             switch (item.id)
             {
@@ -151,6 +192,7 @@ namespace FleetVieweR
 
         private void EnableEvaMode(bool enable)
         {
+            playerControllerAllowTouchMovementBeforeForcedDisabled = null;
             PlayerController.AllowTouchMovement = enable;
             EnableObjectSelection(!enable);
         }
@@ -175,14 +217,14 @@ namespace FleetVieweR
 #endif
         }
 
-        private void OnEditorObjectSelectionChanged(ObjectSelectionChangedEventArgs args)
+        private void EditorObjectSelection_OnSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
             if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
             {
-                Debug.Log(TAG + " OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
-                Debug.Log(TAG + " OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));
-                Debug.Log(TAG + " OnSelectionChanged: args.DeselectActionType:" + args.DeselectActionType);
-                Debug.Log(TAG + " OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
+                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
+                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));
+                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.DeselectActionType:" + args.DeselectActionType);
+                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
             }
             switch (args.SelectActionType)
             {
@@ -194,12 +236,12 @@ namespace FleetVieweR
                         {
                             if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
                             {
-                                Debug.Log(TAG + " OnSelectionChanged: selectedObject:" + selectedObject);
+                                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: selectedObject:" + selectedObject);
                             }
                             GameObject modelRoot = FindModelRoot(ModelsRoot, selectedObject);
                             if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
                             {
-                                Debug.Log(TAG + " OnSelectionChanged: modelRoot:" + modelRoot);
+                                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: modelRoot:" + modelRoot);
                             }
                             if (modelRoot != null)
                             {

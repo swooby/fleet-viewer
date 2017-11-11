@@ -657,7 +657,7 @@ MonoBehaviour:
   - {r: 0.6039216, g: 0.9529412, b: 0.28235295, a: 1}
   - {r: 0.22745098, g: 0.47843137, b: 0.972549, a: 1}
   _selectedAxisColor: {r: 0.9647059, g: 0.9490196, b: 0.19607843, a: 1}
-  _gizmoBaseScale: 1
+  _gizmoBaseScale: 2
   _preserveGizmoScreenSize: 1
   _axesVisibilityMask: 010101
   _axisLength: 5
@@ -1732,7 +1732,7 @@ MonoBehaviour:
     _canMultiSelect: 1
     _objectSelectionBoxRenderSettings:
       _selectionBoxStyle: 0
-      _selectionBoxRenderMode: 0
+      _selectionBoxRenderMode: 1
       _selectionBoxCornerLinePercentage: 0.5
       _selectionBoxLineColor: {r: 0, g: 1, b: 0, a: 1}
       _boxSizeAdd: 0.005
@@ -2254,7 +2254,7 @@ MonoBehaviour:
   _cubeColor: {r: 0.8, g: 0.8, b: 0.8, a: 0.92941177}
   _hoveredComponentColor: {r: 0.9647059, g: 0.9490196, b: 0.19607843, a: 1}
   _cameraAlignDuration: 0.3
-  _lockPerspective: 0
+  _lockPerspective: 1
 --- !u!1 &1753516652
 GameObject:
   m_ObjectHideFlags: 0
@@ -2301,7 +2301,7 @@ MonoBehaviour:
   - {r: 0.6039216, g: 0.9529412, b: 0.28235295, a: 1}
   - {r: 0.22745098, g: 0.47843137, b: 0.972549, a: 1}
   _selectedAxisColor: {r: 0.9647059, g: 0.9490196, b: 0.19607843, a: 1}
-  _gizmoBaseScale: 2
+  _gizmoBaseScale: 4
   _preserveGizmoScreenSize: 1
   _axesVisibilityMask: 010101
   _enableStepSnappingShortcut:
