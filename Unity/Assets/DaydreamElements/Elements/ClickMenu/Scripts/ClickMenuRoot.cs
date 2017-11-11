@@ -116,7 +116,18 @@ namespace DaydreamElements.ClickMenu {
     }
 
     private void SetMenuLocation() {
-      Vector3 laserEndPt = laserPointer.GetPointAlongPointer(menuDistance);
+      Vector3 laserEndPt;
+      if (false) {
+        // NOTE:(pv) This original code doesn't actually centering on the point clicked!
+        laserEndPt = laserPointer.GetPointAlongPointer(menuDistance);
+      } else {
+        RaycastResult raycastResult = laserPointer.CurrentRaycastResult;
+        if (raycastResult.gameObject != null) {
+          laserEndPt = raycastResult.worldPosition;
+        } else {
+          laserEndPt = laserPointer.GetPointAlongPointer(laserPointer.defaultReticleDistance);
+        }
+      }
 
       // Center and orient the menu
       menuCenter = laserEndPt;
@@ -127,6 +138,7 @@ namespace DaydreamElements.ClickMenu {
       Vector3 rayFromCamera = (laserEndPt - cameraCenter).normalized;
       Vector3 up = Vector3.Cross(rayFromCamera, headRight);
       menuOrientation = Quaternion.LookRotation(rayFromCamera, up);
+      Debug.DrawRay(laserEndPt, menuOrientation.eulerAngles, Color.magenta, 10);
     }
 
     private bool IsMenuInFOV() {
