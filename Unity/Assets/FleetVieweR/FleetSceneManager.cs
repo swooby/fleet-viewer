@@ -663,9 +663,6 @@ namespace FleetVieweR
 
             SystemName = AppSettings.SystemName;
 
-
-            LoadModels();
-
             //RepositionPlayerToViewFleet();
         }
 
@@ -709,78 +706,71 @@ namespace FleetVieweR
             }
             set
             {
-                SystemInfo system;
-                SortedDictionary<string, SystemInfo> systems = new SortedDictionary<string, SystemInfo>(StringComparer.OrdinalIgnoreCase);
-                    CSVReader.ParseResource<SystemInfo>("Fleet VieweR - Systems", (dictionary) =>
+                if (systemName == value)
                 {
-                    system = new SystemInfo(dictionary);
-                    systems[system.Name] = system;
-                    return null;
+                    return;
+                }
+
+                Debug.Log("Attempting to set SystemName = " + Utils.Quote(value));
+                ConfigInfo.GetSystemInfos((systemInfos) =>
+                {
+                    SystemInfo systemInfo;
+                    systemInfos.TryGetValue(value, out systemInfo);
+                    if (systemInfo == null)
+                    {
+                        Debug.LogError("SystemName: Failed to load system " + Utils.Quote(value));
+                        return;
+                    }
+
+                    systemName = value;
+
+                    ConfigInfo.GetModelInfos(systemInfo, (modelInfos) =>
+                    {
+                        ModelInfos = modelInfos;
+
+                        //Debug.Log("LoadModelInfos: ModelInfos.Count == " + ModelInfos.Count);
+
+                        /*
+                        GameObject modelInfosDropdown = GameObject.Find("/Player/Main Camera/Overlay Canvas/ModelInfosDropdown");
+                        if (modelInfosDropdown == null)
+                        {
+                            Debug.LogWarning("LoadModelInfos: modelInfosDropdown == null; ignoring");
+                            return;
+                        }
+
+                        GvrDropdown dropdown = modelInfosDropdown.GetComponent<GvrDropdown>();
+                        if (dropdown == null)
+                        {
+                            Debug.LogWarning("LoadModelInfos: dropdown == null; ignoring");
+                            return;
+                        }
+
+                        List<Dropdown.OptionData> optionDatas = new List<Dropdown.OptionData>();
+                        foreach (ModelInfo modelInfo in ModelInfos.Values)
+                        {
+                            if (modelInfo == null || modelInfo.ModelPathLocal == null)
+                            {
+                                continue;
+                            }
+
+                            Dropdown.OptionData optionData = new Dropdown.OptionData()
+                            {
+                                text = modelInfo.Name
+                            };
+                            optionDatas.Add(optionData);
+                        }
+
+                        dropdown.ClearOptions();
+                        dropdown.AddOptions(optionDatas);
+                        dropdown.value = 0;
+
+                        Debug.Log("LoadModelInfos: dropdown.options.Count == " + dropdown.options.Count);
+                        */
+
+                        LoadModels();
+                    });
                 });
-
-                systems.TryGetValue(value, out system);
-                if (system == null)
-                {
-                    Debug.LogError("SystemName: Failed to load systemName == " + Utils.Quote(value));
-                }
-
-                systemName = value;
-
-                string configPath = system.ConfigPath;
-
-                LoadModelInfos(configPath);
             }
-        }
-
-        public void LoadModelInfos(string configPath)
-        {
-            Debug.Log("LoadModelInfos(configPath:" + Utils.Quote(configPath) + ")");
-
-            ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
-            CSVReader.ParseResource<ModelInfo>(configPath, (dictionary) =>
-            {
-                ModelInfo modelInfo = new ModelInfo(dictionary);
-                ModelInfos[modelInfo.Name] = modelInfo;
-                return null;
-            });
-            //Debug.Log("LoadModelInfos: ModelInfos.Count == " + ModelInfos.Count);
-
-            /*
-            GameObject modelInfosDropdown = GameObject.Find("/Player/Main Camera/Overlay Canvas/ModelInfosDropdown");
-            if (modelInfosDropdown == null)
-            {
-                Debug.LogWarning("LoadModelInfos: modelInfosDropdown == null; ignoring");
-                return;
-            }
-
-            GvrDropdown dropdown = modelInfosDropdown.GetComponent<GvrDropdown>();
-            if (dropdown == null)
-            {
-                Debug.LogWarning("LoadModelInfos: dropdown == null; ignoring");
-                return;
-            }
-
-            List<Dropdown.OptionData> optionDatas = new List<Dropdown.OptionData>();
-            foreach (ModelInfo modelInfo in ModelInfos.Values)
-            {
-                if (modelInfo == null || modelInfo.ModelPathLocal == null)
-                {
-                    continue;
-                }
-
-                Dropdown.OptionData optionData = new Dropdown.OptionData()
-                {
-                    text = modelInfo.Name
-                };
-                optionDatas.Add(optionData);
-            }
-
-            dropdown.ClearOptions();
-            dropdown.AddOptions(optionDatas);
-            dropdown.value = 0;
-
-            Debug.Log("LoadModelInfos: dropdown.options.Count == " + dropdown.options.Count);
-            */
         }
 
         private delegate void AsyncLoadModelCaller(GameObject model);

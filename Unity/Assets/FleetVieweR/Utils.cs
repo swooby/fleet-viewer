@@ -37,7 +37,33 @@ namespace FleetVieweR
             return s;
         }
 
-        public static string ToString<T>(List<T> values)
+        public static string ToString<K,V>(IDictionary<K,V> values)
+        {
+            if (values == null)
+            {
+                return "null";
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append('{');
+            int i = 0;
+            foreach (KeyValuePair<K,V> entry in values)
+            {
+                K key = entry.Key;
+                V value = entry.Value;
+
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(ToString(key)).Append(':').Append(ToString(value));
+                i++;
+            }
+            sb.Append('}');
+            return sb.ToString();
+        }
+
+        public static string ToString<T>(IList<T> values)
         {
             if (values == null)
             {

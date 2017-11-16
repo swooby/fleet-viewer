@@ -11,11 +11,9 @@ namespace FleetVieweR
 {
     public class ConfigInfo
     {
-        private const string FLEET_VIEWER_GOOGLE_SPREADSHEET_ID = "1ammOh0-6BHe2hYFQ5c1pdYrLlNjVaphd5bDidcdWqRo";
-        private const string FLEET_VIEWER_GOOGLE_SPREADSHEET_SHEET_ID_SYSTEMS = "1057971452";
-        //private const string FLEET_VIEWER_GOOGLE_SPREADSHEET_SHEET_ID_SYSTEM_STAR_CITIZEN_SHIP_MATRIX_2_0 = "1227853955";
-
         private const string FIREBASE_BUCKET = "gs://swooby-fleet-viewer.appspot.com";
+
+        private const string FLEET_VIEWER_SYSTEMS_CSV = "Fleet VieweR - Systems.csv";
 
         private static FirebaseStorage CloudStorage;
 
@@ -28,28 +26,47 @@ namespace FleetVieweR
         {
         }
 
-        public static WWW GetFleetViewerSystemsCsv()
+        public delegate void GetSystemInfosCallback(SortedDictionary<string, SystemInfo> systemInfos);
+
+        public static void GetSystemInfos(GetSystemInfosCallback callback)
         {
-            return GetFleetViewerSpreadsheetSheetCsv(FLEET_VIEWER_GOOGLE_SPREADSHEET_SHEET_ID_SYSTEMS);
+            ConfigInfo.EnsureFileCached(FLEET_VIEWER_SYSTEMS_CSV, (cachedPath) =>
+            {
+                String text = File.ReadAllText(cachedPath);
+
+                SortedDictionary<string, SystemInfo> systemInfos = new SortedDictionary<string, SystemInfo>(StringComparer.OrdinalIgnoreCase);
+
+                CSVReader.ParseText<SystemInfo>(text, (dictionary) =>
+                {
+                    SystemInfo system = new SystemInfo(dictionary);
+                    systemInfos[system.Name] = system;
+                    return null;
+                });
+
+                callback(systemInfos);
+            });
         }
 
-        /*
-        public static WWW GetFleetViewerSystemStarCitizenShipMatrix2_0Csv()
-        {
-            return getFleetViewerSpreadsheetSheetCsv(FLEET_VIEWER_GOOGLE_SPREADSHEET_SHEET_ID_SYSTEM_STAR_CITIZEN_SHIP_MATRIX_2_0);
-        }
-        */
+        public delegate void GetModelInfosCallback(SortedDictionary<string, ModelInfo> modelInfos);
 
-        public static WWW GetFleetViewerSpreadsheetSheetCsv(string sheetId)
+        public static void GetModelInfos(SystemInfo systemInfo, GetModelInfosCallback callback)
         {
-            return GetSpreadsheetSheetAsCsv(FLEET_VIEWER_GOOGLE_SPREADSHEET_ID, sheetId);
-        }
+            ConfigInfo.EnsureFileCached(systemInfo.ConfigPath, (cachedPath) =>
+            {
+                String text = File.ReadAllText(cachedPath);
 
-        private static WWW GetSpreadsheetSheetAsCsv(string spreadsheetId, string sheetId)
-        {
-            string url = string.Format("https://docs.google.com/spreadsheets/d/{0}/export?gid={1}&format=csv", spreadsheetId, sheetId);
-            Debug.Log("GetSpreadsheetSheetAsCsv: url:" + Utils.Quote(url));
-            return new WWW(url);
+                SortedDictionary<string, ModelInfo> modelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
+
+                CSVReader.ParseText<ModelInfo>(text, (dictionary) =>
+                {
+                    ModelInfo modelInfo = new ModelInfo(dictionary);
+                    //Debug.Log("modelInfo.Name:" + Utils.Quote(modelInfo.Name));
+                    modelInfos[modelInfo.Name] = modelInfo;
+                    return null;
+                });
+
+                callback(modelInfos);
+            });
         }
 
         public delegate void EnsureFileCachedCallback(string cachedPath);
@@ -58,34 +75,72 @@ namespace FleetVieweR
         {
             Debug.Log("EnsureFileCached(filePath:" + Utils.Quote(filePath) + ", ...)");
 
-            string filePathLocal = Path.Combine(Application.persistentDataPath, filePath);
+            // Android: 
+            //   MacOS: ~/Library/Application Support/swooby_com/Fleet VieweR
+            // Windows:
+            string applicationPersistentDataPath = Application.persistentDataPath;
+            Debug.Log("EnsureFileCached: applicationPersistentDataPath:" + applicationPersistentDataPath);
+            string filePathLocal = Path.Combine(applicationPersistentDataPath, filePath);
             string filePathRemote = FIREBASE_BUCKET + '/' + filePath;
 
-            StorageReference storageReference = CloudStorage.GetReferenceFromUrl(filePathRemote);
-            storageReference.GetMetadataAsync().ContinueWith(taskMetadata =>
+            NetworkReachability internetReachability = Application.internetReachability;
+            //Debug.Log("EnsureFileCached: internetReachability:" + internetReachability);
+            // TODO:(pv) Timeout the below GetMetadataAsync since it does not automatically abort if the internet becomes unreachable after this check
+            if (internetReachability == NetworkReachability.NotReachable)
             {
-                Debug.Log("EnsureFileCached: GetMetadataAsync completed");
-                if (taskMetadata.IsFaulted || taskMetadata.IsCanceled)
-                {
-                    callback(null);
-                    return;
-                }
+                OnEnsureFileCached("EnsureFileCached: Internet is not reachable; not updating cache", filePathLocal, callback);
+                return;
+            }
 
-                StorageMetadata remoteMetadata = taskMetadata.Result;
+            StorageReference storageReference = CloudStorage.GetReferenceFromUrl(filePathRemote);
+
+            if (!File.Exists(filePathLocal))
+            {
+                OnEnsureFileCacheUpdate("EnsureFileCached: File is not cached", storageReference, filePathRemote, filePathLocal, callback);
+                return;
+            }
+
+            //Debug.Log("EnsureFileCached: +GetMetadataAsync()");
+            storageReference.GetMetadataAsync().ContinueWith((taskMetadata) =>
+            {
+                //Debug.Log("EnsureFileCached: -GetMetadataAsync()");
+
+                bool isSuccess = !(taskMetadata.IsFaulted || taskMetadata.IsCanceled);
+
+                DateTime lastUpdatedRemote;
+                long sizeBytes;
+                if (isSuccess)
+                {
+                    StorageMetadata remoteMetadata = taskMetadata.Result;
+                    lastUpdatedRemote = remoteMetadata.UpdatedTimeMillis;
+                    sizeBytes = remoteMetadata.SizeBytes;
+                }
+                else
+                {
+                    lastUpdatedRemote = DateTime.MinValue;
+                    sizeBytes = -1;
+                }
 
                 string message;
 
                 DateTime lastUpdatedLocal;
+                // Double check that the file didn't disappear during GetMetadataAsync
                 if (File.Exists(filePathLocal))
                 {
-                    lastUpdatedLocal = File.GetLastWriteTime(filePathLocal);
-
-                    DateTime lastUpdatedRemote = remoteMetadata.UpdatedTimeMillis;
-
-                    if (lastUpdatedLocal >= lastUpdatedRemote)
+                    if (isSuccess)
                     {
-                        Debug.Log("EnsureFileCached: File is cached and up to date");
-                        callback(filePathLocal);
+                        lastUpdatedLocal = File.GetLastWriteTime(filePathLocal);
+                        if (lastUpdatedLocal >= lastUpdatedRemote)
+                        {
+                            OnEnsureFileCached("EnsureFileCached: File is cached and up to date",
+                                               filePathLocal, callback);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        OnEnsureFileCached("EnsureFileCached: Failed to get date on filePathRemote:" + Utils.Quote(filePathRemote),
+                                           filePathLocal, callback);
                         return;
                     }
 
@@ -94,43 +149,81 @@ namespace FleetVieweR
                 else
                 {
                     message = "EnsureFileCached: File is not cached";
-
-                    string filePathLocalDirectoryName = Path.GetDirectoryName(filePathLocal);
-                    if (!Directory.Exists(filePathLocalDirectoryName))
-                    {
-                        Directory.CreateDirectory(filePathLocalDirectoryName);
-                    }
                 }
-                message += "; Downloading " + filePathRemote + " to " + filePathLocal;
-                Debug.Log(message);
 
-                long sizeBytes = remoteMetadata.SizeBytes;
-
-                storageReference
-                    .GetFileAsync(filePathLocal, new StorageProgress<DownloadState>(state =>
-                    {
-                        Debug.Log(String.Format("EnsureFileCached: Progress: {0} of {1} bytes transferred.",
-                                                state.BytesTransferred, sizeBytes));
-                    }), CancellationToken.None)
-                    .ContinueWith(taskDownload =>
-                    {
-                        if (taskDownload.IsFaulted)
-                        {
-                            Debug.LogError("Download error");
-                            filePathLocal = null;
-                        }
-                        else if (taskDownload.IsCanceled)
-                        {
-                            Debug.LogWarning("Download canceled");
-                            filePathLocal = null;
-                        }
-                        else
-                        {
-                            Debug.Log("Download finished");
-                        }
-                        callback(filePathLocal);
-                    });
+                OnEnsureFileCacheUpdate(message, storageReference, filePathRemote, filePathLocal, callback, sizeBytes);
             });
         }
+
+        private static void OnEnsureFileCacheUpdate(string message,
+                                                    StorageReference storageReference,
+                                                    string filePathRemote,
+                                                    string filePathLocal,
+                                                    EnsureFileCachedCallback callback,
+                                                    long sizeBytes = -1)
+        {
+            Debug.Log(message + "; Downloading " + filePathRemote + " to " + filePathLocal);
+            GetFileAsync(storageReference, filePathLocal, (ignoreA, ignoreB) =>
+            {
+                OnEnsureFileCached(null, filePathLocal, callback);
+            }, sizeBytes);
+        }
+
+        private static void OnEnsureFileCached(string message, string filePathLocal, EnsureFileCachedCallback callback)
+        {
+            if (!String.IsNullOrEmpty(message))
+            {
+                Debug.Log(message);
+            }
+            if (!File.Exists(filePathLocal))
+            {
+                filePathLocal = null;
+            }
+            callback(filePathLocal);
+        }
+
+        public delegate void GetFileAsyncCallback(string filePathRemote, string filePathLocal);
+
+        private static void GetFileAsync(StorageReference storageReference, string filePathLocal, GetFileAsyncCallback callback, long sizeBytes = -1)
+        {
+            StorageProgress<DownloadState> progressListener = new StorageProgress<DownloadState>((state) =>
+            {
+                string message = String.Format("GetFileAsync: Progress: {0}", state.BytesTransferred);
+                if (sizeBytes > 0)
+                {
+                    message += String.Format(" of {0}", sizeBytes);
+                }
+                message += " bytes transferred.";
+                Debug.Log(message);
+            });
+
+            string filePathLocalDirectoryName = Path.GetDirectoryName(filePathLocal);
+            if (!Directory.Exists(filePathLocalDirectoryName))
+            {
+                Directory.CreateDirectory(filePathLocalDirectoryName);
+            }
+
+            storageReference
+                .GetFileAsync(filePathLocal, progressListener, CancellationToken.None)
+                .ContinueWith((taskDownload) =>
+            {
+                    if (taskDownload.IsFaulted)
+                    {
+                        Debug.LogError("Download error");
+                        filePathLocal = null;
+                    }
+                    else if (taskDownload.IsCanceled)
+                    {
+                        Debug.LogWarning("Download canceled");
+                        filePathLocal = null;
+                    }
+                    else
+                    {
+                        Debug.Log("Download finished");
+                    }
+                    callback(storageReference.Path, filePathLocal);
+                });
+        }
+
     }
 }

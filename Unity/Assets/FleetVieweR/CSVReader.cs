@@ -93,7 +93,7 @@ namespace FleetVieweR
 
         public static List<T> ParseText<T>(StringReader reader, OnKeyValue<T> callback) where T : class
         {
-            Debug.Log("CSVReader.ParseText(reader:" + reader + ", ...");
+            //Debug.Log("CSVReader.ParseText(reader:" + reader + ", ...");
 
             CSVInfo<T> csvInfo = new CSVInfo<T>();
 
