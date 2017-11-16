@@ -19,41 +19,41 @@ namespace FleetVieweR
             LaunchVrHomeButton.SetActive(false);
             */
 #else
-        GvrDaydreamApi.CreateAsync((success) =>
-        {
-            if (!success)
+            GvrDaydreamApi.CreateAsync((success) =>
             {
-                // Unexpected. See GvrDaydreamApi log messages for details.
-                Debug.LogError("GvrDaydreamApi.CreateAsync() failed");
-              }
-        });
+                if (!success)
+                {
+                    // Unexpected. See GvrDaydreamApi log messages for details.
+                    Debug.LogError("GvrDaydreamApi.CreateAsync() failed");
+                  }
+            });
 #endif  // !UNITY_ANDROID || UNITY_EDITOR
         }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-    void Update()
-    {
-        /*
-        if (LaunchVrHomeButton == null || FleetInputManager == null)
+        void Update()
         {
-            return;
+            /*
+            if (LaunchVrHomeButton == null || FleetInputManager == null)
+            {
+                return;
+            }
+            LaunchVrHomeButton.SetActive(FleetInputManager.IsCurrentlyDaydream());
+            */
         }
-        LaunchVrHomeButton.SetActive(FleetInputManager.IsCurrentlyDaydream());
-        */
-    }
 #endif  // UNITY_ANDROID && !UNITY_EDITOR
 
         public void LaunchVrHome()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        GvrDaydreamApi.LaunchVrHomeAsync((success) =>
-        {
-            if (!success)
+            GvrDaydreamApi.LaunchVrHomeAsync((success) =>
             {
-                // Unexpected. See GvrDaydreamApi log messages for details.
-                Debug.LogError("GvrDaydreamApi.LaunchVrHomeAsync() failed");
-            }
-        });
+                if (!success)
+                {
+                    // Unexpected. See GvrDaydreamApi log messages for details.
+                    Debug.LogError("GvrDaydreamApi.LaunchVrHomeAsync() failed");
+                }
+            });
 #endif  // UNITY_ANDROID && !UNITY_EDITOR
         }
     }
