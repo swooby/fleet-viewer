@@ -16,19 +16,28 @@ namespace FleetVieweR
         public GameObject ModelsRoot;
         [Tooltip("Reference to GvrControllerPointer")]
         public GameObject GvrControllerPointer;
+        [Tooltip("Reference to Unselectedable Game Objects")]
+        public GameObject[] UnselectableGameObjects;
 
         void Awake()
         {
+            List<GameObject> selectionMask = GvrControllerPointer.GetAllChildren();
+
             if (GvrControllerPointer != null)
             {
 #if UNITY_ANDROID // TODO:(pv) Better way to runtime detect Daydream/Cardboard?
                 InputDeviceGvrController inputDeviceGvrController = new InputDeviceGvrController();
                 InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
 #endif
-                List<GameObject> selectionMask = GvrControllerPointer.GetAllChildren();
                 selectionMask.Add(GvrControllerPointer);
-                EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
             }
+
+            foreach (GameObject gameObject in UnselectableGameObjects)
+            {
+                selectionMask.Add(gameObject);
+            }
+
+            EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
 
             EditorObjectSelection.Instance.SelectionChanged += EditorObjectSelection_OnSelectionChanged;
             EditorGizmoSystem.Instance.TranslationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
