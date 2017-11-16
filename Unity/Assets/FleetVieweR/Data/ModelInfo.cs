@@ -6,6 +6,8 @@ namespace FleetVieweR
 {
     public class ModelInfo
     {
+        private const string TAG = "ModelInfo";
+
         public const bool VERBOSE_LOG = false;
 
         public const string FIELD_NAME = "Name";
@@ -126,7 +128,10 @@ namespace FleetVieweR
         {
             try
             {
-                Debug.Log("+ModelInfo.LoadModelCoroutine(callback:" + callback + ")");
+                if (VERBOSE_LOG)
+                {
+                    Debug.Log(TAG + " +LoadModelAsync(callback:" + callback + ")");
+                }
 
                 if (cachedModel == null)
                 {
@@ -136,7 +141,7 @@ namespace FleetVieweR
                     {
                         if (VERBOSE_LOG)
                         {
-                            Debug.LogError("ModelInfo.LoadModelCoroutine: Non-Cached Load: ModelFactory.LoadModelAsync(...)");
+                            Debug.LogError(TAG + " LoadModelAsync: Non-Cached Load: ModelFactory.LoadModelAsync(...)");
                         }
 
                         DateTime timeLoadStart = DateTime.Now;
@@ -144,13 +149,16 @@ namespace FleetVieweR
                         {
                             if (VERBOSE_LOG)
                             {
-                                Debug.LogError("ModelInfo.LoadModelCoroutine: ModelFactory.LoadModelAsync completed");
+                                Debug.LogError(TAG + " LoadModelAsync: ModelFactory.LoadModelAsync completed");
                             }
 
                             DateTime timeLoadStop = DateTime.Now;
                             TimeSpan duration = timeLoadStop.Subtract(timeLoadStart);
                             string durationString = Utils.ToString(duration);
-                            Debug.Log("ModelInfo.LoadModelCoroutine: ModelFactory.LoadModelAsync Took " + durationString);
+                            if (VERBOSE_LOG)
+                            {
+                                Debug.Log(TAG + " LoadModelAsync: ModelFactory.LoadModelAsync Took " + durationString);
+                            }
 
                             if (model != null)
                             {
@@ -175,7 +183,7 @@ namespace FleetVieweR
                     {
                         if (VERBOSE_LOG)
                         {
-                            Debug.LogError("ModelInfo.LoadModelAsync: ModelFactory.LoadModelAsync already in progress");
+                            Debug.LogError(TAG + " LoadModelAsync: ModelFactory.LoadModelAsync already in progress");
                         }
                     }
 
@@ -184,7 +192,7 @@ namespace FleetVieweR
 
                 if (VERBOSE_LOG)
                 {
-                    Debug.LogError("ModelInfo.LoadModelAsync: Cached Load");
+                    Debug.LogError(TAG + " LoadModelAsync: Cached Load");
                 }
 
                 GameObject loadedModel = OnModelLoaded(cachedModel);
@@ -193,13 +201,19 @@ namespace FleetVieweR
             }
             finally
             {
-                Debug.Log("-ModelInfo.LoadModelAsync(callback:" + callback + ")");
+                if (VERBOSE_LOG)
+                {
+                    Debug.Log(TAG + " -LoadModelAsync(callback:" + callback + ")");
+                }
             }
         }
 
         private GameObject OnModelLoaded(GameObject model)
         {
-            Debug.Log("+ModelInfo.OnModelLoaded(model:" + model + ")");
+            if (VERBOSE_LOG)
+            {
+                Debug.Log(TAG + " +OnModelLoaded(model:" + model + ")");
+            }
 
             if (cachedModel == null)
             {
@@ -217,14 +231,17 @@ namespace FleetVieweR
             {
                 Transform transform = model.transform;
                 Bounds bounds = Utils.CalculateBounds(transform);
-                Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.position == " + transform.position);
-                Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD transform.rotation == " + transform.rotation);
-                Debug.LogError("ModelInfo.ModelLoad: AFTER LOAD bounds == " + Utils.ToString(bounds));
+                Debug.LogError(TAG + " ModelLoad: AFTER LOAD transform.position == " + transform.position);
+                Debug.LogError(TAG + " ModelLoad: AFTER LOAD transform.rotation == " + transform.rotation);
+                Debug.LogError(TAG + " ModelLoad: AFTER LOAD bounds == " + Utils.ToString(bounds));
             }
 
             Normalize(model);
 
-            Debug.Log("-ModelInfo.OnModelLoaded(model:" + model + ")");
+            if (VERBOSE_LOG)
+            {
+                Debug.Log(TAG + " -OnModelLoaded(model:" + model + ")");
+            }
 
             return model;
         }
@@ -247,8 +264,8 @@ namespace FleetVieweR
 
             if (VERBOSE_LOG)
             {
-                Debug.LogError("ModelInfo.Normalize: gameObject.transform.position == " + model.transform.position);
-                Debug.LogError("ModelInfo.Normalize: gameObject.transform.rotation == " + model.transform.rotation);
+                Debug.LogError(TAG + " Normalize: gameObject.transform.position == " + model.transform.position);
+                Debug.LogError(TAG + " Normalize: gameObject.transform.rotation == " + model.transform.rotation);
             }
 
             return model;
@@ -256,7 +273,7 @@ namespace FleetVieweR
 
         private static void Decorate(GameObject model)
         {
-            //Debug.Log("ModelInfo.Decorate(model)");
+            //Debug.Log(TAG + " Decorate(model)");
 
             Transform transform = model.transform;
 

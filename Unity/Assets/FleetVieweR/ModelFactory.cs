@@ -12,6 +12,8 @@ namespace FleetVieweR
     /// </summary>
     public class ModelFactory
     {
+        private const string TAG = "ModelFactory";
+
         public const bool VERBOSE_LOG = false;
 
         private ModelFactory()
@@ -43,8 +45,11 @@ namespace FleetVieweR
 
         public static void LoadModelAsync(string modelPath, LoadModelCallback callback)
         {
-            Debug.Log("+ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
-                       ", callback:" + callback + ")");
+            if (VERBOSE_LOG)
+            {
+                Debug.Log(TAG + " +ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
+                           ", callback:" + callback + ")");
+            }
 
             GameObject cachedModel = GetCachedModel(modelPath);
             if (cachedModel == null)
@@ -65,13 +70,13 @@ namespace FleetVieweR
                         {
                             if (VERBOSE_LOG)
                             {
-                                Debug.LogError("ModelFactory.LoadModelAsync: Non-Cached Load: CTMReader.LoadAsync(...)");
+                                Debug.LogError(TAG + " ModelFactory.LoadModelAsync: Non-Cached Load: CTMReader.LoadAsync(...)");
                             }
                             InternalLoadModelAsync(modelPath, (model) =>
                             {
                                 if (VERBOSE_LOG)
                                 {
-                                    Debug.LogError("ModelFactory.LoadModelAsync: Non-Cached Load completed; model:" + model);
+                                    Debug.LogError(TAG + " ModelFactory.LoadModelAsync: Non-Cached Load completed; model:" + model);
                                 }
                                 if (model == null)
                                 {
@@ -104,7 +109,7 @@ namespace FleetVieweR
                         {
                             if (VERBOSE_LOG)
                             {
-                                Debug.LogError("ModelFactory.LoadModelAsync: Non-Cached Load already in progress");
+                                Debug.LogError(TAG + " ModelFactory.LoadModelAsync: Non-Cached Load already in progress");
                             }
                         }
 
@@ -115,15 +120,18 @@ namespace FleetVieweR
 
             if (VERBOSE_LOG)
             {
-                Debug.LogError("ModelFactory.LoadModelAsync: Cached Load");
+                Debug.LogError(TAG + " ModelFactory.LoadModelAsync: Cached Load");
             }
 
             GameObject loadedModel = OnModelLoaded(modelPath, cachedModel);
 
             callback(loadedModel);
 
-            Debug.Log("-ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
-                      ", callback:" + callback + ")");
+            if (VERBOSE_LOG)
+            {
+                Debug.Log(TAG + " -ModelFactory.LoadModelAsync(modelPath:" + Utils.Quote(modelPath) +
+                          ", callback:" + callback + ")");
+            }
         }
 
         private static void InternalLoadModelAsync(string modelPath, CTMReader.LoadCallback callback)
@@ -132,12 +140,18 @@ namespace FleetVieweR
             {
                 if (String.IsNullOrEmpty(cachedPath))
                 {
-                    Debug.Log("EnsureFileCached: not cached; trying local resource");
+                    if (VERBOSE_LOG)
+                    {
+                        Debug.Log(TAG + " EnsureFileCached: " + Utils.Quote(modelPath) + " not cached; trying local resource");
+                    }
                     CTMReader.LoadResourceAsync(modelPath, callback);
                 }
                 else
                 {
-                    Debug.Log("EnsureFileCached: cached; loading cached file");
+                    if (VERBOSE_LOG)
+                    {
+                        Debug.Log(TAG + " EnsureFileCached: " + Utils.Quote(modelPath) + " cached; loading cached file");
+                    }
                     CTMReader.LoadFileAsync(cachedPath, callback);
                 }
             });
@@ -161,16 +175,21 @@ namespace FleetVieweR
                 return;
             }
 
+            // TODO:(pv) Load LOD names from touched single index file to potentially void hitting Firebase to check each LOD file
+
             filename = filename.Substring(0, filename.Length - 1) + lod;
 
             string resourcePath = directory + "/" + filename + ext;
-            Debug.Log("ModelFactory.LoadModelLodAsync: resourcePath:" + Utils.Quote(resourcePath));
+            if (VERBOSE_LOG)
+            {
+                Debug.Log("ModelFactory.LoadModelLodAsync: resourcePath:" + Utils.Quote(resourcePath));
+            }
 
             InternalLoadModelAsync(resourcePath, (model) =>
             {
                 if (VERBOSE_LOG)
                 {
-                    Debug.LogError("ModelFactory.LoadModelLodAsync: CTMReader.LoadAsync completed; model:" + model);
+                    Debug.LogError(TAG + " ModelFactory.LoadModelLodAsync: CTMReader.LoadAsync completed; model:" + model);
                 }
                 if (model == null)
                 {
@@ -193,7 +212,7 @@ namespace FleetVieweR
             int lodCount = lodModels.Count;
 
             LOD[] lods = new LOD[lodCount];
-            //Debug.LogError("ModelFactory.AddLod: lods:" + lods);
+            //Debug.LogError(TAG + " ModelFactory.AddLod: lods:" + lods);
 
             int i = 0;
             float screenRelativeTransitionHeight = 1.0f;
@@ -223,8 +242,11 @@ namespace FleetVieweR
 
         private static GameObject OnModelLoaded(string modelPath, GameObject model)
         {
-            Debug.Log("+ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
-                      ", model:" + model + ")");
+            if (VERBOSE_LOG)
+            {
+                Debug.Log(TAG + " +ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
+                          ", model:" + model + ")");
+            }
 
             GameObject cachedModel = GetCachedModel(modelPath);
             if (cachedModel == null)
@@ -239,8 +261,11 @@ namespace FleetVieweR
                 model.transform.localScale = Vector3.one;
             }
 
-            Debug.Log("-ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
-                      ", model:" + model + ")");
+            if (VERBOSE_LOG)
+            {
+                Debug.Log(TAG + " -ModelFactory.OnModelLoaded(modelPath:" + Utils.Quote(modelPath) +
+                          ", model:" + model + ")");
+            }
 
             return model;
         }

@@ -746,6 +746,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModelsRoot: {fileID: 1675460961}
   GvrControllerPointer: {fileID: 114469903}
+  UnselectableGameObjects:
+  - {fileID: 1599096818}
 --- !u!114 &525024763
 MonoBehaviour:
   m_ObjectHideFlags: 0

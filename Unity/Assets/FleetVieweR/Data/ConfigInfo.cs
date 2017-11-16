@@ -11,6 +11,10 @@ namespace FleetVieweR
 {
     public class ConfigInfo
     {
+        private const string TAG = "ConfigInfo";
+
+        private const bool VERBOSE_LOG = false;
+
         private const string FIREBASE_BUCKET = "gs://swooby-fleet-viewer.appspot.com";
 
         private const string FLEET_VIEWER_SYSTEMS_CSV = "Fleet VieweR - Systems.csv";
@@ -60,7 +64,7 @@ namespace FleetVieweR
                 CSVReader.ParseText<ModelInfo>(text, (dictionary) =>
                 {
                     ModelInfo modelInfo = new ModelInfo(dictionary);
-                    //Debug.Log("modelInfo.Name:" + Utils.Quote(modelInfo.Name));
+                    //Debug.Log(TAG + " GetModelInfos: modelInfo.Name:" + Utils.Quote(modelInfo.Name));
                     modelInfos[modelInfo.Name] = modelInfo;
                     return null;
                 });
@@ -73,18 +77,21 @@ namespace FleetVieweR
 
         public static void EnsureFileCached(string filePath, EnsureFileCachedCallback callback)
         {
-            Debug.Log("EnsureFileCached(filePath:" + Utils.Quote(filePath) + ", ...)");
+            if (VERBOSE_LOG)
+            {
+                Debug.Log(TAG + " EnsureFileCached(filePath:" + Utils.Quote(filePath) + ", ...)");
+            }
 
             // Android: 
             //   MacOS: ~/Library/Application Support/swooby_com/Fleet VieweR
             // Windows:
             string applicationPersistentDataPath = Application.persistentDataPath;
-            Debug.Log("EnsureFileCached: applicationPersistentDataPath:" + applicationPersistentDataPath);
+            //Debug.Log(TAG + " EnsureFileCached: applicationPersistentDataPath:" + applicationPersistentDataPath);
             string filePathLocal = Path.Combine(applicationPersistentDataPath, filePath);
             string filePathRemote = FIREBASE_BUCKET + '/' + filePath;
 
             NetworkReachability internetReachability = Application.internetReachability;
-            //Debug.Log("EnsureFileCached: internetReachability:" + internetReachability);
+            //Debug.Log(TAG + " EnsureFileCached: internetReachability:" + internetReachability);
             // TODO:(pv) Timeout the below GetMetadataAsync since it does not automatically abort if the internet becomes unreachable after this check
             if (internetReachability == NetworkReachability.NotReachable)
             {
@@ -96,14 +103,14 @@ namespace FleetVieweR
 
             if (!File.Exists(filePathLocal))
             {
-                OnEnsureFileCacheUpdate("EnsureFileCached: File is not cached", storageReference, filePathRemote, filePathLocal, callback);
+                OnEnsureFileCaching("EnsureFileCached: File is not cached", storageReference, filePathRemote, filePathLocal, callback);
                 return;
             }
 
-            //Debug.Log("EnsureFileCached: +GetMetadataAsync()");
+            //Debug.Log(TAG + " EnsureFileCached: +GetMetadataAsync()");
             storageReference.GetMetadataAsync().ContinueWith((taskMetadata) =>
             {
-                //Debug.Log("EnsureFileCached: -GetMetadataAsync()");
+                //Debug.Log(TAG + " EnsureFileCached: -GetMetadataAsync()");
 
                 bool isSuccess = !(taskMetadata.IsFaulted || taskMetadata.IsCanceled);
 
@@ -132,14 +139,14 @@ namespace FleetVieweR
                         lastUpdatedLocal = File.GetLastWriteTime(filePathLocal);
                         if (lastUpdatedLocal >= lastUpdatedRemote)
                         {
-                            OnEnsureFileCached("EnsureFileCached: File is cached and up to date",
+                            OnEnsureFileCached(TAG + " EnsureFileCached: File is cached and up to date",
                                                filePathLocal, callback);
                             return;
                         }
                     }
                     else
                     {
-                        OnEnsureFileCached("EnsureFileCached: Failed to get date on filePathRemote:" + Utils.Quote(filePathRemote),
+                        OnEnsureFileCached(TAG + " EnsureFileCached: Failed to get date on filePathRemote:" + Utils.Quote(filePathRemote),
                                            filePathLocal, callback);
                         return;
                     }
@@ -151,18 +158,18 @@ namespace FleetVieweR
                     message = "EnsureFileCached: File is not cached";
                 }
 
-                OnEnsureFileCacheUpdate(message, storageReference, filePathRemote, filePathLocal, callback, sizeBytes);
+                OnEnsureFileCaching(message, storageReference, filePathRemote, filePathLocal, callback, sizeBytes);
             });
         }
 
-        private static void OnEnsureFileCacheUpdate(string message,
+        private static void OnEnsureFileCaching(string message,
                                                     StorageReference storageReference,
                                                     string filePathRemote,
                                                     string filePathLocal,
                                                     EnsureFileCachedCallback callback,
                                                     long sizeBytes = -1)
         {
-            Debug.Log(message + "; Downloading " + filePathRemote + " to " + filePathLocal);
+            Debug.Log(TAG + " " + message + "; Downloading " + filePathRemote + " to " + filePathLocal);
             GetFileAsync(storageReference, filePathLocal, (ignoreA, ignoreB) =>
             {
                 OnEnsureFileCached(null, filePathLocal, callback);
@@ -171,7 +178,7 @@ namespace FleetVieweR
 
         private static void OnEnsureFileCached(string message, string filePathLocal, EnsureFileCachedCallback callback)
         {
-            if (!String.IsNullOrEmpty(message))
+            if (VERBOSE_LOG && !String.IsNullOrEmpty(message))
             {
                 Debug.Log(message);
             }
@@ -188,7 +195,7 @@ namespace FleetVieweR
         {
             StorageProgress<DownloadState> progressListener = new StorageProgress<DownloadState>((state) =>
             {
-                string message = String.Format("GetFileAsync: Progress: {0}", state.BytesTransferred);
+                string message = String.Format(TAG + " GetFileAsync: Progress: {0}", state.BytesTransferred);
                 if (sizeBytes > 0)
                 {
                     message += String.Format(" of {0}", sizeBytes);
@@ -207,22 +214,22 @@ namespace FleetVieweR
                 .GetFileAsync(filePathLocal, progressListener, CancellationToken.None)
                 .ContinueWith((taskDownload) =>
             {
-                    if (taskDownload.IsFaulted)
-                    {
-                        Debug.LogError("Download error");
-                        filePathLocal = null;
-                    }
-                    else if (taskDownload.IsCanceled)
-                    {
-                        Debug.LogWarning("Download canceled");
-                        filePathLocal = null;
-                    }
-                    else
-                    {
-                        Debug.Log("Download finished");
-                    }
-                    callback(storageReference.Path, filePathLocal);
-                });
+                if (taskDownload.IsFaulted)
+                {
+                    Debug.LogError(TAG + " GetFileAsync: Download error");
+                    filePathLocal = null;
+                }
+                else if (taskDownload.IsCanceled)
+                {
+                    Debug.LogWarning(TAG + " GetFileAsync: Download canceled");
+                    filePathLocal = null;
+                }
+                else
+                {
+                    Debug.Log(TAG + " GetFileAsync: Download finished");
+                }
+                callback(storageReference.Path, filePathLocal);
+            });
         }
 
     }

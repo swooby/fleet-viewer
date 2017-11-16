@@ -711,7 +711,7 @@ namespace FleetVieweR
                     return;
                 }
 
-                Debug.Log("Attempting to set SystemName = " + Utils.Quote(value));
+                //Debug.Log("Attempting to set SystemName = " + Utils.Quote(value));
                 ConfigInfo.GetSystemInfos((systemInfos) =>
                 {
                     SystemInfo systemInfo;

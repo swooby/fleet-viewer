@@ -10,6 +10,8 @@ namespace FleetVieweR
 {
     public class CSVReader
     {
+        private const string TAG = "CSVReader";
+
         private CSVReader()
         {
         }
@@ -72,7 +74,7 @@ namespace FleetVieweR
 
         public static List<T> ParseResource<T>(string resourcePath, OnKeyValue<T> callback) where T : class
         {
-            Debug.Log("CSVReader.ParseResource(resourcePath:" + Utils.Quote(resourcePath) + ", ...");
+            //Debug.Log(TAG + " ParseResource(resourcePath:" + Utils.Quote(resourcePath) + ", ...");
             TextAsset data = Resources.Load(resourcePath) as TextAsset;
             return ParseText(data, callback);
         }
@@ -84,7 +86,7 @@ namespace FleetVieweR
 
         public static List<T> ParseText<T>(string text, OnKeyValue<T> callback) where T : class
         {
-            //Debug.Log("CSVReader.ParseText(text:" + Utils.Quote(text) + ", ...");
+            //Debug.Log(TAG + " ParseText(text:" + Utils.Quote(text) + ", ...");
             using (StringReader reader = new StringReader(text))
             {
                 return ParseText(reader, callback);
@@ -93,7 +95,7 @@ namespace FleetVieweR
 
         public static List<T> ParseText<T>(StringReader reader, OnKeyValue<T> callback) where T : class
         {
-            //Debug.Log("CSVReader.ParseText(reader:" + reader + ", ...");
+            //Debug.Log(TAG + " ParseText(reader:" + reader + ", ...");
 
             CSVInfo<T> csvInfo = new CSVInfo<T>();
 
