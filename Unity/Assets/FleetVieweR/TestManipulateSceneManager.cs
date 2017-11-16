@@ -12,7 +12,7 @@ namespace FleetVieweR
 {
     public class TestManipulateSceneManager : MonoBehaviour
     {
-        private const string TAG = "TestManipulateSceneManager";
+        private static readonly string TAG = Utils.TAG<TestManipulateSceneManager>();
 
         public const bool VERBOSE_LOG = false;
 

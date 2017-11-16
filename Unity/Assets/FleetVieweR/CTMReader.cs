@@ -38,7 +38,7 @@ namespace FleetVieweR
     /// </summary>
     public class CTMReader
     {
-        private const string TAG = "CTMReader";
+        private static readonly string TAG = Utils.TAG<CTMReader>();
 
         public const bool VERBOSE_LOG = false;
 

@@ -6,7 +6,7 @@ namespace FleetVieweR
 {
     public class ModelInfo
     {
-        private const string TAG = "ModelInfo";
+        private static readonly string TAG = Utils.TAG<ModelInfo>();
 
         public const bool VERBOSE_LOG = false;
 

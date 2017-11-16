@@ -10,7 +10,7 @@ namespace FleetVieweR
 {
     public class CSVReader
     {
-        private const string TAG = "CSVReader";
+        private static readonly string TAG = Utils.TAG<CSVReader>();
 
         private CSVReader()
         {

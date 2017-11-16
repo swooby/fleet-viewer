@@ -12,7 +12,7 @@ namespace FleetVieweR
     /// </summary>
     public class ModelFactory
     {
-        private const string TAG = "ModelFactory";
+        private static readonly string TAG = Utils.TAG<ModelFactory>();
 
         public const bool VERBOSE_LOG = false;
 

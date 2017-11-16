@@ -11,7 +11,7 @@ namespace FleetVieweR
 {
     public class ConfigInfo
     {
-        private const string TAG = "ConfigInfo";
+        private static readonly string TAG = Utils.TAG<ConfigInfo>();
 
         private const bool VERBOSE_LOG = false;
 
