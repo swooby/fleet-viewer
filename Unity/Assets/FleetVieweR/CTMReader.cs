@@ -100,7 +100,7 @@ namespace FleetVieweR
 
         public static GameObject LoadResource(string resourcePath)
         {
-            Debug.Log((TAG + " LoadResource(resourcePath:" + Utils.Quote(resourcePath) + ")");
+            Debug.Log(TAG + " LoadResource(resourcePath:" + Utils.Quote(resourcePath) + ")");
             MemoryStream stream = GetResourcePathByteStream(resourcePath);
             MeshInfo[] meshInfos = GetMeshInfos(stream);
             return GetGameObject(meshInfos);
@@ -113,7 +113,7 @@ namespace FleetVieweR
         {
             if (VERBOSE_LOG)
             {
-                Debug.Log((TAG + " LoadResourceAsync(resourcePath:" + Utils.Quote(resourcePath) +
+                Debug.Log(TAG + " LoadResourceAsync(resourcePath:" + Utils.Quote(resourcePath) +
                           ", callback:" + callback + ")");
             }
             MemoryStream stream = GetResourcePathByteStream(resourcePath);
@@ -124,7 +124,7 @@ namespace FleetVieweR
         {
             if (VERBOSE_LOG)
             {
-                Debug.Log((TAG + " LoadFileAsync(filePath:" + Utils.Quote(filePath) +
+                Debug.Log(TAG + " LoadFileAsync(filePath:" + Utils.Quote(filePath) +
                           ", callback:" + callback + ")");
             }
             FileStream fileStream = new FileStream(filePath, FileMode.Open);
@@ -137,7 +137,7 @@ namespace FleetVieweR
         {
             if (VERBOSE_LOG)
             {
-                Debug.Log((TAG + " LoadAsync(stream, callback");
+                Debug.Log(TAG + " LoadAsync(stream, callback");
             }
             IAsyncResult asyncResult = new GetMeshInfosCaller(GetMeshInfos)
                 .BeginInvoke(stream, OnGetMeshInfos, callback);
@@ -174,23 +174,23 @@ namespace FleetVieweR
 
             if (VERBOSE_LOG)
             {
-                Debug.LogWarning((TAG + " GetMeshInfos: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
+                Debug.LogWarning(TAG + " GetMeshInfos: MAX_TRIANGLES_PER_MESH == " + MAX_TRIANGLES_PER_MESH);
             }
 
-            //Debug.Log((TAG + " GetMeshInfos: new CtmFileReader(memoryStream)");
+            //Debug.Log(TAG + " GetMeshInfos: new CtmFileReader(memoryStream)");
             CtmFileReader reader = new CtmFileReader(stream);
-            //Debug.Log((TAG + " GetMeshInfos: reader.decode()");
+            //Debug.Log(TAG + " GetMeshInfos: reader.decode()");
             OpenCTM.Mesh ctmMesh = reader.decode();
 
             if (VERBOSE_LOG)
             {
-                Debug.LogWarning((TAG + " GetMeshInfos: BEGIN Converting OpenCTM.Mesh to UnityEngine.Mesh...");
+                Debug.LogWarning(TAG + " GetMeshInfos: BEGIN Converting OpenCTM.Mesh to UnityEngine.Mesh...");
             }
 
             int verticesLength = ctmMesh.vertices.Length;
-            //Debug.LogError((TAG + " GetMeshInfos: ctmMesh.vertices.Length == " + verticesLength);
+            //Debug.LogError(TAG + " GetMeshInfos: ctmMesh.vertices.Length == " + verticesLength);
             //int numVectors = verticesLength / 3;
-            //Debug.LogError((TAG + " GetMeshInfos: numVectors == " + numVectors);
+            //Debug.LogError(TAG + " GetMeshInfos: numVectors == " + numVectors);
             List<Vector3> vertices = new List<Vector3>();
             for (int j = 0; j < verticesLength; j += 3)
             {
@@ -198,10 +198,10 @@ namespace FleetVieweR
                                          ctmMesh.vertices[j + 1],
                                          ctmMesh.vertices[j + 2]));
             }
-            //Debug.LogError((TAG + " GetMeshInfos: vertices.Count == " + vertices.Count);
+            //Debug.LogError(TAG + " GetMeshInfos: vertices.Count == " + vertices.Count);
 
             bool hasNormals = ctmMesh.normals != null;
-            //Debug.LogError((TAG + " GetMeshInfos: hasNormals == " + hasNormals);
+            //Debug.LogError(TAG + " GetMeshInfos: hasNormals == " + hasNormals);
             List<Vector3> normals = new List<Vector3>();
             if (hasNormals)
             {
@@ -212,20 +212,20 @@ namespace FleetVieweR
                                             ctmMesh.normals[j + 2]));
                 }
             }
-            //Debug.LogError((TAG + " GetMeshInfos: normals.Count == " + normals.Count);
+            //Debug.LogError(TAG + " GetMeshInfos: normals.Count == " + normals.Count);
 
             int indicesLength = ctmMesh.indices.Length;
-            //Debug.LogError((TAG + " GetMeshInfos: ctmMesh.indices.Length == " + indicesLength);
+            //Debug.LogError(TAG + " GetMeshInfos: ctmMesh.indices.Length == " + indicesLength);
             int numTriangles = indicesLength / 3;
             if (VERBOSE_LOG)
             {
-                Debug.LogWarning((TAG + " GetMeshInfos: numTriangles == " + numTriangles);
+                Debug.LogWarning(TAG + " GetMeshInfos: numTriangles == " + numTriangles);
             }
 
             //List<Vector2> uv = new List<Vector2>();
             /*
             // TODO:(pv) Texture...
-            //Debug.LogError((TAG + " GetMeshInfos: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
+            //Debug.LogError(TAG + " GetMeshInfos: ctmMesh.texcoordinates == " + ctmMesh.texcoordinates);
             if (ctmMesh.texcoordinates.Length > 0)
             {
                 for (int j = 0; j < ctmMesh.texcoordinates[0].values.Length / 2; j++)
@@ -235,12 +235,12 @@ namespace FleetVieweR
                 }
             }
             */
-            //Debug.LogError((TAG + " GetMeshInfos: uv.Count == " + uv.Count);
+            //Debug.LogError(TAG + " GetMeshInfos: uv.Count == " + uv.Count);
 
             int meshCount = (int)Math.Ceiling((double)(numTriangles / (double)MAX_TRIANGLES_PER_MESH));
             if (VERBOSE_LOG)
             {
-                Debug.LogWarning((TAG + " GetMeshInfos: meshCount == " + meshCount);
+                Debug.LogWarning(TAG + " GetMeshInfos: meshCount == " + meshCount);
             }
             MeshInfo[] meshInfos = new MeshInfo[meshCount];
 
@@ -262,13 +262,13 @@ namespace FleetVieweR
             {
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: triangleIndex:" + triangleIndex);
+                    Debug.LogError(TAG + " GetMeshInfos: triangleIndex:" + triangleIndex);
                 }
 
                 meshIndex = triangleIndex / MAX_TRIANGLES_PER_MESH;
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: meshIndex:" + meshIndex);
+                    Debug.LogError(TAG + " GetMeshInfos: meshIndex:" + meshIndex);
                 }
 
                 meshInfo = meshInfos[meshIndex];
@@ -276,7 +276,7 @@ namespace FleetVieweR
                 {
                     if (triangleIndex >= debugTriangleIndex)
                     {
-                        Debug.LogError((TAG + " GetMeshInfos: meshInfos[" + meshIndex + "] = new MeshInfo();");
+                        Debug.LogError(TAG + " GetMeshInfos: meshInfos[" + meshIndex + "] = new MeshInfo();");
                     }
                     meshInfo = new MeshInfo();
                     meshInfos[meshIndex] = meshInfo;
@@ -284,25 +284,25 @@ namespace FleetVieweR
 
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: meshInfo:" + meshInfo);
+                    Debug.LogError(TAG + " GetMeshInfos: meshInfo:" + meshInfo);
                 }
 
                 indicesIndex = triangleIndex * 3;
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: indicesIndex:" + indicesIndex);
+                    Debug.LogError(TAG + " GetMeshInfos: indicesIndex:" + indicesIndex);
                 }
 
                 triangleVertex1 = ctmMesh.indices[indicesIndex];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: triangleVertex1:" + triangleVertex1);
+                    Debug.LogError(TAG + " GetMeshInfos: triangleVertex1:" + triangleVertex1);
                 }
                 meshInfo.triangles.Add(meshInfo.vertices.Count);
                 vertex1 = vertices[triangleVertex1];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: vertex1:" + vertex1);
+                    Debug.LogError(TAG + " GetMeshInfos: vertex1:" + vertex1);
                 }
                 meshInfo.vertices.Add(vertex1);
                 if (hasNormals)
@@ -310,7 +310,7 @@ namespace FleetVieweR
                     normal1 = normals[triangleVertex1];
                     if (triangleIndex >= debugTriangleIndex)
                     {
-                        Debug.LogError((TAG + " GetMeshInfos: normal1:" + normal1);
+                        Debug.LogError(TAG + " GetMeshInfos: normal1:" + normal1);
                     }
                     meshInfo.normals.Add(normal1);
                 }
@@ -318,13 +318,13 @@ namespace FleetVieweR
                 triangleVertex2 = ctmMesh.indices[indicesIndex + 1];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: triangleVertex2:" + triangleVertex2);
+                    Debug.LogError(TAG + " GetMeshInfos: triangleVertex2:" + triangleVertex2);
                 }
                 meshInfo.triangles.Add(meshInfo.vertices.Count);
                 vertex2 = vertices[triangleVertex2];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: vertex2:" + vertex2);
+                    Debug.LogError(TAG + " GetMeshInfos: vertex2:" + vertex2);
                 }
                 meshInfo.vertices.Add(vertex2);
                 if (hasNormals)
@@ -332,7 +332,7 @@ namespace FleetVieweR
                     normal2 = normals[triangleVertex2];
                     if (triangleIndex >= debugTriangleIndex)
                     {
-                        Debug.LogError((TAG + " GetMeshInfos: normal2:" + normal2);
+                        Debug.LogError(TAG + " GetMeshInfos: normal2:" + normal2);
                     }
                     meshInfo.normals.Add(normal2);
                 }
@@ -340,13 +340,13 @@ namespace FleetVieweR
                 triangleVertex3 = ctmMesh.indices[indicesIndex + 2];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: triangleVertex3:" + triangleVertex3);
+                    Debug.LogError(TAG + " GetMeshInfos: triangleVertex3:" + triangleVertex3);
                 }
                 meshInfo.triangles.Add(meshInfo.vertices.Count);
                 vertex3 = vertices[triangleVertex3];
                 if (triangleIndex >= debugTriangleIndex)
                 {
-                    Debug.LogError((TAG + " GetMeshInfos: vertex3:" + vertex3);
+                    Debug.LogError(TAG + " GetMeshInfos: vertex3:" + vertex3);
                 }
                 meshInfo.vertices.Add(vertex3);
                 if (hasNormals)
@@ -354,7 +354,7 @@ namespace FleetVieweR
                     normal3 = normals[triangleVertex3];
                     if (triangleIndex >= debugTriangleIndex)
                     {
-                        Debug.LogError((TAG + " GetMeshInfos: normal3:" + normal3);
+                        Debug.LogError(TAG + " GetMeshInfos: normal3:" + normal3);
                     }
                     meshInfo.normals.Add(normal3);
                 }
@@ -376,7 +376,7 @@ namespace FleetVieweR
                     triangleVertexMax = triangleVertexNew;
                     if (triangleIndex >= debugTriangleIndex)
                     {
-                        Debug.LogError((TAG + " GetMeshInfos: triangleVertexMax:" + triangleVertexMax);
+                        Debug.LogError(TAG + " GetMeshInfos: triangleVertexMax:" + triangleVertexMax);
                     }
                 }
             }
@@ -401,7 +401,7 @@ namespace FleetVieweR
 
             if (VERBOSE_LOG)
             {
-                Debug.LogWarning((TAG + " GetGameObject: Creating Unity Mesh(es)");
+                Debug.LogWarning(TAG + " GetGameObject: Creating Unity Mesh(es)");
             }
 
             int meshCount = meshInfos.Length;
@@ -415,17 +415,17 @@ namespace FleetVieweR
             {
                 if (meshIndex >= debugMeshIndex)
                 {
-                    Debug.LogError((TAG + " GetGameObject: meshIndex:" + meshIndex);
+                    Debug.LogError(TAG + " GetGameObject: meshIndex:" + meshIndex);
                 }
 
                 meshInfo = meshInfos[meshIndex];
                 if (meshIndex >= debugMeshIndex)
                 {
-                    Debug.LogError((TAG + " GetGameObject: meshInfo:" + meshInfo);
-                    Debug.LogError((TAG + " GetGameObject: meshInfo.vertices.Count:" + meshInfo.vertices.Count);
-                    Debug.LogError((TAG + " GetGameObject: meshInfo.normals.Count:" + meshInfo.normals.Count);
-                    Debug.LogError((TAG + " GetGameObject: meshInfo.triangles.Count:" + meshInfo.triangles.Count);
-                    Debug.LogError((TAG + " GetGameObject: meshInfo.uv.Count:" + meshInfo.uv.Count);
+                    Debug.LogError(TAG + " GetGameObject: meshInfo:" + meshInfo);
+                    Debug.LogError(TAG + " GetGameObject: meshInfo.vertices.Count:" + meshInfo.vertices.Count);
+                    Debug.LogError(TAG + " GetGameObject: meshInfo.normals.Count:" + meshInfo.normals.Count);
+                    Debug.LogError(TAG + " GetGameObject: meshInfo.triangles.Count:" + meshInfo.triangles.Count);
+                    Debug.LogError(TAG + " GetGameObject: meshInfo.uv.Count:" + meshInfo.uv.Count);
                 }
 
                 unityMesh = meshInfo.Mesh;
@@ -464,7 +464,7 @@ namespace FleetVieweR
 
             if (VERBOSE_LOG)
             {
-                Debug.LogWarning((TAG + " GetGameObject: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
+                Debug.LogWarning(TAG + " GetGameObject: END Converting OpenCTM.Mesh to UnityEngine.Mesh");
             }
 
             return root;

@@ -15,6 +15,51 @@ namespace FleetVieweR
         {
         }
 
+        /**
+         * NOTE: android.util.Log.isLoggable(tag, level) throws IllegalArgumentException if the tag.length() > 23
+         */
+        public static string TAG<T>()
+        {
+            return TAG(typeof(T));
+        }
+
+        /**
+         * NOTE: android.util.Log.isLoggable(tag, level) throws IllegalArgumentException if the tag.length() > 23
+         */
+        public static string TAG(object o)
+        {
+            return TAG((o == null) ? null : o.GetType());
+        }
+
+        /**
+         * NOTE: android.util.Log.isLoggable(tag, level) throws IllegalArgumentException if the tag.length() > 23  
+         */
+        public static string TAG(Type c)
+        {
+            return GetShortClassName(c);
+        }
+
+        public static string GetShortClassName(string className)
+        {
+            if (String.IsNullOrEmpty(className))
+            {
+                return "null";
+            }
+            return className.Substring(className.LastIndexOf('.') + 1);
+        }
+
+        public static string GetShortClassName(System.Object o)
+        {
+            Type t = (o == null) ? null : o.GetType();
+            return GetShortClassName(t);
+        }
+
+        public static string GetShortClassName(Type c)
+        {
+            string className = (c == null) ? null : c.Name;
+            return GetShortClassName(className);
+        }
+
         public static string Quote(string value)
         {
             return value == null ? "null" : "\"" + value + "\"";
