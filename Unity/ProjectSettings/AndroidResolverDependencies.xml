@@ -1,5 +1,6 @@
 <dependencies>
   <packages>
+    <package>com.google.android.gms:play-services-auth:10+</package>
     <package>com.google.android.gms:play-services-base:11.4.2</package>
     <package>com.google.firebase:firebase-analytics:11.4.2</package>
     <package>com.google.firebase:firebase-analytics-unity:4.2.1</package>
@@ -8,6 +9,7 @@
     <package>com.google.firebase:firebase-auth-unity:4.2.1</package>
     <package>com.google.firebase:firebase-common:11.4.2</package>
     <package>com.google.firebase:firebase-core:11.4.2</package>
+    <package>com.google.signin:google-signin-support:1.0.2</package>
   </packages>
   <files>
     <file>Assets/Plugins/Android/firebase-analytics-11.4.2.aar</file>
@@ -24,6 +26,9 @@
     <file>Assets/Plugins/Android/firebase-core-11.4.2</file>
     <file>Assets/Plugins/Android/firebase-iid-11.4.2</file>
     <file>Assets/Plugins/Android/firebase-iid-license-11.4.2</file>
+    <file>Assets/Plugins/Android/google-signin-support-1.0.2</file>
+    <file>Assets/Plugins/Android/play-services-auth-11.4.2.aar</file>
+    <file>Assets/Plugins/Android/play-services-auth-base-11.4.2.aar</file>
     <file>Assets/Plugins/Android/play-services-base-11.4.2.aar</file>
     <file>Assets/Plugins/Android/play-services-base-license-11.4.2</file>
     <file>Assets/Plugins/Android/play-services-basement-11.4.2.aar</file>
