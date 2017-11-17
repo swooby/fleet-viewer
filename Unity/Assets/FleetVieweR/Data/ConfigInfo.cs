@@ -82,7 +82,7 @@ namespace FleetVieweR
                 Debug.Log(TAG + " EnsureFileCached(filePath:" + Utils.Quote(filePath) + ", ...)");
             }
 
-            // Android: 
+            // Android: /storage/emulated/0/Android/data/com.swooby.fleetviewer/files
             //   MacOS: ~/Library/Application Support/swooby_com/Fleet VieweR
             // Windows:
             string applicationPersistentDataPath = Application.persistentDataPath;

@@ -8,7 +8,7 @@ namespace FleetVieweR
 {
     public class FleetViewerSelectionManager : MonoBehaviour
     {
-        private const string TAG = "FleetViewerSelectionManager";//Utils.TAG(FleetViewerSelectionManager);
+        private static readonly string TAG = Utils.TAG<FleetViewerSelectionManager>();
 
         public const bool VERBOSE_LOG_EDITOR_OBJECT_SELECTION = true;
 
@@ -94,49 +94,72 @@ namespace FleetVieweR
                     objectSelectionSettings.CanMultiSelect = enable;
         }
 
+        private List<GameObject> SelectedObjects = new List<GameObject>();
+
         private void EditorObjectSelection_OnSelectionChanged(ObjectSelectionChangedEventArgs args)
         {
             if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
             {
-                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
-                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));
-                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.DeselectActionType:" + args.DeselectActionType);
-                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
+                Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: args.SelectActionType:" + args.SelectActionType);
+                Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: args.SelectedObjects:" + Utils.ToString(args.SelectedObjects));
+                Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: args.DeselectActionType:" + args.DeselectActionType);
+                Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: args.DeselectedObjects:" + Utils.ToString(args.DeselectedObjects));
             }
             switch (args.SelectActionType)
             {
                 case ObjectSelectActionType.Click:
                 case ObjectSelectActionType.MultiSelect:
                     {
-                        List<GameObject> selectedObjects = new List<GameObject>();
                         foreach (GameObject selectedObject in args.SelectedObjects)
                         {
                             if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
                             {
-                                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: selectedObject:" + selectedObject);
+                                Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: selectedObject:" + selectedObject);
                             }
                             GameObject modelRoot = FindModelRoot(ModelsRoot, selectedObject);
                             if (VERBOSE_LOG_EDITOR_OBJECT_SELECTION)
                             {
-                                Debug.Log(TAG + " EditorObjectSelection_OnSelectionChanged: modelRoot:" + modelRoot);
+                                Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: modelRoot:" + modelRoot);
                             }
+
                             if (modelRoot != null)
                             {
+                                Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: RemoveObjectFromSelection(" + selectedObject + ")");
                                 EditorObjectSelection.Instance.RemoveObjectFromSelection(selectedObject, false);
-                                if (!selectedObjects.Contains(modelRoot))
+                            }
+                            else
+                            {
+                                modelRoot = selectedObject;
+                            }
+
+                            if (SelectedObjects.Contains(modelRoot))
+                            {
+                                if (args.SelectActionType == ObjectSelectActionType.Click)
                                 {
-                                    selectedObjects.Add(modelRoot);
+                                    SelectedObjects.Remove(modelRoot);
                                 }
                             }
+                            else
+                            {
+                                SelectedObjects.Add(modelRoot);
+                            }
                         }
-                        if (selectedObjects.Count > 0)
+                        if (!EditorObjectSelection.Instance.IsSelectionExactMatch(SelectedObjects))
                         {
                             // Per documentation, allowUndoRedo should always be false when inside of a handler
                             // TODO:(pv) Experiment to see if this can be nicely set true
-                            EditorObjectSelection.Instance.SetSelectedObjects(selectedObjects, false);
+                            Debug.Log(DateTime.Now + " " + TAG + " EditorObjectSelection_OnSelectionChanged: SetSelectedObjects(" + Utils.ToString(SelectedObjects) + ")");
+                            EditorObjectSelection.Instance.SetSelectedObjects(SelectedObjects, false);
                         }
                         break;
                     }
+            }
+            if (args.DeselectActionType != ObjectDeselectActionType.None)
+            {
+                foreach (GameObject deselectedObject in args.DeselectedObjects)
+                {
+                    SelectedObjects.Remove(deselectedObject);
+                }
             }
         }
 
