@@ -6,9 +6,9 @@ using RTEditor;
 
 namespace FleetVieweR
 {
-    public class FleetViewerSelectionManager : MonoBehaviour
+    public class FleetInputManager : MonoBehaviour
     {
-        private static readonly string TAG = Utils.TAG<FleetViewerSelectionManager>();
+        private static readonly string TAG = Utils.TAG<FleetInputManager>();
 
         public const bool VERBOSE_LOG_EDITOR_OBJECT_SELECTION = false;
 
@@ -16,25 +16,41 @@ namespace FleetVieweR
         public GameObject ModelsRoot;
         [Tooltip("Reference to GvrControllerPointer")]
         public GameObject GvrControllerPointer;
-        [Tooltip("Reference to Unselectedable Game Objects")]
+        [Tooltip("Reference to Unselectable Game Objects")]
         public GameObject[] UnselectableGameObjects;
+
+        private static void AddGameObjectAndAllChildren(GameObject gameObject, List<GameObject> list)
+        {
+            if (gameObject != null)
+            {
+                list.Add(gameObject);
+                list.AddRange(gameObject.GetAllChildren());
+            }
+        }
 
         void Awake()
         {
-            List<GameObject> selectionMask = GvrControllerPointer.GetAllChildren();
+            Input.backButtonLeavesApp = true;
+
+            //
+            // Initialize "Runtime Transform Gizmos"
+            //
+
+            List<GameObject> selectionMask = new List<GameObject>();
 
             if (GvrControllerPointer != null)
             {
 #if UNITY_ANDROID // TODO:(pv) Better way to runtime detect Daydream/Cardboard?
                 InputDeviceGvrController inputDeviceGvrController = new InputDeviceGvrController();
                 InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
+
+                AddGameObjectAndAllChildren(GvrControllerPointer, selectionMask);
 #endif
-                selectionMask.Add(GvrControllerPointer);
             }
 
-            foreach (GameObject gameObject in UnselectableGameObjects)
+            foreach (GameObject unselectableGameObject in UnselectableGameObjects)
             {
-                selectionMask.Add(gameObject);
+                AddGameObjectAndAllChildren(unselectableGameObject, selectionMask);
             }
 
             EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
@@ -48,7 +64,21 @@ namespace FleetVieweR
 
         void Start()
         {
+            EnableEvaMode(true);
         }
+
+        void Update()
+        {
+            // Exit when (X) is tapped.
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
+        }
+
+        //
+        //
+        //
 
         private bool? playerControllerAllowTouchMovementBeforeForcedDisabled;
 
@@ -65,6 +95,10 @@ namespace FleetVieweR
                 PlayerController.AllowTouchMovement = playerControllerAllowTouchMovementBeforeForcedDisabled.Value;
             }
         }
+
+        //
+        //
+        //
 
         private void Gizmo_GizmoHoverEnter(Gizmo gizmo)
         {
