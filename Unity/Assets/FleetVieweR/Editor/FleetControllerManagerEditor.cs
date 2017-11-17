@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace FleetVieweR
 {
-    [CustomEditor(typeof(FleetInputManager))]
-    public class FleetInputManagerEditor : Editor
+    [CustomEditor(typeof(FleetControllerManager))]
+    public class FleetControllerManagerEditor : Editor
     {
         SerializedProperty emulatedPlatformTypeProp;
         SerializedProperty gvrControllerMainProp;
@@ -13,11 +13,11 @@ namespace FleetVieweR
 
         void OnEnable()
         {
-            gvrControllerMainProp = serializedObject.FindProperty(FleetInputManager.CONTROLLER_MAIN_PROP_NAME);
-            gvrControllerPointerProp = serializedObject.FindProperty(FleetInputManager.CONTROLLER_POINTER_PROP_NAME);
-            gvrReticlePointerProp = serializedObject.FindProperty(FleetInputManager.RETICLE_POINTER_PROP_NAME);
+            gvrControllerMainProp = serializedObject.FindProperty(FleetControllerManager.CONTROLLER_MAIN_PROP_NAME);
+            gvrControllerPointerProp = serializedObject.FindProperty(FleetControllerManager.CONTROLLER_POINTER_PROP_NAME);
+            gvrReticlePointerProp = serializedObject.FindProperty(FleetControllerManager.RETICLE_POINTER_PROP_NAME);
 
-            emulatedPlatformTypeProp = serializedObject.FindProperty(FleetInputManager.EMULATED_PLATFORM_PROP_NAME);
+            emulatedPlatformTypeProp = serializedObject.FindProperty(FleetControllerManager.EMULATED_PLATFORM_PROP_NAME);
         }
 
         public override void OnInspectorGUI()
@@ -28,7 +28,7 @@ namespace FleetVieweR
             EditorGUILayout.PropertyField(gvrControllerPointerProp);
             EditorGUILayout.PropertyField(gvrReticlePointerProp);
 
-            if (DemoInputManager.playerSettingsHasCardboard() == FleetInputManager.playerSettingsHasDaydream())
+            if (DemoInputManager.playerSettingsHasCardboard() == FleetControllerManager.playerSettingsHasDaydream())
             {
                 // Show the platform emulation dropdown only if both or neither VR SDK selected in
                 // Player Settings > Virtual Reality supported,

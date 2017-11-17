@@ -13,7 +13,7 @@ using OpenCTM;
 
 namespace FleetVieweR
 {
-    public class FleetInputManager : MonoBehaviour
+    public class FleetControllerManager : MonoBehaviour
     {
         // Java class, method, and field constants.
         private const int ANDROID_MIN_DAYDREAM_API = 24;
@@ -49,8 +49,8 @@ namespace FleetVieweR
         public EmulatedPlatformType gvrEmulatedPlatformType = EmulatedPlatformType.Daydream;
         public static string EMULATED_PLATFORM_PROP_NAME = "gvrEmulatedPlatformType";
 #else
-    // Running on an Android device.
-    private GvrSettings.ViewerPlatformType viewerPlatform;
+        // Running on an Android device.
+        private GvrSettings.ViewerPlatformType viewerPlatform;
 #endif  // !RUNNING_ON_ANDROID_DEVICE
 
         void Start()
@@ -66,28 +66,28 @@ namespace FleetVieweR
             }
             isDaydream = (gvrEmulatedPlatformType == EmulatedPlatformType.Daydream);
 #else
-        // Running on an Android device.
-        viewerPlatform = GvrSettings.ViewerPlatform;
-        // First loaded device in Player Settings.
-        string vrDeviceName = UnityEngine.VR.VRSettings.loadedDeviceName;
-        if (vrDeviceName != CARDBOARD_DEVICE_NAME &&
-            vrDeviceName != DAYDREAM_DEVICE_NAME)
-        {
-            Debug.LogErrorFormat("Loaded device was '{0}', must be one of '{1}' or '{2}'",
-                  vrDeviceName, DAYDREAM_DEVICE_NAME, CARDBOARD_DEVICE_NAME);
-            return;
-        }
+            // Running on an Android device.
+            viewerPlatform = GvrSettings.ViewerPlatform;
+            // First loaded device in Player Settings.
+            string vrDeviceName = UnityEngine.VR.VRSettings.loadedDeviceName;
+            if (vrDeviceName != CARDBOARD_DEVICE_NAME &&
+                vrDeviceName != DAYDREAM_DEVICE_NAME)
+            {
+                Debug.LogErrorFormat("Loaded device was '{0}', must be one of '{1}' or '{2}'",
+                      vrDeviceName, DAYDREAM_DEVICE_NAME, CARDBOARD_DEVICE_NAME);
+                return;
+            }
 
-        // On a non-Daydream ready phone, fall back to Cardboard if it's present in the list of
-        // enabled VR SDKs.
-        // On a Daydream-ready phone, go into Cardboard mode if it's the currently-paired viewer.
-        if ((!IsDeviceDaydreamReady() && playerSettingsHasCardboard()) ||
-            (IsDeviceDaydreamReady() && playerSettingsHasCardboard() &&
-             GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Cardboard))
-        {
-            vrDeviceName = CARDBOARD_DEVICE_NAME;
-        }
-        isDaydream = (vrDeviceName == DAYDREAM_DEVICE_NAME);
+            // On a non-Daydream ready phone, fall back to Cardboard if it's present in the list of
+            // enabled VR SDKs.
+            // On a Daydream-ready phone, go into Cardboard mode if it's the currently-paired viewer.
+            if ((!IsDeviceDaydreamReady() && playerSettingsHasCardboard()) ||
+                (IsDeviceDaydreamReady() && playerSettingsHasCardboard() &&
+                 GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Cardboard))
+            {
+                vrDeviceName = CARDBOARD_DEVICE_NAME;
+            }
+            isDaydream = (vrDeviceName == DAYDREAM_DEVICE_NAME);
 #endif  // !RUNNING_ON_ANDROID_DEVICE
             SetVRInputMechanism();
         }
@@ -105,15 +105,15 @@ namespace FleetVieweR
             isDaydream = (gvrEmulatedPlatformType == EmulatedPlatformType.Daydream);
             SetVRInputMechanism();
 #else
-        // Running on an Android device.
-        // Viewer type switched at runtime.
-        if (!IsDeviceDaydreamReady() || viewerPlatform == GvrSettings.ViewerPlatform)
-        {
-            return;
-        }
-        isDaydream = (GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Daydream);
-        viewerPlatform = GvrSettings.ViewerPlatform;
-        SetVRInputMechanism();
+            // Running on an Android device.
+            // Viewer type switched at runtime.
+            if (!IsDeviceDaydreamReady() || viewerPlatform == GvrSettings.ViewerPlatform)
+            {
+                return;
+            }
+            isDaydream = (GvrSettings.ViewerPlatform == GvrSettings.ViewerPlatformType.Daydream);
+            viewerPlatform = GvrSettings.ViewerPlatform;
+            SetVRInputMechanism();
 #endif  // !RUNNING_ON_ANDROID_DEVICE
         }
 

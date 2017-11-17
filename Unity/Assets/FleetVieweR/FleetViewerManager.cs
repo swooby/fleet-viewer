@@ -6,7 +6,7 @@ namespace FleetVieweR
     public class FleetViewerManager : MonoBehaviour
     {
         //public GameObject LaunchVrHomeButton;
-        public FleetInputManager FleetInputManager;
+        public FleetControllerManager FleetControllerManager;
 
         void Start()
         {
@@ -34,11 +34,11 @@ namespace FleetVieweR
         void Update()
         {
             /*
-            if (LaunchVrHomeButton == null || FleetInputManager == null)
+            if (LaunchVrHomeButton == null || FleetControllerManager == null)
             {
                 return;
             }
-            LaunchVrHomeButton.SetActive(FleetInputManager.IsCurrentlyDaydream());
+            LaunchVrHomeButton.SetActive(FleetControllerManager.IsCurrentlyDaydream());
             */
         }
 #endif  // UNITY_ANDROID && !UNITY_EDITOR
