@@ -10,7 +10,7 @@ namespace FleetVieweR
     {
         private static readonly string TAG = Utils.TAG<FleetViewerSelectionManager>();
 
-        public const bool VERBOSE_LOG_EDITOR_OBJECT_SELECTION = true;
+        public const bool VERBOSE_LOG_EDITOR_OBJECT_SELECTION = false;
 
         [Tooltip("Reference to ModelsRoot")]
         public GameObject ModelsRoot;
