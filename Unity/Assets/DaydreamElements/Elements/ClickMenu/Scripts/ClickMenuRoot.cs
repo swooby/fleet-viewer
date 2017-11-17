@@ -41,8 +41,10 @@ namespace DaydreamElements.ClickMenu {
     public delegate void ItemHoveredEvent(ClickMenuItem id);
     public event ItemHoveredEvent OnItemHovered;
 
-    [Tooltip("The tree of menu items")]
-    public ClickMenuTree menuTree;
+    //[Tooltip("The tree of menu items")]
+    //public ClickMenuTree menuTree;
+    public delegate ClickMenuTree GetClickMenuTreeEvent();
+    public event GetClickMenuTreeEvent GetClickMenuTree;
 
     [Tooltip("(Optional) The center icon")]
     public Sprite backIcon;
@@ -120,8 +122,8 @@ namespace DaydreamElements.ClickMenu {
 
     private void SetMenuLocation() {
       Vector3 laserEndPt;
-      if (false) {
-        // NOTE:(pv) This original code doesn't actually centering on the point clicked!
+      if (true) {
+        // NOTE:(pv) This original code isn't actually centering on the point clicked!
         laserEndPt = laserPointer.GetPointAlongPointer(menuDistance);
       } else {
         RaycastResult raycastResult = laserPointer.CurrentRaycastResult;
@@ -186,6 +188,13 @@ namespace DaydreamElements.ClickMenu {
         if (IsMenuInFOV()) {
           dummyParent = (ClickMenuIcon)Instantiate(menuIconPrefab, transform);
           dummyParent.menuRoot = this;
+          ClickMenuTree menuTree = null;
+          if (GetClickMenuTree != null) {
+            menuTree = GetClickMenuTree();
+          }
+          if (menuTree == null) {
+            return;
+          }
           ClickMenuIcon.ShowMenu(this, menuTree.tree.Root, dummyParent,
                                  menuCenter, menuOrientation, iconScale);
           dummyParent.SetDummy();

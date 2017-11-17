@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RTEditor;
+using DaydreamElements.ClickMenu;
 
 namespace FleetVieweR
 {
@@ -18,6 +19,10 @@ namespace FleetVieweR
         public GameObject GvrControllerPointer;
         [Tooltip("Reference to Unselectable Game Objects")]
         public GameObject[] UnselectableGameObjects;
+        [Tooltip("Reference to ClickMenuRoot")]
+        public ClickMenuRoot MenuRoot;
+        [Tooltip("Reference to ClickMenuTree")]
+        public ClickMenuTree MenuTree;
 
         private static void AddGameObjectAndAllChildren(GameObject gameObject, List<GameObject> list)
         {
@@ -57,13 +62,38 @@ namespace FleetVieweR
 #endif
             }
 
-            EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
+            EditorObjectSelection editorObjectSelection = EditorObjectSelection.Instance;
 
-            EditorObjectSelection.Instance.SelectionChanged += EditorObjectSelection_OnSelectionChanged;
-            EditorGizmoSystem.Instance.TranslationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
-            EditorGizmoSystem.Instance.TranslationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
-            EditorGizmoSystem.Instance.RotationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
-            EditorGizmoSystem.Instance.RotationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
+            editorObjectSelection.AddGameObjectCollectionToSelectionMask(selectionMask);
+
+            editorObjectSelection.SelectionChanged += EditorObjectSelection_OnSelectionChanged;
+
+            EditorGizmoSystem editorGizmoSystem = EditorGizmoSystem.Instance;
+
+            TranslationGizmo translationGizmo = editorGizmoSystem.TranslationGizmo;
+            translationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
+            translationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
+
+            RotationGizmo rotationGizmo = editorGizmoSystem.RotationGizmo;
+            rotationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
+            rotationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
+
+#if UNITY_EDITOR
+            translationGizmo.GizmoBaseScale = 1;
+            rotationGizmo.GizmoBaseScale = translationGizmo.GizmoBaseScale * 2;
+#endif
+
+            //
+            // Initialize "Daydream Elements Click Menu"
+            //
+
+            if (MenuRoot != null)
+            {
+                MenuRoot.GetClickMenuTree += MenuRoot_GetClickMenuTree;
+                MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
+                MenuRoot.OnMenuClosed += MenuRoot_OnMenuClosed;
+                MenuRoot.OnItemSelected += MenuRoot_OnItemSelected;
+            }
         }
 
         void Start()
@@ -126,6 +156,7 @@ namespace FleetVieweR
 
         private void EnableObjectSelection(bool enable)
         {
+            Debug.Log("EnableObjectSelection(" + enable + ")");
             ObjectSelectionSettings objectSelectionSettings = EditorObjectSelection.Instance.ObjectSelectionSettings;
             objectSelectionSettings.CanSelectEmptyObjects =
                     objectSelectionSettings.CanClickSelect =
@@ -226,6 +257,110 @@ namespace FleetVieweR
         //
         //
         //
+
+        private void MenuRoot_OnMenuOpened()
+        {
+            PlayerControllerAllowTouchMovementForceDisable();
+        }
+
+        private void MenuRoot_OnMenuClosed()
+        {
+            PlayerControllerAllowTouchMovementRestore();
+        }
+
+        private ClickMenuTree MenuRoot_GetClickMenuTree()
+        {
+            return MenuTree;
+        }
+
+        /// <summary>
+        /// No Models Loaded:
+        ///          Add
+        ///       Load Settings 
+        ///          Exit 
+        /// One Or More Model(s) Loaded:
+        ///  EVA/Select Add
+        ///       Load   Settings  
+        ///           Exit 
+        /// One Or More Model(s) Selected:
+        ///  EVA/Select Add
+        ///     Remove   Duplicate
+        ///    Rotate     Move
+        ///       Load   Settings  
+        ///           Exit 
+        /// Modified:
+        ///         Undo Redo
+        ///  EVA/Select   Add
+        ///        Load   Save
+        ///         Exit Settings 
+        /// Modified & One Or More Model(s) Selected:
+        ///         Undo Redo
+        ///  EVA/Select   Add
+        ///     Remove     Duplicate
+        ///     Rotate     Move
+        ///        Load   Save
+        ///         Exit Settings 
+        /// </summary>
+        /// <param name="item">Item.</param>
+        private void MenuRoot_OnItemSelected(ClickMenuItem item)
+        {
+            Debug.Log("MenuRoot_OnItemSelected(item:" + item + ")");
+            if (item == null)
+            {
+                return;
+            }
+            Debug.Log("MenuRoot_OnItemSelected: item.id:" + item.id);
+            switch (item.id)
+            {
+                // TODO:(pv) Toggle Global/Local Transform
+                // TODO:(pv) Step Snapping
+                // TODO:(pv) Vertex Snapping
+                // TODO:(pv) Box Snapping
+                // TODO:(pv) Surface Placement
+                // TODO:(pv) Surface Placement Align X
+                // TODO:(pv) Surface Placement Align Y
+                // TODO:(pv) Surface Placement Align Z
+                // TODO:(pv) Surface Placement Align None
+                // TODO:(pv) Move Scale
+                case 0100: // Undo:
+                    //EditorObjectSelection.Instance.SelectedGameObjects;
+                    //EditorObjectSelection.Instance.UndoRedoSelection();
+                    EditorUndoRedoSystem.Instance.Undo();
+                    break;
+                case 0200: // Redo:
+                    EditorUndoRedoSystem.Instance.Redo();
+                    break;
+                case 0300: // Add: Brings up model Carrossel
+                    break;
+                case 0400: // Duplicate: (Hidden if no item(s) selected) Duplicate Selected Item(s)
+                    EditorObjectSelection.Instance.DuplicateSelection();
+                    break;
+                case 0500: // Move: Disables EVA & RotationGizmo, Enables TransformGizmo
+                    EditorGizmoSystem.Instance.ActiveGizmoType = GizmoType.Translation;
+                    break;
+                case 0600: // Save: Name fleet file and Save to cloud
+                    break;
+                case 0700: // Settings:
+                    break;
+                case 0800: // Exit:
+                    Exit();
+                    break;
+                case 0900: // Load: Browse fleet files and Load from cloud
+                    break;
+                case 1000: // Rotate: Disables EVA & TransformGizmo, Enables RotationGizmo
+                    EditorGizmoSystem.Instance.ActiveGizmoType = GizmoType.Rotation;
+                    break;
+                case 1100: // Remove: (Hidden if no item(s) selected) Remove Selected Item(s)
+                    EditorObjectSelection.Instance.DeleteSelection();
+                    break;
+                case 1200: // Toggle EVA/Select:
+                    EnableEvaMode(true);
+                    break;
+                case 1300:
+                    EnableEvaMode(false);
+                    break;
+            }
+        }
 
         private void Exit()
         {

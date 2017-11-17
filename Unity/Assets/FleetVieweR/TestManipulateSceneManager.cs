@@ -18,18 +18,12 @@ namespace FleetVieweR
 
         [Tooltip("Reference to ModelsRoot")]
         public GameObject ModelsRoot;
-        [Tooltip("Reference to ClickMenuRoot")]
-        public ClickMenuRoot MenuRoot;
 
         private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
 
         private void Awake()
         {
-            Input.backButtonLeavesApp = true;
 
-            MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
-            MenuRoot.OnMenuClosed += MenuRoot_OnMenuClosed;
-            MenuRoot.OnItemSelected += MenuRoot_OnItemSelected;
         }
 
         void Start()
@@ -37,67 +31,10 @@ namespace FleetVieweR
             //List<string> modelsToLoad = new List<string>();
             //modelsToLoad.Add(StarCitizen.Nox);
             //LoadNextModel(modelsToLoad);
-
         }
 
         void Update()
         {
-            // Exit when (X) is tapped.
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Application.Quit();
-            }
-        }
-
-
-        private void MenuRoot_OnMenuOpened()
-        {
-            //PlayerControllerAllowTouchMovementForceDisable();
-        }
-
-        private void MenuRoot_OnMenuClosed()
-        {
-            //PlayerControllerAllowTouchMovementRestore();
-        }
-
-        private ClickMenuTree MenuRoot_GetClickMenuTree()
-        {
-            return MenuTree;
-        }
-
-        {
-            switch (item.id)
-            {
-                case 100: // EVA Disables TransformGizmo & RotationGizmo, Enables EVA
-                    break;
-                case 200: // Add Brings up model Carrasel (sp)
-                    break;
-                case 300: // Move Disables EVA & RotationGizmo, Enables TransformGizmo
-                    break;
-                case 400: // Save Name fleet file and Save to cloud
-                    break;
-                case 500: // Exit
-                    Exit();
-                    break;
-                case 600: // Load Browse and Load models from cloud
-                    break;
-                case 700: // Rotate Disables EVA & TransformGizmo, Enables RotationGizmo
-                    break;
-                case 800: // Remove (Hidden if no item(s) selected) Remove Selected Item(s)
-                    break;
-            }
-        }
-
-        private void Exit()
-        {
-            // TODO:(pv) Prompt to save first...
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-//#elif UNITY_WEBPLAYER
-            //Application.OpenURL(webplayerQuitURL);
-#else
-            Application.Quit();
-#endif
         }
 
         private void SetMessageBoxText(string text, float removeInSeconds = 0)

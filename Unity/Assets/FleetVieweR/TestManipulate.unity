@@ -1458,8 +1458,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ModelsRoot: {fileID: 1569849317}
-  MenuRoot: {fileID: 692575562}
-  MenuTree: {fileID: 11400000, guid: b1f98a77ac5714946bce737e30f70de3, type: 2}
 --- !u!114 &1041331160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1473,6 +1471,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModelsRoot: {fileID: 1569849317}
   GvrControllerPointer: {fileID: 2131146907}
+  UnselectableGameObjects: []
+  MenuRoot: {fileID: 0}
+  MenuTree: {fileID: 0}
 --- !u!1 &1189127304
 GameObject:
   m_ObjectHideFlags: 0
