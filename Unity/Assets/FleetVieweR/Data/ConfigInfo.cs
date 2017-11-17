@@ -101,10 +101,13 @@ namespace FleetVieweR
 
             StorageReference storageReference = CloudStorage.GetReferenceFromUrl(filePathRemote);
 
-            if (!File.Exists(filePathLocal))
+            if (false)
             {
-                OnEnsureFileCaching("EnsureFileCached: File is not cached", storageReference, filePathRemote, filePathLocal, callback);
-                return;
+                if (!File.Exists(filePathLocal))
+                {
+                    OnEnsureFileCaching("EnsureFileCached: File is not cached", storageReference, filePathRemote, filePathLocal, callback);
+                    return;
+                }
             }
 
             //Debug.Log(TAG + " EnsureFileCached: +GetMetadataAsync()");

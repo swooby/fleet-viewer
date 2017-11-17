@@ -156,7 +156,7 @@ namespace FleetVieweR
 
         private void EnableObjectSelection(bool enable)
         {
-            Debug.Log("EnableObjectSelection(" + enable + ")");
+            //Debug.Log("EnableObjectSelection(" + enable + ")");
             ObjectSelectionSettings objectSelectionSettings = EditorObjectSelection.Instance.ObjectSelectionSettings;
             objectSelectionSettings.CanSelectEmptyObjects =
                     objectSelectionSettings.CanClickSelect =

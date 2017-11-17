@@ -15,6 +15,7 @@ namespace FleetVieweR
 
         private void LoadModels()
         {
+            //Debug.Log("LoadModels()");
             if (true)
             {
                 //
@@ -37,40 +38,40 @@ namespace FleetVieweR
                             // knight55
                             //
 
-                            modelsToLoad.Add(StarCitizen.Origin_X1);          // \
-                            modelsToLoad.Add(StarCitizen.Dragonfly);          // | Race Team Pack
-                            modelsToLoad.Add(StarCitizen.Nox);                // /
-                            modelsToLoad.Add(StarCitizen.Origin_X1);          // \
-                            modelsToLoad.Add(StarCitizen.Origin_X1_Velocity); // | X1 Three Pack
-                            modelsToLoad.Add(StarCitizen.Origin_X1); // Force // /
-                            modelsToLoad.Add(StarCitizen.Origin_X1);          // \
-                            modelsToLoad.Add(StarCitizen.Dragonfly);          // | Race Team Pack
-                            modelsToLoad.Add(StarCitizen.Nox);                // /
-                            modelsToLoad.Add(StarCitizen.Origin_X1);          // \
-                            modelsToLoad.Add(StarCitizen.Dragonfly);          // | Race Team Pack
-                            modelsToLoad.Add(StarCitizen.Nox);                // /
-                            modelsToLoad.Add(StarCitizen.Cyclone_TR);         // \
-                            modelsToLoad.Add(StarCitizen.Ursa_Rover);         // | Offroad Vehicle Pack
-                                                                              // Greycat                                        // /
-                            modelsToLoad.Add(StarCitizen.Cyclone);            // \
-                            modelsToLoad.Add(StarCitizen.Cyclone_AA);         // |
-                            modelsToLoad.Add(StarCitizen.Cyclone_RC);         // | Cyclone Five Pack
-                            modelsToLoad.Add(StarCitizen.Cyclone_RN);         // |
-                            modelsToLoad.Add(StarCitizen.Cyclone_TR);         // /
+                            modelsToLoad.Add(StarCitizen.Origin_X1_Base);          // \
+                            modelsToLoad.Add(StarCitizen.Dragonfly);               // | Race Team Pack
+                            modelsToLoad.Add(StarCitizen.Nox);                     // /
+                            modelsToLoad.Add(StarCitizen.Origin_X1_Base);          // \
+                            modelsToLoad.Add(StarCitizen.Origin_X1_Velocity);      // | X1 Three Pack
+                            modelsToLoad.Add(StarCitizen.Origin_X1_Base); // Force // /
+                            modelsToLoad.Add(StarCitizen.Origin_X1_Base);          // \
+                            modelsToLoad.Add(StarCitizen.Dragonfly);               // | Race Team Pack
+                            modelsToLoad.Add(StarCitizen.Nox);                     // /
+                            modelsToLoad.Add(StarCitizen.Origin_X1_Base);          // \
+                            modelsToLoad.Add(StarCitizen.Dragonfly);               // | Race Team Pack
+                            modelsToLoad.Add(StarCitizen.Nox);                     // /
+                            modelsToLoad.Add(StarCitizen.Cyclone_TR);              // \
+                            modelsToLoad.Add(StarCitizen.Ursa_Rover);              // | Offroad Vehicle Pack
+                                                                                   // Greycat                                        // /
+                            modelsToLoad.Add(StarCitizen.Cyclone);                 // \
+                            modelsToLoad.Add(StarCitizen.Cyclone_AA);              // |
+                            modelsToLoad.Add(StarCitizen.Cyclone_RC);              // | Cyclone Five Pack
+                            modelsToLoad.Add(StarCitizen.Cyclone_RN);              // |
+                            modelsToLoad.Add(StarCitizen.Cyclone_TR);              // /
                             modelsToLoad.Add(StarCitizen.Cyclone);
                             modelsToLoad.Add(StarCitizen.Cyclone);
-                            modelsToLoad.Add(StarCitizen.Nox);                // \
-                            modelsToLoad.Add(StarCitizen.Nox);                // |
-                            modelsToLoad.Add(StarCitizen.Nox);                // | Nox Five Pack
-                            modelsToLoad.Add(StarCitizen.Nox);                // |
-                            modelsToLoad.Add(StarCitizen.Nox);                // /
-                            modelsToLoad.Add(StarCitizen.Nox);                // \
-                            modelsToLoad.Add(StarCitizen.Nox);                // |
-                            modelsToLoad.Add(StarCitizen.Nox);                // | Nox Five Pack
-                            modelsToLoad.Add(StarCitizen.Nox);                // |
-                            modelsToLoad.Add(StarCitizen.Nox);                // /
-                            modelsToLoad.Add(StarCitizen.Nox);                // \
-                            modelsToLoad.Add(StarCitizen.Nox);                // / Nox Two Pack
+                            modelsToLoad.Add(StarCitizen.Nox);                     // \
+                            modelsToLoad.Add(StarCitizen.Nox);                     // |
+                            modelsToLoad.Add(StarCitizen.Nox);                     // | Nox Five Pack
+                            modelsToLoad.Add(StarCitizen.Nox);                     // |
+                            modelsToLoad.Add(StarCitizen.Nox);                     // /
+                            modelsToLoad.Add(StarCitizen.Nox);                     // \
+                            modelsToLoad.Add(StarCitizen.Nox);                     // |
+                            modelsToLoad.Add(StarCitizen.Nox);                     // | Nox Five Pack
+                            modelsToLoad.Add(StarCitizen.Nox);                     // |
+                            modelsToLoad.Add(StarCitizen.Nox);                     // /
+                            modelsToLoad.Add(StarCitizen.Nox);                     // \
+                            modelsToLoad.Add(StarCitizen.Nox);                     // / Nox Two Pack
                             modelsToLoad.Add(StarCitizen.MPUV_Cargo);
                             modelsToLoad.Add(StarCitizen.MPUV_Cargo);
                             modelsToLoad.Add(StarCitizen.MPUV_Cargo);
@@ -110,7 +111,7 @@ namespace FleetVieweR
                             // night55
                             //
 
-                            modelsToLoad.Add(StarCitizen.Origin_X1);
+                            modelsToLoad.Add(StarCitizen.Origin_X1_Base);
                             modelsToLoad.Add(StarCitizen.Dragonfly);
                             modelsToLoad.Add(StarCitizen.Nox);
                             modelsToLoad.Add(StarCitizen.Cyclone_TR);
@@ -186,7 +187,7 @@ namespace FleetVieweR
                     }
                     for (int i = 0; i < 1; i++)
                     {
-                        modelsToLoad.Add(StarCitizen.Origin_X1);
+                        modelsToLoad.Add(StarCitizen.Origin_X1_Base);
                     }
                     for (int i = 0; i < 1; i++)
                     {
@@ -533,7 +534,12 @@ namespace FleetVieweR
 
             foreach (string modelKey in modelKeys)
             {
-                ModelInfo modelInfo = ModelInfos[modelKey];
+                ModelInfo modelInfo;
+                if (!ModelInfos.TryGetValue(modelKey, out modelInfo))
+                {
+                    Debug.LogWarning("SortModels: ModelInfos does not contain modelKey:" + Utils.ToString(modelKey));
+                    continue;
+                }
                 //Debug.Log("SortModels: modelInfo:" + modelInfo);
                 modelInfos.Add(modelInfo, modelKey);
             }
@@ -803,8 +809,8 @@ namespace FleetVieweR
 
         private void AddNewModel(string modelKey, Action action = null)
         {
-            Debug.Log("AddNewModel(modelKey:" + Utils.Quote(modelKey) +
-                      ", action:" + action + ")");
+            //Debug.Log("AddNewModel(modelKey:" + Utils.Quote(modelKey) +
+            //          ", action:" + action + ")");
 
             LoadModelAsync(modelKey, (model) =>
             {
