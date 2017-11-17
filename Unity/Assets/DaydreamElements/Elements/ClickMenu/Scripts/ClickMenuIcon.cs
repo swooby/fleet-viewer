@@ -221,7 +221,9 @@ namespace DaydreamElements.ClickMenu {
         tooltip.transform.localPosition = menuCenter;
         tooltip.transform.localRotation = menuOrientation;
         tooltip.transform.localScale = transform.localScale * TOOLTIP_SCALE;
-        tooltip.GetComponent<TextMesh>().text = menuItem.toolTip.Replace('\\','\n');
+        TextMesh textMesh = tooltip.GetComponent<TextMesh>();
+        textMesh.text = menuItem.toolTip.Replace('\\','\n');
+        textMesh.color = root.tooltipTextColor;
         tooltipRenderer = tooltip.GetComponent<MeshRenderer>();
         SetTooltipAlpha(0.0f);
       } else {
