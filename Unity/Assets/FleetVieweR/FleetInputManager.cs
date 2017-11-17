@@ -21,11 +21,12 @@ namespace FleetVieweR
 
         private static void AddGameObjectAndAllChildren(GameObject gameObject, List<GameObject> list)
         {
-            if (gameObject != null)
+            if (gameObject == null)
             {
-                list.Add(gameObject);
-                list.AddRange(gameObject.GetAllChildren());
+                return;
             }
+            list.Add(gameObject);
+            list.AddRange(gameObject.GetAllChildren());
         }
 
         void Awake()
@@ -38,19 +39,22 @@ namespace FleetVieweR
 
             List<GameObject> selectionMask = new List<GameObject>();
 
+            foreach (GameObject unselectableGameObject in UnselectableGameObjects)
+            {
+                AddGameObjectAndAllChildren(unselectableGameObject, selectionMask);
+            }
+
             if (GvrControllerPointer != null)
             {
 #if UNITY_ANDROID // TODO:(pv) Better way to runtime detect Daydream/Cardboard?
                 InputDeviceGvrController inputDeviceGvrController = new InputDeviceGvrController();
                 InputDevice.Instance.SetInputDevice(inputDeviceGvrController);
 
-                AddGameObjectAndAllChildren(GvrControllerPointer, selectionMask);
+                if (!selectionMask.Contains(GvrControllerPointer))
+                {
+                    AddGameObjectAndAllChildren(GvrControllerPointer, selectionMask);
+                }
 #endif
-            }
-
-            foreach (GameObject unselectableGameObject in UnselectableGameObjects)
-            {
-                AddGameObjectAndAllChildren(unselectableGameObject, selectionMask);
             }
 
             EditorObjectSelection.Instance.AddGameObjectCollectionToSelectionMask(selectionMask);
@@ -69,10 +73,10 @@ namespace FleetVieweR
 
         void Update()
         {
-            // Exit when (X) is tapped.
+            // Exit when upper-left-X or Escape pressed.
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Application.Quit();
+                Exit();
             }
         }
 
@@ -217,6 +221,22 @@ namespace FleetVieweR
             }
 
             return null;
+        }
+
+        //
+        //
+        //
+
+        private void Exit()
+        {
+            // TODO:(pv) Prompt to save first...
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            //#elif UNITY_WEBPLAYER
+            //Application.OpenURL(webplayerQuitURL);
+#else
+            Application.Quit();
+#endif
         }
     }
 }
