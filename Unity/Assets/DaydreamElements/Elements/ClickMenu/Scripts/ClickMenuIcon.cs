@@ -39,7 +39,8 @@ namespace DaydreamElements.ClickMenu {
     /// Distance to push the menu out while it is being hidden in meters.
     private const float HIDING_Z_OFFSET = 0.02f;
     /// Default pop out distance in meters.
-    private const float SHOWING_Z_OFFSET = 0.0f;
+    private const float SHOWING_Z_OFFSET = 0.035f;
+    private const float TEXTMESH_Z_OFFSET = -1.0f;
 
     /// Distance the background is pushed when idle in meters.
     private const float BACKGROUND_PUSH = 0.01f;
@@ -88,7 +89,7 @@ namespace DaydreamElements.ClickMenu {
     private Color pieStartColor;
 
     private const float INNER_RADIUS = 0.6f;
-    private const float OUTER_RADIUS = 1.6f;
+    private const float OUTER_RADIUS = 1.7f;
     private float startAngle;
     private float endAngle;
 
@@ -221,9 +222,14 @@ namespace DaydreamElements.ClickMenu {
         tooltip.transform.localPosition = menuCenter;
         tooltip.transform.localRotation = menuOrientation;
         tooltip.transform.localScale = transform.localScale * TOOLTIP_SCALE;
+
         TextMesh textMesh = tooltip.GetComponent<TextMesh>();
         textMesh.text = menuItem.toolTip.Replace('\\','\n');
         textMesh.color = root.tooltipTextColor;
+        textMesh.offsetZ = TEXTMESH_Z_OFFSET;
+        // TODO:(pv) Dynamically scale fontSize & INNER_RADIUS according to size of circle and longest text
+        textMesh.fontSize = 30;
+
         tooltipRenderer = tooltip.GetComponent<MeshRenderer>();
         SetTooltipAlpha(0.0f);
       } else {

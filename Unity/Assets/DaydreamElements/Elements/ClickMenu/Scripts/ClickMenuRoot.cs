@@ -59,7 +59,7 @@ namespace DaydreamElements.ClickMenu {
     public float iconScale = .1f;
 
     [Tooltip("Color for tooltip text")]
-    public Color tooltipTextColor = Color.magenta;
+    public Color tooltipTextColor = new Color(0x56, 0x56, 0x56);
 
     public enum GvrMenuActivationButton {
       ClickButtonDown,
