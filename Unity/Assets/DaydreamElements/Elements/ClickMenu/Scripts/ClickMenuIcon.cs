@@ -361,7 +361,6 @@ namespace DaydreamElements.ClickMenu {
     /// Shows a new menu, returns true if a fade needs to occur.
     public static bool ShowMenu(ClickMenuRoot root, AssetTree.Node treeNode, ClickMenuIcon parent,
                             Vector3 center, Quaternion orientation, float scale) {
-      // TODO:(pv) Why is this menu not actually centered on the reticle?
       // Determine how many children are in the sub-menu
       List<AssetTree.Node> childItems = treeNode.children;
 

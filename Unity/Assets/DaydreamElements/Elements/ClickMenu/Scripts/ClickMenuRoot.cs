@@ -14,6 +14,7 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DaydreamElements.Common;
 
 namespace DaydreamElements.ClickMenu {
 
@@ -41,10 +42,11 @@ namespace DaydreamElements.ClickMenu {
     public delegate void ItemHoveredEvent(ClickMenuItem id);
     public event ItemHoveredEvent OnItemHovered;
 
-    //[Tooltip("The tree of menu items")]
-    //public ClickMenuTree menuTree;
-    public delegate ClickMenuTree GetClickMenuTreeEvent();
-    public event GetClickMenuTreeEvent GetClickMenuTree;
+    [Tooltip("The tree of menu items")]
+    public ClickMenuTree menuTree;
+
+    public delegate AssetTree.Node GetClickMenuTreeNodeEvent();
+    public event GetClickMenuTreeNodeEvent GetClickMenuTreeNode;
 
     [Tooltip("(Optional) The center icon")]
     public Sprite backIcon;
@@ -188,14 +190,14 @@ namespace DaydreamElements.ClickMenu {
         if (IsMenuInFOV()) {
           dummyParent = (ClickMenuIcon)Instantiate(menuIconPrefab, transform);
           dummyParent.menuRoot = this;
-          ClickMenuTree menuTree = null;
-          if (GetClickMenuTree != null) {
-            menuTree = GetClickMenuTree();
+          AssetTree.Node node = null;
+          if (GetClickMenuTreeNode != null) {
+            node = GetClickMenuTreeNode();
           }
-          if (menuTree == null) {
-            return;
+          if (node == null) {
+            node = menuTree.tree.Root;
           }
-          ClickMenuIcon.ShowMenu(this, menuTree.tree.Root, dummyParent,
+          ClickMenuIcon.ShowMenu(this, node, dummyParent,
                                  menuCenter, menuOrientation, iconScale);
           dummyParent.SetDummy();
           if (OnMenuOpened != null) {
