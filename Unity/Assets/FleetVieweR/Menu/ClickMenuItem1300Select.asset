@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3d3480dc2db50146bf7ac1c7c2d6e77, type: 3}
-  m_Name: ClickMenuItem600Load
+  m_Name: ClickMenuItem1300Select
   m_EditorClassIdentifier: 
-  id: 600
-  icon: {fileID: 21300000, guid: 9da051a1f09cb46b8beef85cbbd4f1b5, type: 3}
+  id: 1300
+  icon: {fileID: 21300000, guid: 94f9213ada6624cc6b6d41cf882ed09a, type: 3}
   background: {fileID: 0}
-  toolTip: Load
+  toolTip: Select
   closeAfterSelected: 1

@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3d3480dc2db50146bf7ac1c7c2d6e77, type: 3}
-  m_Name: ClickMenuItem300Move
+  m_Name: ClickMenuItem1100Delete
   m_EditorClassIdentifier: 
-  id: 300
-  icon: {fileID: 21300000, guid: 04efa3497f9974987b29d78850fa7d58, type: 3}
+  id: 1100
+  icon: {fileID: 21300000, guid: c4d94d4e6cea74ac2abca7f7a3c68bef, type: 3}
   background: {fileID: 0}
-  toolTip: Move
+  toolTip: Delete
   closeAfterSelected: 1

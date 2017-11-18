@@ -40,7 +40,7 @@ namespace DaydreamElements.ClickMenu {
     private const float HIDING_Z_OFFSET = 0.02f;
     /// Default pop out distance in meters.
     private const float SHOWING_Z_OFFSET = 0.035f;
-    private const float TEXTMESH_Z_OFFSET = -1.0f;
+    private const float TEXTMESH_Z_OFFSET = -2.0f;
 
     /// Distance the background is pushed when idle in meters.
     private const float BACKGROUND_PUSH = 0.01f;

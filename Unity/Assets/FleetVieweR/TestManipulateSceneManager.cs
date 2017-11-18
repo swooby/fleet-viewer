@@ -7,7 +7,6 @@ using UnityEngine.EventSystems;
 using RTEditor;
 using DaydreamElements.ClickMenu;
 
-
 namespace FleetVieweR
 {
     public class TestManipulateSceneManager : MonoBehaviour
@@ -20,11 +19,6 @@ namespace FleetVieweR
         public GameObject ModelsRoot;
 
         private SortedDictionary<string, ModelInfo> ModelInfos = new SortedDictionary<string, ModelInfo>(StringComparer.OrdinalIgnoreCase);
-
-        private void Awake()
-        {
-
-        }
 
         void Start()
         {

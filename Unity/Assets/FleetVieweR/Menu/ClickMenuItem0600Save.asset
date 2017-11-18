@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3d3480dc2db50146bf7ac1c7c2d6e77, type: 3}
-  m_Name: ClickMenuItem700Rotate
+  m_Name: ClickMenuItem0600Save
   m_EditorClassIdentifier: 
-  id: 700
-  icon: {fileID: 21300000, guid: 9994da6175a7943a8803e6619c4ea654, type: 3}
+  id: 600
+  icon: {fileID: 21300000, guid: 37cd55760910740219aa8a36b9202d11, type: 3}
   background: {fileID: 0}
-  toolTip: Rotate
+  toolTip: Save
   closeAfterSelected: 1

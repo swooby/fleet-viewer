@@ -3,10 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RTEditor;
+using DaydreamElements.Common;
 using DaydreamElements.ClickMenu;
 
+// TODO:(pv) Get Scene Gizmo to work (currently doesn't because no Orthogonal cameras are supported in VR)
+// TODO:(pv) ClickMenu shows too much XZ grid lines through it
+
 namespace FleetVieweR
-{
+{    
     public class FleetInputManager : MonoBehaviour
     {
         private static readonly string TAG = Utils.TAG<FleetInputManager>();
@@ -73,10 +77,12 @@ namespace FleetVieweR
             TranslationGizmo translationGizmo = editorGizmoSystem.TranslationGizmo;
             translationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
             translationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
+            translationGizmo.GizmoDragEnd += Gizmo_GizmoDragEnd;
 
             RotationGizmo rotationGizmo = editorGizmoSystem.RotationGizmo;
             rotationGizmo.GizmoHoverEnter += Gizmo_GizmoHoverEnter;
             rotationGizmo.GizmoHoverExit += Gizmo_GizmoHoverExit;
+            rotationGizmo.GizmoDragEnd += Gizmo_GizmoDragEnd;
 
 #if UNITY_EDITOR
             translationGizmo.GizmoBaseScale = 1;
@@ -87,9 +93,14 @@ namespace FleetVieweR
             // Initialize "Daydream Elements Click Menu"
             //
 
+            if (MenuTree != null)
+            {
+                InitializeClickMenuItem(MenuTree.tree.Root);
+            }
+
             if (MenuRoot != null)
             {
-                MenuRoot.GetClickMenuTree += MenuRoot_GetClickMenuTree;
+                MenuRoot.GetClickMenuTreeNode += MenuRoot_GetClickMenuTreeNode;
                 MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
                 MenuRoot.OnMenuClosed += MenuRoot_OnMenuClosed;
                 MenuRoot.OnItemSelected += MenuRoot_OnItemSelected;
@@ -146,11 +157,17 @@ namespace FleetVieweR
             PlayerControllerAllowTouchMovementRestore();
         }
 
+        private void Gizmo_GizmoDragEnd(Gizmo gizmo)
+        {
+            isOneOrMoreModelModified = true;
+        }
+
         private void EnableEvaMode(bool enable)
         {
             playerControllerAllowTouchMovementBeforeForcedDisabled = null;
             PlayerController.AllowTouchMovement = enable;
             EnableObjectSelection(!enable);
+
             // TODO:(pv) Update ClickMenu/MenuRoot...
         }
 
@@ -223,6 +240,7 @@ namespace FleetVieweR
                         break;
                     }
             }
+            // TODO:(pv) There are still some selection bugs here, espcially in VR
             if (args.DeselectActionType != ObjectDeselectActionType.None)
             {
                 foreach (GameObject deselectedObject in args.DeselectedObjects)
@@ -230,6 +248,8 @@ namespace FleetVieweR
                     SelectedObjects.Remove(deselectedObject);
                 }
             }
+
+            isOneOrMoreModelSelected = SelectedObjects.Count > 0;
         }
 
         private static GameObject FindModelRoot(GameObject modelsRoot, GameObject child)
@@ -268,40 +288,106 @@ namespace FleetVieweR
             PlayerControllerAllowTouchMovementRestore();
         }
 
-        private ClickMenuTree MenuRoot_GetClickMenuTree()
+        private bool isOneOrMoreModelLoaded;
+        private bool isOneOrMoreModelSelected;
+        private bool isOneOrMoreModelModified;
+
+        private Dictionary<int, AssetTree.Node> clickMenuItems = new Dictionary<int, AssetTree.Node>();
+
+        private void InitializeClickMenuItem(AssetTree.Node node)
         {
-            return MenuTree;
+            ClickMenuItem clickMenuItem = node.value as ClickMenuItem;
+            Debug.Log("AddClickMenuItem: clickMenuItem:" + clickMenuItem);
+            if (clickMenuItem != null)
+            {
+                int clickMenuItemId = clickMenuItem.id;
+
+                if (clickMenuItems.ContainsKey(clickMenuItemId))
+                {
+                    Debug.LogWarning("AddClickMenuItem: Unexpected duplicate clickMenuItems[" +
+                                     clickMenuItemId + "]:" + clickMenuItems[clickMenuItemId] +
+                                     " and clickMenuItem:" + clickMenuItem);
+                }
+                clickMenuItems[clickMenuItemId] = node;
+            }
+
+            foreach(AssetTree.Node child in node.children)
+            {
+                InitializeClickMenuItem(child);
+            }
+        }
+
+        /// <summary>
+        /// Must match ClickMenuItems listed in MenuTree
+        /// </summary>
+        private enum ClickMenuItemIds
+        {
+            Undo = 100,
+            Redo = 200,
+            Add = 300,
+            Copy = 400,
+            Move = 500,
+            Save = 600,
+            Options = 700,
+            OptionsGlobal = 710,
+            Exit = 800,
+            Load = 900,
+            Rotate = 1000,
+            Delete = 1100,
+            Eva = 1200,
+            Select = 1300,
         }
 
         /// <summary>
         /// No Models Loaded:
         ///          Add
-        ///       Load Settings 
+        ///       Load Options 
         ///          Exit 
         /// One Or More Model(s) Loaded:
         ///  EVA/Select Add
-        ///       Load   Settings  
+        ///       Load   Options  
         ///           Exit 
         /// One Or More Model(s) Selected:
         ///  EVA/Select Add
         ///     Remove   Duplicate
         ///    Rotate     Move
-        ///       Load   Settings  
+        ///       Load   Options  
         ///           Exit 
         /// Modified:
         ///         Undo Redo
         ///  EVA/Select   Add
         ///        Load   Save
-        ///         Exit Settings 
+        ///         Exit Options 
         /// Modified & One Or More Model(s) Selected:
         ///         Undo Redo
         ///  EVA/Select   Add
         ///     Remove     Duplicate
         ///     Rotate     Move
         ///        Load   Save
-        ///         Exit Settings 
+        ///         Exit Options 
         /// </summary>
-        /// <param name="item">Item.</param>
+        /// <returns>The root get click menu tree node.</returns>
+        private AssetTree.Node MenuRoot_GetClickMenuTreeNode()
+        {
+            AssetTree.Node root = new AssetTree.Node();
+
+            AssetTree.Node node;
+
+            node = AddClickMenuItem(root, ClickMenuItemIds.Add);
+            node = AddClickMenuItem(root, ClickMenuItemIds.Options);
+            node = AddClickMenuItem(root, ClickMenuItemIds.Exit);
+            node = AddClickMenuItem(root, ClickMenuItemIds.Load);
+
+            return root;
+        }
+
+        private AssetTree.Node AddClickMenuItem(AssetTree.Node root, ClickMenuItemIds id)
+        {
+            AssetTree.Node node = clickMenuItems[(int)id];
+            root.children.Add(node);
+            return node;
+        }
+
         private void MenuRoot_OnItemSelected(ClickMenuItem item)
         {
             Debug.Log("MenuRoot_OnItemSelected(item:" + item + ")");
@@ -323,8 +409,6 @@ namespace FleetVieweR
                 // TODO:(pv) Surface Placement Align None
                 // TODO:(pv) Move Scale
                 case 0100: // Undo:
-                    //EditorObjectSelection.Instance.SelectedGameObjects;
-                    //EditorObjectSelection.Instance.UndoRedoSelection();
                     EditorUndoRedoSystem.Instance.Undo();
                     break;
                 case 0200: // Redo:
@@ -372,6 +456,18 @@ namespace FleetVieweR
 #else
             Application.Quit();
 #endif
+        }
+
+        private void Save()
+        {
+            //...
+            isOneOrMoreModelModified = false;
+        }
+
+        private void Load()
+        {
+            //...
+            //isOneOrMoreModelLoaded = ...;
         }
     }
 }
