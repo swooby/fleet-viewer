@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e3d3480dc2db50146bf7ac1c7c2d6e77, type: 3}
-  m_Name: ClickMenuItem0710GlobalTransform
+  m_Name: ClickMenuItem0791AddNox
   m_EditorClassIdentifier: 
-  id: 710
-  icon: {fileID: 21300000, guid: 612fe6fbf755a4717a7551ca1c1e8ae7, type: 3}
+  id: 0
+  icon: {fileID: 21300000, guid: 347890b9c559c458e972c629a8abfdb7, type: 3}
   background: {fileID: 0}
-  toolTip: Global Transform
+  toolTip: Add Nox
   closeAfterSelected: 1

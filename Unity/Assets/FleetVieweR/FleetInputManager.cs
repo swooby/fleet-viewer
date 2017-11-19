@@ -159,7 +159,7 @@ namespace FleetVieweR
 
         private void Gizmo_GizmoDragEnd(Gizmo gizmo)
         {
-            isOneOrMoreModelModified = true;
+            //isOneOrMoreModelModified = true;
         }
 
         private void EnableEvaMode(bool enable)
@@ -248,8 +248,6 @@ namespace FleetVieweR
                     SelectedObjects.Remove(deselectedObject);
                 }
             }
-
-            isOneOrMoreModelSelected = SelectedObjects.Count > 0;
         }
 
         private static GameObject FindModelRoot(GameObject modelsRoot, GameObject child)
@@ -288,10 +286,6 @@ namespace FleetVieweR
             PlayerControllerAllowTouchMovementRestore();
         }
 
-        private bool isOneOrMoreModelLoaded;
-        private bool isOneOrMoreModelSelected;
-        private bool isOneOrMoreModelModified;
-
         private Dictionary<int, AssetTree.Node> clickMenuItems = new Dictionary<int, AssetTree.Node>();
 
         private void InitializeClickMenuItem(AssetTree.Node node)
@@ -329,7 +323,9 @@ namespace FleetVieweR
             Move = 500,
             Save = 600,
             Options = 700,
-            OptionsGlobal = 710,
+            OptionsTransformGlobal = 710,
+            OptionsTransformLocal = 711,
+            OptionsDebug = 790,
             Exit = 800,
             Load = 900,
             Rotate = 1000,
@@ -338,30 +334,36 @@ namespace FleetVieweR
             Select = 1300,
         }
 
+        //private bool isOneOrMoreModelModified;
+
         /// <summary>
         /// No Models Loaded:
         ///          Add
         ///       Load Options 
         ///          Exit 
+        /// 
         /// One Or More Model(s) Loaded:
         ///  EVA/Select Add
         ///       Load   Options  
         ///           Exit 
+        /// 
         /// One Or More Model(s) Selected:
         ///  EVA/Select Add
-        ///     Remove   Duplicate
+        ///     Delete   Copy
         ///    Rotate     Move
         ///       Load   Options  
         ///           Exit 
+        /// 
         /// Modified:
         ///         Undo Redo
         ///  EVA/Select   Add
         ///        Load   Save
         ///         Exit Options 
+        /// 
         /// Modified & One Or More Model(s) Selected:
         ///         Undo Redo
         ///  EVA/Select   Add
-        ///     Remove     Duplicate
+        ///     Delete     Copy
         ///     Rotate     Move
         ///        Load   Save
         ///         Exit Options 
@@ -375,8 +377,63 @@ namespace FleetVieweR
 
             node = AddClickMenuItem(root, ClickMenuItemIds.Add);
             node = AddClickMenuItem(root, ClickMenuItemIds.Options);
+            TransformSpace transformSpace = EditorGizmoSystem.Instance.TransformSpace;
+            switch(transformSpace)
+            {
+                case TransformSpace.Global:
+                    RemoveClickMenuItem(node, ClickMenuItemIds.OptionsTransformGlobal);
+                    break;
+                case TransformSpace.Local:
+                    RemoveClickMenuItem(node, ClickMenuItemIds.OptionsTransformLocal);
+                    break;
+            }
+            // TODO:(pv) If not debug, RemoveClickMenuItem(node, ClickMenuItemIds.OptionsDebug);
             node = AddClickMenuItem(root, ClickMenuItemIds.Exit);
             node = AddClickMenuItem(root, ClickMenuItemIds.Load);
+
+            if (ModelsRoot.transform.childCount > 0)
+            {
+                ClickMenuItemIds evaOrSelect;
+                if (PlayerController.AllowTouchMovement)
+                {
+                    evaOrSelect = ClickMenuItemIds.Select;
+                }
+                else
+                {
+                    evaOrSelect = ClickMenuItemIds.Eva;
+                }
+                node = AddClickMenuItem(root, evaOrSelect);
+            }
+
+            //if (EditorObjectSelection.Instance.SelectedGameObjects.Count > 0)
+            if (SelectedObjects.Count > 0)
+            {
+                node = AddClickMenuItem(root, ClickMenuItemIds.Delete);
+                node = AddClickMenuItem(root, ClickMenuItemIds.Copy);
+
+                ClickMenuItemIds moveOrRotate;
+                if (EditorGizmoSystem.Instance.ActiveGizmoType == GizmoType.Translation)
+                {
+                    moveOrRotate = ClickMenuItemIds.Rotate;
+                }
+                else
+                {
+                    moveOrRotate = ClickMenuItemIds.Move;
+                }
+                node = AddClickMenuItem(root, moveOrRotate);
+            }
+
+            EditorUndoRedoSystem editorUndoRedoSystem = EditorUndoRedoSystem.Instance;
+            if (editorUndoRedoSystem.CanUndo())
+            {
+                AddClickMenuItem(root, ClickMenuItemIds.Undo);
+            }
+            if (editorUndoRedoSystem.CanRedo())
+            {
+                AddClickMenuItem(root, ClickMenuItemIds.Redo);
+            }
+
+            // TODO:(pv) Sort them in to an intuitive order
 
             return root;
         }
@@ -386,6 +443,25 @@ namespace FleetVieweR
             AssetTree.Node node = clickMenuItems[(int)id];
             root.children.Add(node);
             return node;
+        }
+
+        private void RemoveClickMenuItem(AssetTree.Node node, ClickMenuItemIds id)
+        {
+            List<AssetTree.Node> children = node.children;
+            for (int i = children.Count - 1; i >= 0; i--)
+            {
+                AssetTree.Node child = children[i];
+                ClickMenuItem clickMenuItem = child.value as ClickMenuItem;
+                if (clickMenuItem == null)
+                {
+                    continue;
+                }
+                if (clickMenuItem.id == (int)id)
+                {
+                    children.RemoveAt(i);
+                }
+            }
+
         }
 
         private void MenuRoot_OnItemSelected(ClickMenuItem item)
@@ -398,7 +474,8 @@ namespace FleetVieweR
             Debug.Log("MenuRoot_OnItemSelected: item.id:" + item.id);
             switch (item.id)
             {
-                // TODO:(pv) Toggle Global/Local Transform
+                // TODO:(pv) EditorGizmoSystem.Instance.TransformPivotPoint
+                // TODO:(pv) XZ Grid Settings: Visible/Color/CellSizeX/CellSizeZ/YPosition/YStep
                 // TODO:(pv) Step Snapping
                 // TODO:(pv) Vertex Snapping
                 // TODO:(pv) Box Snapping
@@ -408,39 +485,47 @@ namespace FleetVieweR
                 // TODO:(pv) Surface Placement Align Z
                 // TODO:(pv) Surface Placement Align None
                 // TODO:(pv) Move Scale
-                case 0100: // Undo:
+                // TODO:(pv) Sort/Arrange/Formation
+                case (int)ClickMenuItemIds.Undo:
                     EditorUndoRedoSystem.Instance.Undo();
                     break;
-                case 0200: // Redo:
+                case (int)ClickMenuItemIds.Redo:
                     EditorUndoRedoSystem.Instance.Redo();
                     break;
-                case 0300: // Add: Brings up model Carrossel
+                case (int)ClickMenuItemIds.Add:
+                    AddModel();
                     break;
-                case 0400: // Duplicate: (Hidden if no item(s) selected) Duplicate Selected Item(s)
+                case (int)ClickMenuItemIds.Copy:
                     EditorObjectSelection.Instance.DuplicateSelection();
                     break;
-                case 0500: // Move: Disables EVA & RotationGizmo, Enables TransformGizmo
+                case (int)ClickMenuItemIds.Move:
                     EditorGizmoSystem.Instance.ActiveGizmoType = GizmoType.Translation;
                     break;
-                case 0600: // Save: Name fleet file and Save to cloud
+                case (int)ClickMenuItemIds.Save:
+                    Save();
                     break;
-                case 0700: // Settings:
+                case (int)ClickMenuItemIds.OptionsTransformGlobal:
+                    EditorGizmoSystem.Instance.TransformSpace = TransformSpace.Global;
                     break;
-                case 0800: // Exit:
+                case (int)ClickMenuItemIds.OptionsTransformLocal:
+                    EditorGizmoSystem.Instance.TransformSpace = TransformSpace.Local;
+                    break;
+                case (int)ClickMenuItemIds.Exit:
                     Exit();
                     break;
-                case 0900: // Load: Browse fleet files and Load from cloud
+                case (int)ClickMenuItemIds.Load:
+                    Load();
                     break;
-                case 1000: // Rotate: Disables EVA & TransformGizmo, Enables RotationGizmo
+                case (int)ClickMenuItemIds.Rotate:
                     EditorGizmoSystem.Instance.ActiveGizmoType = GizmoType.Rotation;
                     break;
-                case 1100: // Remove: (Hidden if no item(s) selected) Remove Selected Item(s)
+                case (int)ClickMenuItemIds.Delete:
                     EditorObjectSelection.Instance.DeleteSelection();
                     break;
-                case 1200: // Toggle EVA/Select:
+                case (int)ClickMenuItemIds.Eva:
                     EnableEvaMode(true);
                     break;
-                case 1300:
+                case (int)ClickMenuItemIds.Select:
                     EnableEvaMode(false);
                     break;
             }
@@ -458,14 +543,21 @@ namespace FleetVieweR
 #endif
         }
 
+        private void AddModel()
+        {
+            // TODO:(pv) Bring up model carrossel
+        }
+
         private void Save()
         {
+            // TODO:(pv) Name fleet file and Save to cloud
             //...
-            isOneOrMoreModelModified = false;
+            //isOneOrMoreModelModified = false;
         }
 
         private void Load()
         {
+            // TODO:(pv) Browse fleet files and Load from cloud
             //...
             //isOneOrMoreModelLoaded = ...;
         }
