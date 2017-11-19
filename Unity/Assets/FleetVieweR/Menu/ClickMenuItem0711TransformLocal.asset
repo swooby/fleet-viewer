@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d3480dc2db50146bf7ac1c7c2d6e77, type: 3}
   m_Name: ClickMenuItem0711TransformLocal
   m_EditorClassIdentifier: 
-  id: 0
+  id: 711
   icon: {fileID: 21300000, guid: 5cf163516eb144bebb1bd6e10a2d8635, type: 3}
   background: {fileID: 0}
   toolTip: Local Transform

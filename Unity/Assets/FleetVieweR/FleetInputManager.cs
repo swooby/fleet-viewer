@@ -305,7 +305,8 @@ namespace FleetVieweR
                 clickMenuItems[clickMenuItemId] = node;
             }
 
-            foreach(AssetTree.Node child in node.children)
+            List<AssetTree.Node> children = node.children;
+            foreach(AssetTree.Node child in children)
             {
                 InitializeClickMenuItem(child);
             }
@@ -377,17 +378,19 @@ namespace FleetVieweR
 
             node = AddClickMenuItem(root, ClickMenuItemIds.Add);
             node = AddClickMenuItem(root, ClickMenuItemIds.Options);
+            node.children.Clear();
             TransformSpace transformSpace = EditorGizmoSystem.Instance.TransformSpace;
             switch(transformSpace)
             {
                 case TransformSpace.Global:
-                    RemoveClickMenuItem(node, ClickMenuItemIds.OptionsTransformGlobal);
+                    AddClickMenuItem(node, ClickMenuItemIds.OptionsTransformLocal);
                     break;
                 case TransformSpace.Local:
-                    RemoveClickMenuItem(node, ClickMenuItemIds.OptionsTransformLocal);
+                    AddClickMenuItem(node, ClickMenuItemIds.OptionsTransformGlobal);
                     break;
             }
-            // TODO:(pv) If not debug, RemoveClickMenuItem(node, ClickMenuItemIds.OptionsDebug);
+            // TODO:(pv) Don't do this if not in debug
+            AddClickMenuItem(node, ClickMenuItemIds.OptionsDebug);
             node = AddClickMenuItem(root, ClickMenuItemIds.Exit);
             node = AddClickMenuItem(root, ClickMenuItemIds.Load);
 
