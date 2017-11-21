@@ -100,7 +100,7 @@ namespace FleetVieweR
 
             if (MenuRoot != null)
             {
-                MenuRoot.GetClickMenuTreeNode += MenuRoot_GetClickMenuTreeNode;
+                MenuRoot.OnMenuShow += MenuRoot_OnMenuShow;
                 MenuRoot.OnMenuOpened += MenuRoot_OnMenuOpened;
                 MenuRoot.OnMenuClosed += MenuRoot_OnMenuClosed;
                 MenuRoot.OnItemSelected += MenuRoot_OnItemSelected;
@@ -370,7 +370,7 @@ namespace FleetVieweR
         ///         Exit Options 
         /// </summary>
         /// <returns>The root get click menu tree node.</returns>
-        private AssetTree.Node MenuRoot_GetClickMenuTreeNode()
+        private AssetTree.Node MenuRoot_OnMenuShow()
         {
             AssetTree.Node root = new AssetTree.Node();
 
@@ -380,7 +380,7 @@ namespace FleetVieweR
             node = AddClickMenuItem(root, ClickMenuItemIds.Options);
             node.children.Clear();
             TransformSpace transformSpace = EditorGizmoSystem.Instance.TransformSpace;
-            switch(transformSpace)
+            switch (transformSpace)
             {
                 case TransformSpace.Global:
                     AddClickMenuItem(node, ClickMenuItemIds.OptionsTransformLocal);
@@ -394,7 +394,12 @@ namespace FleetVieweR
             node = AddClickMenuItem(root, ClickMenuItemIds.Exit);
             node = AddClickMenuItem(root, ClickMenuItemIds.Load);
 
-            if (ModelsRoot.transform.childCount > 0)
+            //
+            //
+            //
+
+            bool isOneOrMoreModelLoaded = ModelsRoot.transform.childCount > 0;
+            if (isOneOrMoreModelLoaded)
             {
                 ClickMenuItemIds evaOrSelect;
                 if (PlayerController.AllowTouchMovement)
@@ -408,8 +413,13 @@ namespace FleetVieweR
                 node = AddClickMenuItem(root, evaOrSelect);
             }
 
-            //if (EditorObjectSelection.Instance.SelectedGameObjects.Count > 0)
-            if (SelectedObjects.Count > 0)
+            //
+            //
+            //
+
+            //bool isOneOrMoreModelSelected = EditorObjectSelection.Instance.SelectedGameObjects.Count > 0;
+            bool isOneOrMoreModelSelected = SelectedObjects.Count > 0;
+            if (isOneOrMoreModelSelected)
             {
                 node = AddClickMenuItem(root, ClickMenuItemIds.Delete);
                 node = AddClickMenuItem(root, ClickMenuItemIds.Copy);
@@ -426,6 +436,10 @@ namespace FleetVieweR
                 node = AddClickMenuItem(root, moveOrRotate);
             }
 
+            //
+            //
+            //
+
             EditorUndoRedoSystem editorUndoRedoSystem = EditorUndoRedoSystem.Instance;
             if (editorUndoRedoSystem.CanUndo())
             {
@@ -436,7 +450,7 @@ namespace FleetVieweR
                 AddClickMenuItem(root, ClickMenuItemIds.Redo);
             }
 
-            // TODO:(pv) Sort them in to an intuitive order
+            // TODO:(pv) Sort the menu items in to an intuitive/usable/friendly order
 
             return root;
         }

@@ -45,8 +45,8 @@ namespace DaydreamElements.ClickMenu {
     [Tooltip("The tree of menu items")]
     public ClickMenuTree menuTree;
 
-    public delegate AssetTree.Node GetClickMenuTreeNodeEvent();
-    public event GetClickMenuTreeNodeEvent GetClickMenuTreeNode;
+    public delegate AssetTree.Node OnMenuShowEvent();
+    public event OnMenuShowEvent OnMenuShow;
 
     [Tooltip("(Optional) The center icon")]
     public Sprite backIcon;
@@ -191,8 +191,8 @@ namespace DaydreamElements.ClickMenu {
           dummyParent = (ClickMenuIcon)Instantiate(menuIconPrefab, transform);
           dummyParent.menuRoot = this;
           AssetTree.Node node = null;
-          if (GetClickMenuTreeNode != null) {
-            node = GetClickMenuTreeNode();
+          if (OnMenuShow != null) {
+            node = OnMenuShow();
           }
           if (node == null) {
             node = menuTree.tree.Root;
