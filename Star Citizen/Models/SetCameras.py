@@ -1,3 +1,18 @@
+'''
+To use:
+>>> import importlib
+>>> import SetCameras
+>>> importlib.reload(SetCameras)
+<module 'SetCameras' from '/Users/pv/Development/GitHub/swooby/fleet-viewer/Star Citizen/Idris_Bridge.blend/SetCameras.py'>
+
+>>> data = SetCameras.default
+>>> data = SetCameras.processOrbitVertexIndexCameraVertexAndIncrement(**data)
+data:{'camera_sphere_vertex_index': 1, 'orbit_vertex_index': 0}
+
+>>> data = SetCameras.processOrbitVertexIndexCameraVertexAndIncrement(**data)
+data:{'camera_sphere_vertex_index': 2, 'orbit_vertex_index': 0}
+
+'''
 import bpy
 import bmesh
 from bpy_extras.object_utils import world_to_camera_view
@@ -122,10 +137,21 @@ def look_at(obj, world_point):
   '''
   From https://blender.stackexchange.com/a/5220/47021
   '''
+  #print("look_at(obj:%r, world_point:%r)" % (obj, world_point))
+  #print("look_at: obj.location:%r" % obj.location)
   obj_world_location = obj.matrix_world.to_translation()
+  #print("look_at: obj_world_location:%r" % obj_world_location)
   direction = world_point - obj_world_location
+  #print("look_at: direction:%r" % direction)
   rot_quat = direction.to_track_quat('-Z', 'Y')
+  #print("look_at: obj.rotation_mode:%r" % obj.rotation_mode)
   rot_euler = rot_quat.to_euler()
+  #print("look_at: BEFORE rot_euler:%r" % rot_euler)
+  #if yaw:
+  #  rot_euler.z += yaw
+  #if pitch:
+  #  rot_euler.x += pitch
+  #print("look_at: AFTER rot_euler:%r" % rot_euler)
   obj.rotation_euler = rot_euler
 
 def getView3dAreaAndRegion(context):
@@ -168,17 +194,18 @@ def select_border(context, view3dAreaAndRegion=None, extend=True):
 class SelectBridge:
   def __init__(self):
     self.context = bpy.context
-  
+
     self.view3dAreaAndRegion = getView3dAreaAndRegion(self.context)
-  
+
     self.scene = self.context.scene
 
     self.idris = self.scene.objects["Idris_fv_LOD0"]
     self.table_orbit = self.scene.objects["Table Orbit"]
-    self.table_orbit_sphere = self.scene.objects["Table Orbit Sphere"]
-    self.table_orbit_sphere_camera = self.scene.objects["Table Orbit Sphere Camera"]
-    
+    self.table_orbit_sphere = self.scene.objects["Table Orbit Icosphere"]
+    self.table_orbit_sphere_camera = self.scene.objects["Table Orbit Icosphere Camera"]
+
   def processOrbitVertexIndex(self, orbit_vertex_index=None, camera_sphere_vertex_index=None):
+    #print("processOrbitVertexIndex(orbit_vertex_index:%r, camera_sphere_vertex_index:%r)" % (orbit_vertex_index, camera_sphere_vertex_index))
     if orbit_vertex_index == None:
       #bpy.context.scene.objects.active = idris
       #bpy.ops.object.mode_set(mode="EDIT")
@@ -194,25 +221,28 @@ class SelectBridge:
         break
 
       return
-  
+
     vertex = self.table_orbit.data.vertices[orbit_vertex_index]
-    
+
     if camera_sphere_vertex_index is None:
       lookat = None
     else:
       orbit_position_count = len(self.table_orbit.data.vertices)
-      
+      #print("orbit_position_count:%r" % orbit_position_count)
+
       table_orbit_sphere_data_vertices = self.table_orbit_sphere.data.vertices
-      
+
       table_orbit_sphere_vertex_count = len(table_orbit_sphere_data_vertices)
-      
+      #print("table_orbit_sphere_vertex_count:%r" % table_orbit_sphere_vertex_count)
+
       if camera_sphere_vertex_index >= table_orbit_sphere_vertex_count:
           camera_sphere_vertex_index = 0
-      
+
       table_orbit_sphere_vertex = table_orbit_sphere_data_vertices[camera_sphere_vertex_index]
-      
+
       lookat = self.table_orbit_sphere.matrix_world * Vector(table_orbit_sphere_vertex.co)
-      
+      #print("lookat:%r" % lookat)
+
       camera_sphere_vertex_index += 1
 
       if camera_sphere_vertex_index >= table_orbit_sphere_vertex_count:
@@ -220,26 +250,30 @@ class SelectBridge:
         orbit_vertex_index += 1
 
     self.processOrbitVertex(vertex, lookat)
-  
+
     data = { "orbit_vertex_index":orbit_vertex_index, "camera_sphere_vertex_index":camera_sphere_vertex_index }
     print("data:%r" % data)
     return data
-  
+
   def processOrbitVertex(self, vertex, lookat=None):
     if lookat is None:
       lookat = self.table_orbit.location
+    #print("processOrbitVertex(vertex, lookat:%r" % lookat)
+
     self.table_orbit_sphere.location = Vector(vertex.co)
-    
+
     look_at(self.table_orbit_sphere_camera, lookat)
 
     object_as_camera(self.context, self.view3dAreaAndRegion, self.table_orbit_sphere_camera)
 
     if True:
+      # NOTE: Select only Idris so that orbit/sphere/etc aren't edited/selected
       bpy.context.scene.objects.active = self.idris
       bpy.ops.object.mode_set(mode="EDIT")
-      bpy.ops.mesh.select_mode(type="FACE")
+      bpy.ops.mesh.select_mode(type="FACE", action="ENABLE")
+      #print("mesh_select_mode:%r" % tuple(self.scene.tool_settings.mesh_select_mode))
       select_border(self.context, self.view3dAreaAndRegion)
-    
+
 
 default = { "orbit_vertex_index":0, "camera_sphere_vertex_index":0 }
 
@@ -249,6 +283,6 @@ def main(orbit_vertex_index=None):
 def processOrbitVertexIndexCameraVertexAndIncrement(orbit_vertex_index=None, camera_sphere_vertex_index=None):
   return SelectBridge().processOrbitVertexIndex(orbit_vertex_index, camera_sphere_vertex_index)
 
-  
+
 if __name__ == "__main__":
   main()

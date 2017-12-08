@@ -16,7 +16,7 @@
 #      Select by Vertext Quality: min:0, max:0.0001
 #      Delete Selected Faces
 #      Remove Unreferenced Vertices
-#   3) 
+#   3)
 #
 #
 # Requires MeshLab installed
@@ -99,12 +99,12 @@ class RsiCtmToLods:
         if not meshlabForwardUpNormal:
           meshlabForwardUpNormal = 'nZ_pY_Normal'
         print('     meshlabForwardUpNormal:%r' % meshlabForwardUpNormal)
-        
+
         if not pathRemote or pathRemote in processed:
           continue
 
         self.importAndProcess(session, pathRemote, meshlabForwardUpNormal)
-        
+
         processed.append(pathRemote)
 
         #break
@@ -122,14 +122,14 @@ class RsiCtmToLods:
     filename = os.path.splitext(filename_ctm)[0]
 
     self.meshlabProcessCtmToObj(filename, meshlabForwardUpNormal)
-    
+
     self.blenderProcessObj(filename)
 
     self.blenderExportScene()
 
   def downloadCtm(self, session, pathRemote):
     print("Downloading %r" % pathRemote)
-    
+
     filename_ctm = os.path.split(pathRemote)[1]
     filename = os.path.splitext(filename_ctm)[0]
 
@@ -149,7 +149,7 @@ class RsiCtmToLods:
 
   def meshlabProcessCtmToObj(self, filename, meshlabForwardUpNormal):
     print("%r MeshLab CTM to OBJ" % filename)
-    
+
     #
     # TODO:(pv) Consider using https://github.com/3DLIRIOUS/MeshLabXML
     #
@@ -225,12 +225,12 @@ class RsiCtmToLods:
 
     blend_file_dir = os.path.dirname(bpy.data.filepath)
     filepath = os.path.join(blend_file_dir, obj.name)
-    
+
     #
     # https://docs.blender.org/api/current/bpy.ops.export_scene.html#bpy.ops.export_scene.obj
     #
     bpy.ops.export_scene.obj(filepath=filepath + ".obj", check_existing=False, use_selection=True)
-    
+
     self.obj2ctm(filepath)
 
   def obj2ctm(self, filepath):
@@ -242,7 +242,7 @@ class RsiCtmToLods:
       #
       # This seems like a win/win that produces the best quality output *AND* smallest files
       #
-      
+
       cwd = os.path.dirname(filepath) or None
       filename = os.path.split(filepath)[1]
       filename_obj = filename + ".obj"
@@ -251,10 +251,10 @@ class RsiCtmToLods:
       cmd_args = [MESHLABSERVER_EXE, "-i", filename_obj, "-o", filename_ctm]
       execute(cmd_args, cwd=cwd)
     else:
-        
+
       filepath_obj = filepath + ".obj"
       filepath_ctm = filepath + ".ctm"
-      
+
       if True:
         #
         # Requires OpenCTM SDK installed
@@ -273,10 +273,10 @@ class RsiCtmToLods:
         #
         # ERROR: Can't get this to work
         #
-      
+
         filepath_obj = ctypes.c_char_p(filepath_obj.encode("utf-8"))
         filepath_ctm = ctypes.c_char_p(filepath_ctm.encode("utf-8"))
-      
+
         try:
           ctmIn = ctmNewContext(CTM_IMPORT)
           ctmLoad(ctmIn, filepath_obj)
@@ -286,8 +286,8 @@ class RsiCtmToLods:
           indices = ctmGetIntegerArray(ctmIn, CTM_INDICES)
         finally:
           ctmFreeContext(ctmIn)
-  
-        try:    
+
+        try:
           ctmOut = ctmNewContext(CTM_EXPORT)
           ctmDefineMesh(ctmOut, verts, vertCount, indices, triCount, None)
           ctmCompressionMethod(ctmOut, CTM_METHOD_MG1)
@@ -300,6 +300,6 @@ def main():
   rsiCtmToLods = RsiCtmToLods()
   rsiCtmToLods.importAndProcessAll()
   #rsiCtmToLods.importAndProcess(None, "https://robertsspaceindustries.com/media/4qayc3taiskh3r/source/CNOU_PIONEER.ctm", None)
-  
+
 if __name__ == '__main__':
   main()

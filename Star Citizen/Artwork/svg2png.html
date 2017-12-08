@@ -1,0 +1,81 @@
+<html>
+<body>
+
+<!--
+SC: https://robertsspaceindustries.com/comm-link/transmission/16263-Discount-Starters-Anniversary-Special-Sale
+Drake: https://robertsspaceindustries.com/comm-link/transmission/16262-DRAKE-Anniversary-Special-Sale
+MISC: https://robertsspaceindustries.com/comm-link/transmission/16273-MISC-Anniversary-Special-Sale
+RSI: https://robertsspaceindustries.com/comm-link/transmission/16261-RSI-Anniversary-Special-Sale
+CO: https://robertsspaceindustries.com/comm-link/transmission/16260-CONSOLIDATED-OUTLAND-Anniversary-Special-Sale
+Origin: https://robertsspaceindustries.com/comm-link/transmission/16259-ORIGIN-Anniversary-Special-Sale
+Aliens: https://robertsspaceindustries.com/comm-link/transmission/16258-VEHICLES-ALIEN-SHIPS-Anniversary-Special-Sale
+Aegis: https://robertsspaceindustries.com/comm-link/transmission/16257-AEGIS-Anniversary-Special-Sale
+Anvil: https://robertsspaceindustries.com/comm-link/transmission/16256-ANVIL-Anniversary-Special-Sale
+-->
+<textarea id="textarea"></textarea>
+<br/>
+<button id="buttonRender">Render</button>
+<br/>
+<canvas id="canvas" width="192" height="192"></canvas>
+<br />
+<input id="filename" type="text" value="svg2png.png">
+<button id="buttonSave">Save</button>
+
+<script>
+
+<!--
+From: https://stackoverflow.com/questions/28226677/save-inline-svg-as-jpeg-png-svg
+-->
+
+var buttonRender = document.getElementById('buttonRender')
+buttonRender.addEventListener('click', function () {
+  var img = new Image();
+  img.onload = function () {
+
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(img, 0, 0);
+
+    DOMURL.revokeObjectURL(url);
+  };
+
+  var data = document.getElementById('textarea').value;
+  var svgBlob = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+
+  var DOMURL = window.URL || window.webkitURL || window;
+  var url = DOMURL.createObjectURL(svgBlob);
+
+  img.src = url;
+});
+
+var buttonSave = document.getElementById('buttonSave');
+buttonSave.addEventListener('click', function () {
+  var canvas = document.getElementById('canvas');
+
+  var imgURI = canvas
+      .toDataURL('image/png')
+      .replace('image/png', 'image/octet-stream');
+
+  var filename = document.getElementById('filename');
+  triggerDownload(imgURI, filename.value);
+});
+
+function triggerDownload (imgURI, filename) {
+  var evt = new MouseEvent('click', {
+    view: window,
+    bubbles: false,
+    cancelable: true
+  });
+
+  var a = document.createElement('a');
+  a.setAttribute('download', filename);
+  a.setAttribute('href', imgURI);
+  a.setAttribute('target', '_blank');
+
+  a.dispatchEvent(evt);
+}
+
+</script>
+
+</body>
