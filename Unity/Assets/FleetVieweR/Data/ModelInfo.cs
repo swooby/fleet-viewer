@@ -11,20 +11,26 @@ namespace FleetVieweR
         public const bool VERBOSE_LOG = false;
 
         public const string FIELD_NAME = "Name";
-        public const string FIELD_LAST_CHECKED = "Last Checked";
+        public const string FIELD_MANUFACTURER = "Manufacturer";
+        public const string FIELD_FOCUS = "Focus";
         public const string FIELD_LENGTH = "Length";
         public const string FIELD_BEAM = "Beam";
         public const string FIELD_HEIGHT = "Height";
+        public const string FIELD_CARGO = "Cargo";
+        public const string FIELD_LAST_CHECKED = "Last Checked";
         public const string FIELD_STORE_URL = "Store URL";
         public const string FIELD_MODEL_PATH_REMOTE = "Model Path Remote";
         public const string FIELD_MODEL_PATH_LOCAL = "Model Path Local";
         public const string FIELD_MODEL_ROTATION = "Model Rotation";
 
         public string Name { get; private set; }
-        public DateTime LastChecked { get; private set; }
+        public string Manufacturer { get; private set; }
+        public string Focus { get; private set; }
         public float LengthMeters { get; private set; }
         public float BeamMeters { get; private set; }
         public float HeightMeters { get; private set; }
+        public float CargoCubicMeters { get; private set; }
+        public DateTime LastChecked { get; private set; }
         public Uri StoreUrl { get; private set; }
         public Uri ModelPathRemote { get; private set; }
         public string ModelPathLocal { get; private set; }
@@ -32,21 +38,28 @@ namespace FleetVieweR
 
         public override string ToString()
         {
-            return string.Format("[" +
-                                 "ModelInfo: Name={0}" +
-                                 ", LastChecked={1}" +
-                                 ", LengthMeters={2}" +
-                                 ", BeamMeters={3}" +
-                                 ", HeightMeters={4}" +
-                                 ", StoreUrl={5}" +
-                                 ", ModelPathRemote={6}" +
-                                 ", ModelPathLocal={7}" +
-                                 ", ModelRotation={8}" +
-                                 "]", Name,
-                                 LastChecked,
+            return string.Format("[ ModelInfo:" +
+                                 " Name={0}" +
+                                 ", Manufacturer={1}" +
+                                 ", Focus={2}" +
+                                 ", LengthMeters={3}" +
+                                 ", BeamMeters={4}" +
+                                 ", HeightMeters={5}" +
+                                 ", CargoCubicMeters={6}" +
+                                 ", LastChecked={7}" +
+                                 ", StoreUrl={8}" +
+                                 ", ModelPathRemote={9}" +
+                                 ", ModelPathLocal={10}" +
+                                 ", ModelRotation={11}" +
+                                 " ]",
+                                 Name,
+                                 Manufacturer,
+                                 Focus,
                                  LengthMeters,
                                  BeamMeters,
                                  HeightMeters,
+                                 CargoCubicMeters,
+                                 LastChecked,
                                  StoreUrl,
                                  ModelPathRemote,
                                  ModelPathLocal,
@@ -57,14 +70,9 @@ namespace FleetVieweR
         {
             Name = dictionary[FIELD_NAME];
 
-            try
-            {
-                LastChecked = DateTime.Parse(dictionary[FIELD_LAST_CHECKED]);
-            }
-            catch (FormatException)
-            {
-                LastChecked = DateTime.MinValue;
-            }
+            Manufacturer = dictionary[FIELD_MANUFACTURER];
+
+            Focus = dictionary[FIELD_FOCUS];
 
             try
             {
@@ -91,6 +99,24 @@ namespace FleetVieweR
             catch (FormatException)
             {
                 HeightMeters = float.NaN;
+            }
+
+            try
+            {
+                CargoCubicMeters = float.Parse(dictionary[FIELD_CARGO]);
+            }
+            catch (FormatException)
+            {
+                CargoCubicMeters = float.NaN;
+            }
+
+            try
+            {
+                LastChecked = DateTime.Parse(dictionary[FIELD_LAST_CHECKED]);
+            }
+            catch (FormatException)
+            {
+                LastChecked = DateTime.MinValue;
             }
 
             try
