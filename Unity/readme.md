@@ -1,6 +1,6 @@
 ## TODO
  * Sort by Line, Curve, Fleet, [Chaos or Custom] like starship42.com/fleetview  
-   Notice they have button to inc/dec rows.
+   Notice they have button to inc/dec rows.  
    Breakpoint keydown and enter VMXXXX file (FleetDB object) and search for "#clay" handlers.
 
 ### Preferred RuntimeTransformGizmos' settings
