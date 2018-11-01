@@ -2,6 +2,14 @@
  * Sort by Line, Curve, Fleet, [Chaos or Custom] like starship42.com/fleetview  
    Notice they have button to inc/dec rows.  
    Breakpoint keydown and enter VMXXXX file (FleetDB object) and search for "#clay" handlers.
+ * Skin imports similar to starship42.com/fleetview
+ ```
+ $("#import").on("click", function() {
+    $("#mask").show(),
+    ke(),
+    le("action", "import")
+ })
+ ```
 
 ### Preferred RuntimeTransformGizmos' settings
 ```
