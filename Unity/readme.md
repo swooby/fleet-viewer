@@ -6,7 +6,7 @@
  ```
  $("#import").on("click", function() {
     $("#mask").show(),
-    ke(),
+    ke(), // <- breakpoint here
     le("action", "import")
  })
  ```
